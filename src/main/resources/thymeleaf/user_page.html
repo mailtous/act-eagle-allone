@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="../asset/ui/our/js/thymeleaf-fragment.js" defer="defer" th:if="false"></script>
+<base href="../" th:if="false"/>
+<body>
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>username</th>
+            <th>create</th>
+        </tr>
+        </thead>
+        <tr th:each="user:${page.childs}">
+            <th th:text="${user.id}">1</th>
+            <th th:text="${user.userName}">leeton</th>
+            <th th:text="${#dates.format(user.createDate, 'yyyy-MM-dd')}">2017-10-01</th>
+        </tr>
+    </table>
+</div>
+<div th:replace="/fragment/pager.html :: page"></div>
+</body>
+</html>

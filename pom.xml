@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>act-eagle</groupId>
+    <artifactId>act-eagle</artifactId>
+    <version>1.0.0</version>
+
+    <profiles>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <profile.env>prod</profile.env>
+                <profile.site>xxx.com</profile.site>
+                <profile.js.compress>true</profile.js.compress>
+                <profile.jdk.version>1.8</profile.jdk.version>
+                <profiles.logger.path>${project.basedir}\logs</profiles.logger.path>
+                <profiles.logger.level>error</profiles.logger.level>
+            </properties>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <profile.env>dev</profile.env>
+                <profile.site>xxx.dev</profile.site>
+                <profile.js.compress>false</profile.js.compress>
+                <profile.jdk.version>1.8</profile.jdk.version>
+                <profiles.logger.path>${project.basedir}\logs</profiles.logger.path>
+                <profiles.logger.level>error</profiles.logger.level>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+    </profiles>
+
+    <properties>
+        <app.entry>act-eagle</app.entry>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <act.thymeleaf.version>1.1.0-SNAPSHOT</act.thymeleaf.version>
+        <osgl-mvc.version>1.2.0</osgl-mvc.version>
+        <mysql.connector.version>5.1.29</mysql.connector.version>
+        <HikariCP.version>2.7.1</HikariCP.version>
+        <act-beetlsql.version>1.2.0</act-beetlsql.version>
+        <logback.version>1.1.6</logback.version>
+        <junit.version>4.10</junit.version>
+        <osgl-tool.version>1.4.0</osgl-tool.version>
+        <act.version>1.5.3</act.version>
+    </properties>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.3</version>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                        <debug>true</debug>
+                        <debuglevel>lines,vars,source</debuglevel>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.1.2</version>
+                    <configuration>
+                        <includePom>true</includePom>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>1.2.1</version>
+                    <configuration>
+                        <executable>java</executable>
+                        <arguments>
+                            <argument>-Xms512m</argument>
+                            <argument>-Xmx512m</argument>
+                            <argument>-classpath</argument>
+                            <classpath/>
+                            <argument>${app.entry}</argument>
+                        </arguments>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.osgl</groupId>
+            <artifactId>osgl-tool</artifactId>
+            <version>${osgl-tool.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.actframework</groupId>
+            <artifactId>act</artifactId>
+            <version>${act.version}</version>
+        </dependency>
+         <dependency>
+            <groupId>org.actframework</groupId>
+            <artifactId>act-beetlsql</artifactId>
+            <version>${act-beetlsql.version}</version>
+        </dependency>
+
+        <!--
+                我本地的版本
+                <dependency>
+                    <groupId>org.actframework</groupId>
+                    <artifactId>act</artifactId>
+                    <version>${act.version}</version>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>org.osgl</groupId>
+                            <artifactId>genie</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+
+                &lt;!&ndash; genie 有BUG改为读取本地修正过的版本&ndash;&gt;
+                <dependency>
+                    <groupId>org.osgl</groupId>
+                    <artifactId>genie</artifactId>
+                    <version>1.2.0-SNAPSHOT</version>
+                </dependency>
+        -->
+
+
+        <dependency>
+            <groupId>org.actframework</groupId>
+            <artifactId>act-thymeleaf</artifactId>
+            <version>${act.thymeleaf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.connector.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>${HikariCP.version}</version>
+        </dependency>
+
+    </dependencies>
+
+</project>

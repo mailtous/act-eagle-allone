@@ -1,0 +1,34 @@
+<main>
+    <welcome class="{invisible: view !== 'welcome'}"></welcome>
+    <viewbox class="{invisible: view !== 'viewbox'}"></viewbox>
+    <style>
+        .invisible {display: none}
+    </style>
+
+    <script>
+        var tag = this;
+        tag.view = 'welcome';
+        tag.url = "";
+        tag.lastEvent = false;
+
+
+        eventBus.on('open', function(data) {
+//            console.log("param.url=" + data.uri);
+//            console.log("param.view=" + data.view);
+            tag.view = data.view; // 设置要显示的区域
+            loadPage(data.uri, data.params, "", null); //真正的加载页面
+            tag.lastEvent = {
+                id: 'open',
+                param:   data.params
+            }
+            tag.update();
+        })
+        eventBus.on('resend-last-event', function() {
+            if (!tag.lastEvent) return    ;
+            var lastEvent = tag.lastEvent  ;
+            tag.lastEvent = false;
+            eventBus.trigger(lastEvent.id, lastEvent.param);
+        })
+
+    </script>
+</main>

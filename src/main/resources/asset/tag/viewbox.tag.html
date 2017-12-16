@@ -1,0 +1,11 @@
+<viewbox>
+    <div id="htmlbox"></div>
+
+    <script>
+        var tag = this;
+        tag.on('mount', function () {
+            eventBus.trigger('resend-last-event');
+        });
+
+    </script>
+</viewbox>

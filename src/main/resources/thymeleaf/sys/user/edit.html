@@ -1,0 +1,40 @@
+<div class="layui-form layui-form-pane" style="margin:10px 5px">
+    <div class="layui-form-item">
+        <label class="layui-form-label">用户名</label>
+        <div class="layui-input-inline">
+            <input type="text" name="userName" required lay-verify="required" placeholder="请输入用户名" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码:</label>
+        <div class="layui-input-inline">
+            <input type="password" name="pwd" required lay-verify="required" placeholder="请输入密码" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            <button class="layui-btn" lay-submit lay-filter="userEdit">提交</button>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    layui.use('form', function () {
+        var form = layui.form;
+        //监听提交
+        form.on('submit(userEdit)', function (params) {
+//            layer.msg(JSON.stringify(data.field));
+            var userId = [[${sysUser.id}]];
+            var editUrl = userId==null ? "/sys/user/add": "/sys/user/edit/" + userId ;
+            post(editUrl, params.field, null);
+
+        });
+
+    });
+
+
+
+</script>

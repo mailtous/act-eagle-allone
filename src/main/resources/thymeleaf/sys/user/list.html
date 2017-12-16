@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="renderer" content="webkit">
+<!--<script src="/asset/ui/our/js/thymeleaf-fragment.js" ></script>-->
+<div class="float-right">
+    <button onclick="editer('/sys/user/edit/0');" class="layui-btn layui-btn-xs">新增用户</button>
+</div>
+<br/>
+<div>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>username</th>
+            <th>create</th>
+        </tr>
+        </thead>
+        <tr th:each="user:${page.items}">
+            <th th:text="${user.id}">1</th>
+            <th th:text="${user.userName}">leeton</th>
+            <th th:text="${#dates.format(user.createDate, 'yyyy-MM-dd')}">2017-10-01</th>
+        </tr>
+    </table>
+    <div th:include="/fragment/pager.html :: page"></div>
+</div>
+
+<script th:inline="javascript">
+    this.editer = function (url) {
+        $.get(url, {}, function (edit_from) {
+            layer.open({
+                type: 1,
+                title:'新增或编辑用户信息',
+                content: edit_from
+            });
+        });
+    }
+
+</script>
+

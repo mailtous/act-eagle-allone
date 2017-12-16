@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>EAGLE ADMIN</title>
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/riot@3.7.4/riot+compiler.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/riot-route@x.x.x/dist/route.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" media="all" href="/asset/ui/layui/css/layui.css"/>
+    <script src="/asset/ui/layui/layui.js"></script>
+
+    <link rel="stylesheet" href="/asset/ui/our/css/app.css" type="text/css"/>
+    <link rel="stylesheet" href="/asset/ui/our/css/page.css" type="text/css"/>
+    <!-- our app js -->
+    <script src="/asset/ui/our/js/app.js"></script>
+</head>
+<body>
+
+<tag-load>
+    <script type="riot/tag" src="/asset/tag/tree.tag.html"></script>
+    <script type="riot/tag" src="/asset/tag/app.tag.html"></script>
+    <script type="riot/tag" src="/asset/tag/top.tag.html"></script>
+    <script type="riot/tag" src="/asset/tag/nav.tag.html"></script>
+    <script type="riot/tag" src="/asset/tag/main.tag.html"></script>
+    <script type="riot/tag" src="/asset/tag/viewbox.tag.html"></script>
+    <script type="riot/tag" src="/asset/tag/welcome.tag.html"></script>
+</tag-load>
+
+<div>
+
+    <app></app>
+
+    <script th:inline="javascript">
+        var tag = this;
+        var treeDataUrl = [[${menuDataUrl}]];  // 取得菜单的URL
+        var treeCache = {}; //菜单的缓存
+
+        //路由
+        var r = route.create();
+        r("sys..", function () {
+            viewOf(route);
+        });
+        function viewOf(route) {
+            eventBus.trigger('open', {view: 'viewbox', uri: "/" + route.uri, params: route.params});
+        }
+
+        //自定义改写route对于路径的解析
+        route.parser(function (path) {
+            var raw = path.split('?'),
+                    uri = raw[0],
+                    qs = raw[1],
+                    params = {}
+            if (qs) {
+                qs.split('&').forEach(function (v) {
+                    var c = v.split('=')
+                    params[c[0]] = c[1]
+                });
+            }
+            //属性回写到route
+            route.uri = uri;
+            route.params = params;
+            return route;
+        });
+
+        /*    eventBus.on('tree_data', function(data) {
+         console.log("data hoe="+data);
+
+         });
+         //取得菜单内容
+         function fetchMenuData() {
+         $.getJSON(treeDataUrl, function (data) {
+         eventBus.trigger("tree_data", data);
+         return data;
+         });
+
+         }*/
+
+        //加载所有TAG
+        riot.mount('*');
+        route.start(true);
+
+
+    </script>
+</div>
+</body>
+</html>

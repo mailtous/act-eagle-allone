@@ -1,0 +1,25 @@
+<div th:fragment="page">
+    <div class="pager_box">
+        <ul>
+            <li>
+                <a th:if="${page.isHasPre}" th:href="@{${page.url}(pageNo=${page.pageNo-1},pageSize=${page.pageSize})}">&laquo; prev</a>
+                <a th:if="${not page.isHasPre}" href="javascript:void(0);">&laquo; prev</a>
+            </li>
+
+            <li th:each="pn : ${#numbers.sequence(1, page.totalPages)}">
+                <a th:if="${pn eq page.pageNo}" href="javascript:void(0);">
+                    <span th:text="${pn}"></span>
+                </a>
+                <a th:if="${not (page.pageNo eq pn)}"
+                   th:href="@{${page.url}(pageNo=${page.pageNo},pageSize=${page.pageSize})}">
+                    <span th:text="${pn}"></span>
+                </a>
+            </li>
+
+            <li>
+                <a th:if="${page.isHasNext}" th:href="@{${page.url}(pageNo=${page.pageNo+1},pageSize=${page.pageSize})}">next &raquo;</a>
+                <a th:if="${not page.isHasNext}" href="javascript:void(0);">next &raquo;</a>
+            </li>
+        </ul>
+    </div>
+</div>

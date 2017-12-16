@@ -1,0 +1,49 @@
+<tree>
+    <ul if="{ opts.childs}" class=" menu " >
+        <li each="{ menu in opts.childs }" class="{current: currentMenu === menu}">
+            <div onclick="{toggleDisplay}">{ menu.funcName }</div>
+            <!-- 回调自身 -->
+            <tree childs="{ menu.childs }" if="{collapsed}"/>
+        </li>
+    </ul>
+
+    <script>
+        var tag = this;
+        tag.opts.childs = {};
+        tag.collapsed = true;
+        tag.fetchMenuData = fetchMenuData();
+        tag.currentMenu=true;
+
+
+        //取得菜单内容
+        function fetchMenuData(){
+            // 因为 <tree> 回调了自身,导致会重复发出请求数据,故这里使用了 jq 的属性缓存
+            // treeCache 要在上级调用菜单的页面先定义,以做为全局缓存
+           if(jQuery.hasData(treeCache)){
+               tag.opts.childs = $.data(treeCache,"tree_cache");
+               tag.update();
+           }else {
+               $.getJSON(treeDataUrl, function (data) {
+                   $.data(treeCache,"tree_cache",data.childs); //缓存菜单内容
+                   tag.opts.childs = data.childs;;
+                   tag.update();
+               });
+           }
+        }
+/*        eventBus.on('tree_data', function(data) {
+            console.log("data="+data);
+            tag.opts.childs = data.childs;
+            tag.update();
+        });*/
+
+
+        tag.toggleDisplay=function(e) {
+            tag.collapsed = !tag.collapsed;
+            tag.currentMenu = e.item.menu;
+            if("undefined" != e.item.menu.funcUrl){
+                route(e.item.menu.funcUrl);  // URL 发送到路由
+            }
+        };
+
+    </script>
+</tree>
