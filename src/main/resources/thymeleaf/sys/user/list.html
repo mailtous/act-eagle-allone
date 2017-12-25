@@ -3,7 +3,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="renderer" content="webkit">
-<!--<script src="/asset/ui/our/js/thymeleaf-fragment.js" ></script>-->
 <div class="float-right">
     <button onclick="editer('/sys/user/edit/0');" class="layui-btn layui-btn-xs">新增用户</button>
 </div>
@@ -23,19 +22,38 @@
             <th th:text="${#dates.format(user.createDate, 'yyyy-MM-dd')}">2017-10-01</th>
         </tr>
     </table>
-    <div th:include="/fragment/pager.html :: page"></div>
 </div>
-
+<div id="pager" class="pagerBar"></div>
 <script th:inline="javascript">
     this.editer = function (url) {
         $.get(url, {}, function (edit_from) {
             layer.open({
                 type: 1,
-                title:'新增或编辑用户信息',
+                title: '新增或编辑用户信息',
                 content: edit_from
             });
         });
     }
+
+    //分页参数
+    var pageOptions = {
+        pagenumber:[[${page.pageNo}]],
+        pagecount:[[${page.totalPages}]],
+        totalCount:[[${page.total}]],
+        recordBegin:[[${page.first+1}]],
+        recordEnd:[[${page.showSize}]]
+    };
+    var url = '/sys/user/list';//数据url
+    var $queryForm = $("#searchForm");//搜索表单
+    var $searchBtn = $("#btn_query");//搜索按钮
+    var $page = $("#pager");//分页条容器
+    //搜索
+    page.pageNoName = "pageNo";
+    page.$pageListPanel = $("#htmlbox");
+    page.initSearch($queryForm, $searchBtn, url);
+    //分页
+    page.initPageBar($page, $queryForm, url, pageOptions);
+
 
 </script>
 

@@ -2,6 +2,9 @@ package com.artlongs.sys.controller;
 
 import act.controller.annotation.TemplateContext;
 import act.controller.annotation.UrlContext;
+import act.data.annotation.Data;
+import act.db.DB;
+import act.db.DbBind;
 import act.view.RenderAny;
 import com.artlongs.framework.model.BaseEntity;
 import com.artlongs.framework.page.Page;
@@ -12,6 +15,7 @@ import org.osgl.mvc.annotation.GetAction;
 import org.osgl.mvc.annotation.Param;
 import org.osgl.mvc.annotation.PostAction;
 import org.osgl.mvc.result.RenderJSON;
+
 import javax.inject.Inject;
 import java.util.Date;
 
@@ -35,6 +39,15 @@ public class SysUserController extends SysBaseController {
         page = sysUserService.getPage(page, sql, null);
         return render("list.html",page);
     }
+
+    @GetAction("list.json")
+    public RenderJSON listJson(Integer pageNo) {
+        Page<SysUser> page = new Page<>().setPageNo(pageNo);
+        String sql = " select * from sys_user";
+        page = sysUserService.getPage(page, sql, null);
+        return renderJson(page);
+    }
+
 
 
     @GetAction("edit/{id}")

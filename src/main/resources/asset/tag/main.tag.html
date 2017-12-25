@@ -6,6 +6,7 @@
     </style>
 
     <script>
+
         var tag = this;
         tag.view = 'welcome';
         tag.url = "";
@@ -17,10 +18,10 @@
 //            console.log("param.view=" + data.view);
             tag.view = data.view; // 设置要显示的区域
             loadPage(data.uri, data.params, "", null); //真正的加载页面
-            tag.lastEvent = {
+/*            tag.lastEvent = {
                 id: 'open',
                 param:   data.params
-            }
+            }*/
             tag.update();
         })
         eventBus.on('resend-last-event', function() {

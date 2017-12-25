@@ -10,7 +10,6 @@ import javax.persistence.Entity;
  * @Autor: leeton
  * @Date : 11/21/17
  */
-@Entity
 public class SysPermission extends BaseEntity {
 
     private Long roleId;

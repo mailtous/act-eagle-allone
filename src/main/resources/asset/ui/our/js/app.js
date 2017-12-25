@@ -4,9 +4,11 @@
  */
 var loadingtip = "数据加载中...请稍候...";
 var errortip = "程序异常，请联系管理员";
-var layer;
-layui.use(['layer'], function () { // 加载 layui的功能模块
+var layer,laypage,table;
+layui.use(['layer','laypage','table'], function () { // 加载 layui的功能模块
     layer = layui.layer;
+    laypage = layui.laypage;
+    table = layui.table;
 });
 
 
@@ -19,7 +21,7 @@ window.eventBus = riot.observable();  // riot 的事件观察
  * @param params
  * @param callback
  */
-var post = function (url, params, callback) {
+var sumbit = function (url, params, callback) {
     if (!url || url == "") return;
     $.ajax({
         url: url,
@@ -29,13 +31,17 @@ var post = function (url, params, callback) {
         success: function (data) {
             if (typeof callback == "function") {
                 callback(data);
+            }else {
+                layer.msg(data.msg);
+                location.reload();
             }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             layer.msg(errortip);
-            console.log(errortip);
+            console.log("ERROR= "+data);
         }
     });
+    return true;
 }
 
 
@@ -62,7 +68,6 @@ var ajaxHTML= function(url,params,callback) {
     _url += url.indexOf("?") == -1 ? "?" : "&";
     _url += "timer=" + new Date().getTime();
     console.log(loadingtip);
-    layer.msg(loadingtip);
     $.ajax({
         url: url,
         data: params,
@@ -77,4 +82,34 @@ var ajaxHTML= function(url,params,callback) {
             console.log(errortip);
         }
     });
+}
+
+//页面分页搜索功能
+var page={
+    pageNoName:"pn",
+    $pageListPanel:$("#htmlContainer"),
+    pageUrl:'',
+    loadPageHTML:function(url,data,$pageListPanel){
+        $pageListPanel
+    },
+    search:function($queryForm,url,pn,callback){
+        var This=this;
+        var p = url.indexOf("?") == -1 ? "?" : "&";
+        window.loadPage(url+p+This.pageNoName+'='+pn, $queryForm.serialize(),(this.$panel_edit?this.$pageListPanel:undefined),function () {
+            if(typeof callback == "function"){
+                callback();
+            }
+        });
+    },
+    initPageBar:function($page,$queryForm,url,pageOptions){
+        var This=this;
+        pageOptions.buttonClickCallback=function(pn){This.search($queryForm,url,pn)};
+        $page.pager(pageOptions);
+    },
+    initSearch:function($queryForm,$searchBtn,url){
+        var This=this;
+        $searchBtn.on("click", function(){
+            This.search($queryForm,url,1);
+        });
+    }
 }

@@ -13,7 +13,6 @@ import java.util.List;
  * @Autor: leeton
  * @Date : 11/21/17
  */
-@Entity
 public class SysFunc extends BaseEntity {
 
     public static final int ON =1;

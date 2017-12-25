@@ -1,0 +1,61 @@
+#pager{line-height:20px;font-size:14px; }
+
+#pager ul.pages {
+float:right;
+border:none;
+text-transform:uppercase;
+margin:0;
+padding-top:10px;
+}
+
+#pager ul.pages li {
+color:#00b8b6;
+list-style:none;
+float:left;
+border:1px solid #2F4056;
+text-decoration:none;
+margin:0 5px 0 0;
+padding:0px 5px;
+cursor:pointer;
+}
+
+#pager ul.pages li:hover {
+border:1px solid #5FB878;
+background: #0B101E;
+}
+
+#pager ul.pages li.pgEmpty {
+border:1px solid #2F4056;
+color:#2F4056;
+cursor:default;
+}
+#pager ul.pages li.pgEmpty:hover {
+border:1px solid #2F4056;
+background:none;
+}
+
+#pager ul.pages li.pgCurrent {
+border:1px solid #5FB878;
+color:#000;
+font-weight:700;
+background-color:#00b8b6;
+}
+
+input.aptitudeOrBank{
+    vertical-align: middle; margin-bottom: 5px;
+}
+/** 分面的跳转**/
+#pager .pagesOther{float:right;margin-right:3px;padding-top:10px;color:#00b8b6;}
+#pager .pagesOther input{width:30px;margin:0;padding:0;text-align:center;}
+#pager .pagesOther button{padding:0 5px;}
+#pager .pagesOther em{font-style:normal;margin:0 2px;color:#f60;}
+
+
+#ticket_form{ padding: 9px; font: 12px/1.5em "Helvetica Neue", Helvetica, Arial, sans-serif }
+#ticket_form h5{ font-size: 1em; margin: 2px 0; }
+#ticket_form p{ display: flex; }
+#ticket_form label input,#ticket_form label span{ vertical-align: middle; margin-left: 6px; }
+#ticket_form input[type=text]{ display: block; padding: 4px 6px; width: 200px; }
+
+
+.ticket-proxy-code{ padding: 6px; color: #00b8b6; cursor: pointer; }

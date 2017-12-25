@@ -15,7 +15,6 @@ import java.util.List;
  * @Autor: leeton
  * @Date : 11/21/17
  */
-@Entity
 public class SysUser extends BaseEntity {
 
     private String userName;
