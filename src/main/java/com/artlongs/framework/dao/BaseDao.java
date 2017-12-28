@@ -19,9 +19,9 @@ public interface BaseDao<T> {
 
     int delete(Long id);
 
-    T getObj(String sql, Object... args);
+    T getObj(String frameSql, Object... args);
 
-    Long count(String sql, Object... args);
+    Long count(String frameSql, Object... args);
 
     List<T> getList(String sql);
 

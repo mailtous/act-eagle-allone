@@ -8,7 +8,8 @@ app{
     font-family: "Roboto", "San Francisco Text", "Noto Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
 app top{
-    background:#0B101E;
+    /*background:#0B101E;*/
+    background: #393D49;
 }
 app main{
     background:#23262E;

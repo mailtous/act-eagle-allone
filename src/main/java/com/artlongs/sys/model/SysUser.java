@@ -1,12 +1,14 @@
 package com.artlongs.sys.model;
 
 
+import act.Act;
 import com.alibaba.fastjson.JSON;
 import com.artlongs.framework.model.BaseEntity;
+import org.osgl.http.H;
+import org.osgl.inject.annotation.Configuration;
 import org.osgl.util.C;
 import org.osgl.util.S;
 
-import javax.persistence.Entity;
 import java.util.List;
 
 /**
@@ -16,6 +18,9 @@ import java.util.List;
  * @Date : 11/21/17
  */
 public class SysUser extends BaseEntity {
+
+    @Configuration("sysuser.cookies.name")
+    public static String cookies_name;
 
     private String userName;
     private String pwd;
@@ -31,7 +36,42 @@ public class SysUser extends BaseEntity {
         return roleIdList;
     }
 
-    //===============
+    public SysUser setPwdByEncode(String pwd) {
+        if(null != this && S.noBlank(pwd)){
+            this.pwd = Act.crypto().passwordHash(pwd);
+        }
+        return this;
+    }
+
+    /**
+     * 核验密码
+     * @param pwdTxt 明文密码
+     * @return
+     */
+    public boolean verifyPassword(String pwdTxt) {
+        if(null == this) return false;
+        return Act.crypto().verifyPassword(pwdTxt,this.getPwd());
+    }
+
+    public void saveToSession(H.Session session) {
+        session.cache(this.getId().toString(), this);
+    }
+
+    public SysUser getBySession(H.Session session) {
+       return session.cached(this.getId().toString());
+    }
+
+    public H.Cookie buildMyCookie(String val){
+        H.Cookie cookie = new H.Cookie(cookies_name, val).path("/").maxAge(-1);
+        return cookie;
+    }
+
+    public static H.Cookie getMyCookie(H.Request request){
+        H.Cookie cookie = request.cookie(cookies_name);
+        return cookie;
+    }
+
+    //=============== geter && setter ================================================
 
     public String getUserName() {
         return userName;

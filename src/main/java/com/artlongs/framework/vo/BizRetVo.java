@@ -44,15 +44,40 @@ public class BizRetVo<T> {
             this.setMsg(msg);
         }
     }
+
+    /**
+     * 注意这个NEW了一下,你明白的
+     * @param msg
+     * @return
+     */
+    public static BizRetVo error(String msg) {
+        BizRetVo vo = new BizRetVo();
+        vo.setMsg(msg);
+        vo.setRetcode(BizRetCode.FAIL);
+        return vo;
+    }
+
+    /**
+     * 注意这个NEW了一下,你明白的
+     * @param msg
+     * @return
+     */
+    public static BizRetVo success(String msg) {
+        BizRetVo vo = new BizRetVo();
+        vo.setRetcode(BizRetCode.SUCCESS);
+        vo.setMsg(msg);
+        return vo;
+    }
+
     public BizRetVo setError(String msg) {
-        retcode = BizRetCode.FAIL;
-        setMsg(msg);
+        this.setRetcode(BizRetCode.FAIL);
+        this.setMsg(msg);
         return this;
     }
 
     public BizRetVo setSuccess(String msg) {
-        retcode = BizRetCode.SUCCESS;
-        setMsg(msg);
+        this.setRetcode(BizRetCode.SUCCESS);
+        this.setMsg(msg);
         return this;
     }
 
@@ -64,33 +89,45 @@ public class BizRetVo<T> {
         return retcode;
     }
 
-    public void setRetcode(BizRetCode retcode) {
+    public BizRetVo setRetcode(BizRetCode retcode) {
         this.retcode = retcode;
+        return this;
     }
 
     public String getMsg() {
         return (null==this.msg || msg.trim().length() == 0)? retcode.getMsg():this.msg;
     }
 
-    public void setMsg(String msg) {
+    public BizRetVo setMsg(String msg) {
         this.msg = msg;
+        return this;
     }
 
     public String getRef() {
         return ref;
     }
 
-    public void setRef(String ref) {
+    public BizRetVo setRef(String ref) {
         this.ref = ref;
+        return this;
     }
 
     public T getItem() {
         return item;
     }
 
-    public void setItem(T item) {
+    public BizRetVo setItem(T item) {
         this.item = item;
+        return this;
     }
 
-
+    @Override
+    public String toString() {
+        return "BizRetVo{" +
+                "retcode=" + retcode +
+                ", ref='" + ref +
+                ", msg='" + msg +
+                ", item=" + item +
+                '}';
+    }
 }

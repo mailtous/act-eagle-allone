@@ -48,7 +48,11 @@ public class SysUserController extends SysBaseController {
         return renderJson(page);
     }
 
-
+    @GetAction("view/{id}")
+    public RenderJSON view(@Param(defIntVal = 0) Integer id ) {
+        SysUser sysUser = sysUserService.get(new Long(id));
+        return json(sysUser);
+    }
 
     @GetAction("edit/{id}")
     public RenderAny edit(@Param(defIntVal = 0) Integer id ) {
@@ -62,14 +66,13 @@ public class SysUserController extends SysBaseController {
     @PostAction("edit/{id}")
     public RenderJSON editBy(SysUser sysUser) {
         sysUserService.update(sysUser);
-        return json(new BizRetVo<>().setSuccess("用户资料编辑成功!"));
+        return json(BizRetVo.success("用户资料编辑成功!"));
     }
 
     @PostAction("add")
     public RenderJSON add(SysUser sysUser) {
-        sysUser.setCreateDate(new Date());
-        sysUserService.save(sysUser);
-        return json(new BizRetVo<>().setSuccess("系统用户添加成功!"));
+        boolean b = sysUserService.createNewUser(sysUser);
+        return json(b?BizRetVo.success("系统用户添加成功!"):BizRetVo.error("系统用户添加失败!"));
     }
 
     @PostAction("del/{id}")
@@ -78,7 +81,7 @@ public class SysUserController extends SysBaseController {
         if (null != sysUser) {
             sysUser.setDelStatus(BaseEntity.DELETED);
         }
-        return json(new BizRetVo<>().setSuccess("用户删除成功!"));
+        return json(BizRetVo.success("用户删除成功!"));
     }
 
 

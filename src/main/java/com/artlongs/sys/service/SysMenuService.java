@@ -174,6 +174,8 @@ public class SysMenuService {
         funcSet = funcMap.get(sysUserID);
         if (C.notEmpty(funcSet)) {
             funcSet.removeIf(f -> (SysFunc.OFF==f.getAction().intValue()));
+        }else {
+            return C.newList();
         }
         return funcSet;
     }

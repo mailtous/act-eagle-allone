@@ -3,6 +3,7 @@ package com.artlongs.sys.dao;
 import act.Act;
 import com.artlongs.framework.dao.BeetlSqlDao;
 import com.artlongs.sys.model.SysUser;
+import org.beetl.sql.core.SQLReady;
 
 /**
  * Function:
@@ -12,11 +13,10 @@ import com.artlongs.sys.model.SysUser;
  */
 public class SysUserDao extends BeetlSqlDao<SysUser> {
 
-    public boolean checkLogin(String userName, String pwd) {
-        String pwdMd5 = Act.crypto().encrypt(pwd);
-        String sql = " select count(1) from sys_user where user_name=? and pwd = ?";
-        Long num = count(sql, new Object[]{userName, pwdMd5});
-        return num > 0;
+    public SysUser checkLogin(String userName, String pwd) {
+        String sql = " select * from sys_user where user_name=?";
+        SysUser sysUser = getObj(sql, userName);
+        return (sysUser != null && sysUser.verifyPassword(pwd))?sysUser:null;
     }
 
 

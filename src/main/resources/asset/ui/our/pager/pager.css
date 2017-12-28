@@ -1,3 +1,4 @@
+/**  JS 分页条样式 **/
 #pager{line-height:20px;font-size:14px; }
 
 #pager ul.pages {
@@ -44,7 +45,7 @@ background-color:#00b8b6;
 input.aptitudeOrBank{
     vertical-align: middle; margin-bottom: 5px;
 }
-/** 分面的跳转**/
+/** 分页的跳转**/
 #pager .pagesOther{float:right;margin-right:3px;padding-top:10px;color:#00b8b6;}
 #pager .pagesOther input{width:30px;margin:0;padding:0;text-align:center;}
 #pager .pagesOther button{padding:0 5px;}
