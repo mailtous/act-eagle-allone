@@ -29,6 +29,7 @@ public class SysLoginController extends SysBaseController {
 
     @GetAction("")
     public RenderAny login() {
+        ctx.renderArg("loginMsg", "");
         return render("login.html");
     }
 
@@ -43,7 +44,7 @@ public class SysLoginController extends SysBaseController {
         if(vo.isSucc()){
             to("/sys/home");
         }
-        ctx.renderArg("bizRetVo", vo);
+        ctx.renderArg("loginMsg", vo.getMsg());
        return render("login.html");
     }
 
