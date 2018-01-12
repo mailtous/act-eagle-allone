@@ -6,8 +6,6 @@ import com.artlongs.framework.vo.BizRetVo;
 import com.artlongs.sys.dao.SysUserDao;
 import com.artlongs.sys.model.SysPermission;
 import com.artlongs.sys.model.SysUser;
-import org.osgl.http.H;
-import org.osgl.http.Http;
 import org.osgl.util.C;
 
 import javax.inject.Inject;
@@ -75,7 +73,7 @@ public class SysUserService extends BaseServiceImpl<SysUser> {
         List<Integer> roleIdList = C.newList();
         SysUser sysUser = sysUserDao.get(new Long(sysUserId));
         if (null != sysUser) {
-            roleIdList = sysUser.getRoleIdList();
+            roleIdList = sysUser.roleIdList();
         }
         return roleIdList;
     }

@@ -28,10 +28,10 @@ public class SysUser extends BaseEntity {
     private Long deptId;
     private Integer delStatus;
 
-    public List<Integer> getRoleIdList() {
+    public List<Integer> roleIdList() {
         List<Integer> roleIdList = C.newList();
         if (S.noBlank(roleIds)) {
-            roleIdList = JSON.parseObject(roleIds, List.class);
+            roleIdList = JSON.parseArray(roleIds, Integer.class);
         }
         return roleIdList;
     }
