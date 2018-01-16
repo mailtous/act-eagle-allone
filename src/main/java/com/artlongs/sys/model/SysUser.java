@@ -28,6 +28,7 @@ public class SysUser extends BaseEntity {
     private Long deptId;
     private Integer delStatus;
 
+
     public List<Integer> roleIdList() {
         List<Integer> roleIdList = C.newList();
         if (S.noBlank(roleIds)) {
@@ -54,7 +55,7 @@ public class SysUser extends BaseEntity {
     }
 
     public void saveToSession(H.Session session) {
-        session.cache(this.getId().toString(), this);
+        session.cacheFor30Min(this.getId().toString(), this);
     }
 
     public SysUser getBySession(H.Session session) {

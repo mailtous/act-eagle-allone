@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="renderer" content="webkit">
+<div class="main_info">
+    <div class="box_full">
+        <span> >> 功能菜单 -- <a href="/sys/func/list">顶层菜单</a> --
+            <a th:if=${parentFunc} th:href="'/sys/func/childs/'+${parentFunc.id}"
+               th:text="${parentFunc.funcName}">用户管理</a>
+        </span>
+        <br/>
+        <input type="button" value="新增模块" class="botton_gray" onclick="addModule();"/>
+        <table width="100%" id="moudleTable" class="layui-table" border="0" cellspacing="0" cellpadding="0">
+            <thead>
+            <tr>
+                <th>功能名称</th>
+                <th width="40%">功能URL</a></th>
+                <th width="10%">功能状态</th>
+                <th width="15%">操作</a></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="func:${funcList}" data-th-id="${func.id }" data-th-pid="${func.parentId}">
+                <td><a class="showChilds" href="#" data-th-data-url="'/sys/func/childs/'+${func.id}" th:text="${func.funcName}"></a></td>
+                <td width="40%" th:text="${func.funcUrl}">&nbsp;功能URL</td>
+                <td width="10%" th:text="${func.action eq 1?'启用中':'已禁用'}">功能状态</td>
+                <td width="15%">&nbsp;操作</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    $(".showChilds").click(function (e) {
+        var url = $(this).data('url');
+        pageTo(url);
+    }) ;
+
+    var pageTo = function (url) {
+//        console.log(url);
+        route(url);  // URL 发送到路由
+    }
+</script>
+

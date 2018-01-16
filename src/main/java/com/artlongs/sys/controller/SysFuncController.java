@@ -12,9 +12,11 @@ import org.osgl.mvc.annotation.PostAction;
 import org.osgl.mvc.result.RenderJSON;
 
 import javax.inject.Inject;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Function:
+ * Function:功能模块列表
  *
  * @Autor: leeton
  * @Date : 11/30/17
@@ -27,11 +29,21 @@ public class SysFuncController extends SysBaseController {
     private SysFuncService sysFuncService;
 
     @GetAction("list")
-    public RenderAny list(Integer pageNo) {
-        Page<SysFunc> page = new Page<>().setPageNo(pageNo);
-        String sql = " select * from sys_func";
-        page = sysFuncService.getPage(page, sql, null);
-        return render("list.html",page);
+    public RenderAny list() {
+        Map<Long, List<SysFunc>> funcTreeMap = sysFuncService.getModuleTreeMap();
+        List<SysFunc> funcList = funcTreeMap.get(0L); //顶层菜单
+        ctx.renderArg("funcList", funcList);
+        return render("list.html");
+    }
+
+    @GetAction("childs/{parentId}")
+    public RenderAny childs(Long parentId) {
+        Map<Long, List<SysFunc>> funcTreeMap = sysFuncService.getModuleTreeMap();
+        List<SysFunc> funcList = funcTreeMap.get(parentId); //子菜单
+        SysFunc parentFunc = sysFuncService.get(parentId);  //顶层菜单
+        ctx.renderArg("funcList", funcList);
+        ctx.renderArg("parentFunc", parentFunc);
+        return render("list.html");
     }
 
     @PostAction("add")
@@ -43,7 +55,7 @@ public class SysFuncController extends SysBaseController {
     @PostAction("edit/{id}")
     public RenderJSON edit(SysFunc sysFunc) {
         sysFuncService.update(sysFunc);
-        return json(new BizRetVo<>().setSuccess("用户资料编辑成功!"));
+        return json(new BizRetVo<>().setSuccess("系统功能编辑成功!"));
     }
 
     @PostAction("del/{id}")
@@ -52,7 +64,7 @@ public class SysFuncController extends SysBaseController {
         if (null != sysFunc) {
             sysFuncService.realDelFuncAndPermisson(funcId);
         }
-        return json(new BizRetVo<>().setSuccess("功能项删除成功!"));
+        return json(new BizRetVo<>().setSuccess("系统功能项删除成功!"));
     }
 
     @PostAction("on/{id}")
@@ -69,7 +81,7 @@ public class SysFuncController extends SysBaseController {
         SysFunc sysFunc = sysFuncService.get(funcId);
         if (null != sysFunc) {
             sysFunc.setAction(onOff);
-            return new BizRetVo<>().setSuccess("功能状态已变更!");
+            return new BizRetVo<>().setSuccess("功能项的状态已变更!");
         }
         return new BizRetVo<>().setError("找不到对应的功能或菜单!");
     }

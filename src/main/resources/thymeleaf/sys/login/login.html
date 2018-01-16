@@ -19,21 +19,17 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">用户名</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="userName" required lay-verify="required" placeholder="请输入用户名" autocomplete="off"
-                               class="layui-input">
+                        <input type="text" name="userName" required lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">密码:</label>
                     <div class="layui-input-inline">
-                        <input type="password" name="pwd" required lay-verify="required" placeholder="请输入密码" autocomplete="off"
-                               class="layui-input">
+                        <input type="password" name="pwd" required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
                     </div>
                 </div>
-                <div class="layui-form-item">
-                    <div class="layui-input-block">
-                        <button class="layui-btn" lay-submit lay-filter="userEdit">提交</button>
-                    </div>
+                <div class="layui-input-inline">
+                    <button class="layui-btn" lay-submit lay-filter="userEdit">提交</button>
                 </div>
             </div>
         </form>
@@ -44,25 +40,30 @@
 <style>
     body {
         background: url("/asset/ui/our/img/k.jpg");
-        text-align:center;
+        text-align: center;
     }
-    .tpl-login{
+
+    .tpl-login {
         display: block;
-        width:360px;
-        height:200px;
-        position:absolute;
-        left:50%;
-        top:50%;
-        margin:-100px 0 0 -150px;
-        background-color:#373b48;
-        box-shadow: 1px 1px 50px rgba(0,0,0,.3);
+        width: 360px;
+        height: 200px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin: -100px 0 0 -150px;
+        background-color: #373b48;
+        box-shadow: 1px 1px 50px rgba(0, 0, 0, .3);
         opacity: 0.9;
     }
-    .tpl-login-content{
+
+    .tpl-login-content {
         padding: 20px;
-        background-color:#373b48;
+        background-color: #373b48;
     }
-    .tip{color: burlywood}
+
+    .tip {
+        color: burlywood
+    }
 </style>
 
 </html>

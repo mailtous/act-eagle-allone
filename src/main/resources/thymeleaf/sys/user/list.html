@@ -1,12 +1,9 @@
 <!DOCTYPE html>
-
 <html xmlns:th="http://www.thymeleaf.org">
-<meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<meta name="renderer" content="webkit">
+
 <div class="float-right">
     <button onclick="editer('/sys/user/edit/0');" class="layui-btn layui-btn-xs">新增用户</button>
 </div>
-<br/>
 <div>
     <table class="layui-table">
         <thead>
@@ -24,6 +21,7 @@
     </table>
 </div>
 <div id="pager" class="pagerBar"></div>
+
 <script th:inline="javascript">
     this.editer = function (url) {
         $.get(url, {}, function (edit_from) {
@@ -56,4 +54,3 @@
 
 
 </script>
-

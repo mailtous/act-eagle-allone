@@ -29,13 +29,16 @@ public class SysHomeController extends SysBaseController {
     @GetAction("")
     public RenderAny home(H.Session session,H.Request req) {
         H.Cookie cookie = SysUser.getMyCookie(req);
+        if (null == cookie) {
+            to("/sys/login");
+        }
         SysUser sysUser = session.cached(cookie.value());
-        ctx.renderArg("sysUser", sysUser);
-        ctx.renderArg("menuDataUrl", "/sys/home/my/menu.json?userId="+sysUser.getId());
-
         if (null == sysUser) {
             to("/sys/login");
         }
+        ctx.renderArg("sysUser", sysUser);
+        ctx.renderArg("menuDataUrl", "/sys/home/my/menu.json?userId="+sysUser.getId());
+
         return render("home.html");
     }
 
