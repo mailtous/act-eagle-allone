@@ -4,14 +4,11 @@ import com.artlongs.framework.page.Page;
 import com.artlongs.framework.service.BaseServiceImpl;
 import com.artlongs.sys.dao.SysFuncDao;
 import com.artlongs.sys.model.SysFunc;
+import com.beust.jcommander.internal.Lists;
 import org.osgl.util.C;
-import org.osgl.util.S;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -25,6 +22,9 @@ public class SysFuncService extends BaseServiceImpl<SysFunc> {
 
     private SysFuncDao sysFuncDao;
 
+    /**
+     * MAP<父亲节点ID,子节点列表>
+     */
     private static Map<Long, List<SysFunc>> moduleMap = new ConcurrentHashMap<>();
 
     @Inject
@@ -42,9 +42,7 @@ public class SysFuncService extends BaseServiceImpl<SysFunc> {
     }
 
     public List<SysFunc> getAll(){
-        String sql = " select * from sys_func ";
-        return sysFuncDao.getList(sql);
-
+        return sysFuncDao.getAll();
     }
 
     public boolean realDelFuncAndPermisson(Long funcId) {
@@ -62,6 +60,58 @@ public class SysFuncService extends BaseServiceImpl<SysFunc> {
     }
 
     /**
+     * 标记是否有子节点
+     */
+    private void markHasChild(Map<Long, List<SysFunc>> moduleMap){
+        List<SysFunc> allFuncs = getAllFuncOfMap(moduleMap);
+        if (C.notEmpty(allFuncs)) {
+            for (SysFunc func : allFuncs) {
+                for (Long key : moduleMap.keySet()) {
+                    if (key.equals(func.getId())) {
+                        func.hasChilds = true;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 构造所有菜单的子菜单
+     * @param moduleMap
+     * @return
+     */
+    public SysFunc buildFuncTree(Map<Long, List<SysFunc>> moduleMap){
+        SysFunc topMenu = SysFunc.blankTopMenu();
+        List<SysFunc> allFuncList = getAllFuncOfMap(moduleMap);
+        if (C.notEmpty(allFuncList)) {
+            for (SysFunc sysFunc : allFuncList) { //构建每层子菜单
+                List<SysFunc> childs = moduleMap.get(sysFunc.getId());
+                if (C.notEmpty(childs)) {
+                    sysFunc.setChilds(childs);
+                    sysFunc.hasChilds = true;
+                }
+            }
+            //设置顶层的子菜单
+            List<SysFunc> topMenuChilds = moduleMap.get(topMenu.getId());
+            topMenu.setChilds(topMenuChilds);
+        }
+        return topMenu;
+    }
+
+    public List<SysFunc> getAllFuncOfMap(Map<Long, List<SysFunc>> moduleMap) {
+        List<SysFunc> allFuncs = Lists.newArrayList();
+        if (C.notEmpty(moduleMap)) {
+            for (List<SysFunc> funcs : moduleMap.values()) {
+                for (SysFunc func : funcs) {
+                    allFuncs.add(func);
+                }
+            }
+        }
+        return allFuncs;
+    }
+
+    /**
      * 将模块(功能)列表转化为MAP
      *
      * @param sysFuncList
@@ -76,7 +126,41 @@ public class SysFuncService extends BaseServiceImpl<SysFunc> {
                 map.put(func.getParentId(), list);
             }
         }
+        markHasChild(map); //标记父节点
         return map;
     }
+
+    public SysFunc getNodeByTreeMap(Long id){
+        if (C.notEmpty(moduleMap)) {
+            for (List<SysFunc> funcList : moduleMap.values()) {
+                for (SysFunc sysFunc : funcList) {
+                    if (id.equals(sysFunc.getId())) {
+                        return sysFunc;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 按当前节点找出所有父节点,保存到stack
+     * @param parentId
+     * @return
+     */
+    public Stack<SysFunc> getParentStackOfNodeId(Long nodeId) {
+        Stack<SysFunc> funcStacks = new Stack<>();
+        while (nodeId.intValue() >0) {
+            SysFunc node = getNodeByTreeMap(nodeId);
+            if (node != null) {
+                funcStacks.push(node);
+                nodeId = node.getParentId();
+            }else {
+                break;
+            }
+        }
+        return funcStacks;
+    }
+
 
 }

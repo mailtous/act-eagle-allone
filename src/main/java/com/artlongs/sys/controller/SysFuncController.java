@@ -3,6 +3,7 @@ package com.artlongs.sys.controller;
 import act.controller.annotation.TemplateContext;
 import act.controller.annotation.UrlContext;
 import act.view.RenderAny;
+import com.alibaba.fastjson.JSON;
 import com.artlongs.framework.page.Page;
 import com.artlongs.framework.vo.BizRetVo;
 import com.artlongs.sys.model.SysFunc;
@@ -14,6 +15,7 @@ import org.osgl.mvc.result.RenderJSON;
 import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 /**
  * Function:功能模块列表
@@ -40,10 +42,17 @@ public class SysFuncController extends SysBaseController {
     public RenderAny childs(Long parentId) {
         Map<Long, List<SysFunc>> funcTreeMap = sysFuncService.getModuleTreeMap();
         List<SysFunc> funcList = funcTreeMap.get(parentId); //子菜单
-        SysFunc parentFunc = sysFuncService.get(parentId);  //顶层菜单
+        Stack<SysFunc> parentStack = sysFuncService.getParentStackOfNodeId(parentId);//父菜单导航条
         ctx.renderArg("funcList", funcList);
-        ctx.renderArg("parentFunc", parentFunc);
+        ctx.renderArg("parentStack", parentStack);
         return render("list.html");
+    }
+
+    @GetAction("tree")
+    public RenderJSON tree() {
+        Map<Long, List<SysFunc>> moduleMap = sysFuncService.getModuleTreeMap();
+        SysFunc topMenu = sysFuncService.buildFuncTree(moduleMap);
+        return json(topMenu);
     }
 
     @PostAction("add")

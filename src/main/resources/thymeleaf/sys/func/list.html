@@ -5,12 +5,14 @@
 <meta name="renderer" content="webkit">
 <div class="main_info">
     <div class="box_full">
-        <span> >> 功能菜单 -- <a href="/sys/func/list">顶层菜单</a> --
-            <a th:if=${parentFunc} th:href="'/sys/func/childs/'+${parentFunc.id}"
-               th:text="${parentFunc.funcName}">用户管理</a>
+        <span> >> <a class="top_nav" data-url="/sys/func/list">功能模块管理</a>
+            <a class="top_nav" th:each="parent:${parentStack}"  data-th-data-url="'/sys/func/childs/'+${parent.id}"
+               th:text="' -- '+${parent.funcName}">用户管理</a>
         </span>
         <br/>
-        <input type="button" value="新增模块" class="botton_gray" onclick="addModule();"/>
+        <div class="float-right">
+            <button onclick="editer('/sys/user/edit/0');" class="layui-btn layui-btn-xs">新增模块</button>
+        </div>
         <table width="100%" id="moudleTable" class="layui-table" border="0" cellspacing="0" cellpadding="0">
             <thead>
             <tr>
@@ -22,7 +24,9 @@
             </thead>
             <tbody>
             <tr th:each="func:${funcList}" data-th-id="${func.id }" data-th-pid="${func.parentId}">
-                <td><a class="showChilds" href="#" data-th-data-url="'/sys/func/childs/'+${func.id}" th:text="${func.funcName}"></a></td>
+                <td><i th:if=${func.hasChilds} class="layui-icon layui-tree-spread"></i>
+                    <a class="show_childs" href="#" data-th-data-haschilds="${func.hasChilds}" data-th-data-url="'/sys/func/childs/'+${func.id}" th:text="${func.funcName}"></a>
+                </td>
                 <td width="40%" th:text="${func.funcUrl}">&nbsp;功能URL</td>
                 <td width="10%" th:text="${func.action eq 1?'启用中':'已禁用'}">功能状态</td>
                 <td width="15%">&nbsp;操作</td>
@@ -32,9 +36,18 @@
     </div>
 </div>
 <script>
-    $(".showChilds").click(function (e) {
+    $(".top_nav").click(function (e) {
         var url = $(this).data('url');
+//        console.log(url);
         pageTo(url);
+    }) ;
+    $(".show_childs").click(function (e) {
+        var url = $(this).data('url');
+        var hasChilds = $(this).data('haschilds');
+//        console.log(hasChilds);
+        if(hasChilds){
+            pageTo(url);
+        }
     }) ;
 
     var pageTo = function (url) {

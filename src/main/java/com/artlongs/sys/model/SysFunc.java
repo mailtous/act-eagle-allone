@@ -27,15 +27,20 @@ public class SysFunc extends BaseEntity {
     private Integer action;
     private Integer sequence;
 
+    public boolean hasChilds = false;  //是否有子节点
+
     @Transient
     private List<SysFunc> childs; //子菜单
+
+    /** 顶层菜单 **/
     @Transient
-    public static SysFunc blankMenu(){
+    public static SysFunc blankTopMenu(){
         SysFunc menu = new SysFunc();
         menu.setFuncName("MY MENU");
+        menu.hasChilds = true;
         menu.setNode(0);
         menu.setParentId(0L);
-        menu.setId(1L);
+        menu.setId(0L);
         menu.setChilds(new ArrayList<>());
         return menu;
     }
@@ -106,4 +111,5 @@ public class SysFunc extends BaseEntity {
     public void setChilds(List<SysFunc> childs) {
         this.childs = childs;
     }
+
 }

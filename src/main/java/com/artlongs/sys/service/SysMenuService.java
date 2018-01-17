@@ -98,7 +98,7 @@ public class SysMenuService {
     public SysFunc getMyMenu(Integer sysUserId){
         SysFunc menu = myMenu.get(sysUserId);
         if (null == menu) {
-            menu = SysFunc.blankMenu();
+            menu = SysFunc.blankTopMenu();
             List<SysFunc> myActionFuncs = getMyActionFunc(sysUserId);
             List<SysFunc> myTopMenus = getTopMenu(myActionFuncs);
             menu.setChilds(myTopMenus);

@@ -67,7 +67,7 @@ var ajaxHTML= function(url,params,callback) {
     var _url = url;
     _url += url.indexOf("?") == -1 ? "?" : "&";
     _url += "timer=" + new Date().getTime();
-    console.log(loadingtip);
+    // console.log(loadingtip);
     $.ajax({
         url: url,
         data: params,
