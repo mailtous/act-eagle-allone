@@ -54,17 +54,17 @@ public class SysUserController extends SysBaseController {
         return json(sysUser);
     }
 
-    @GetAction("edit/{id}")
+    @GetAction("edit_box/{id}")
     public RenderAny edit(@Param(defIntVal = 0) Integer id ) {
         SysUser sysUser = new SysUser();
         if (id > 0) {
              sysUser = sysUserService.get(new Long(id));
         }
-        return render("edit.html",sysUser);
+        return render("edit_box.html",sysUser);
     }
 
     @PostAction("edit/{id}")
-    public RenderJSON editBy(SysUser sysUser) {
+    public RenderJSON editSave(SysUser sysUser) {
         sysUserService.update(sysUser);
         return json(BizRetVo.success("用户资料编辑成功!"));
     }

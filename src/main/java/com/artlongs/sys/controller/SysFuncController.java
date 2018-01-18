@@ -7,8 +7,10 @@ import com.alibaba.fastjson.JSON;
 import com.artlongs.framework.page.Page;
 import com.artlongs.framework.vo.BizRetVo;
 import com.artlongs.sys.model.SysFunc;
+import com.artlongs.sys.model.SysUser;
 import com.artlongs.sys.service.SysFuncService;
 import org.osgl.mvc.annotation.GetAction;
+import org.osgl.mvc.annotation.Param;
 import org.osgl.mvc.annotation.PostAction;
 import org.osgl.mvc.result.RenderJSON;
 
@@ -61,8 +63,18 @@ public class SysFuncController extends SysBaseController {
         return json(new BizRetVo<>().setSuccess("系统功能添加成功!"));
     }
 
+    @GetAction("edit_box/{id}")
+    public RenderAny edit(@Param(defIntVal = 0) Long id ) {
+        SysFunc sysFunc = new SysFunc();
+        sysFunc.setId(id);
+        if (id > 0) {
+            sysFunc = sysFuncService.get(new Long(id));
+        }
+        return render("edit_box.html",sysFunc);
+    }
+
     @PostAction("edit/{id}")
-    public RenderJSON edit(SysFunc sysFunc) {
+    public RenderJSON editSave(SysFunc sysFunc) {
         sysFuncService.update(sysFunc);
         return json(new BizRetVo<>().setSuccess("系统功能编辑成功!"));
     }

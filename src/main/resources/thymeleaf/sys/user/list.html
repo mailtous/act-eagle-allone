@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <div class="float-right">
-    <button onclick="editer('/sys/user/edit/0');" class="layui-btn layui-btn-xs">新增用户</button>
+    <button onclick="editer('/sys/user/edit_box/0');" class="layui-btn layui-btn-xs">新增用户</button>
 </div>
 <div>
     <table class="layui-table">
@@ -23,7 +23,7 @@
 <div id="pager" class="pagerBar"></div>
 
 <script th:inline="javascript">
-    this.editer = function (url) {
+    var editer = function (url) {
         $.get(url, {}, function (edit_from) {
             layer.open({
                 type: 1,

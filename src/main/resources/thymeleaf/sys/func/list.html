@@ -3,6 +3,7 @@
 
 <meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="renderer" content="webkit">
+
 <div class="main_info">
     <div class="box_full">
         <span> >> <a class="top_nav" data-url="/sys/func/list">功能模块管理</a>
@@ -11,7 +12,7 @@
         </span>
         <br/>
         <div class="float-right">
-            <button onclick="editer('/sys/user/edit/0');" class="layui-btn layui-btn-xs">新增模块</button>
+            <button onclick="editer('/sys/func/edit_box/0');" class="layui-btn layui-btn-xs">+顶层功能</button>
         </div>
         <table width="100%" id="moudleTable" class="layui-table" border="0" cellspacing="0" cellpadding="0">
             <thead>
@@ -29,7 +30,9 @@
                 </td>
                 <td width="40%" th:text="${func.funcUrl}">&nbsp;功能URL</td>
                 <td width="10%" th:text="${func.action eq 1?'启用中':'已禁用'}">功能状态</td>
-                <td width="15%">&nbsp;操作</td>
+                <td width="15%">
+                    <button data-th-data-edit="'/sys/func/edit_box/'+${func.id}" class="func_edit layui-btn layui-btn-xs">+子功能</button>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -53,6 +56,23 @@
     var pageTo = function (url) {
 //        console.log(url);
         route(url);  // URL 发送到路由
+    }
+
+    $(".func_edit").click(function (e) {
+        var url = $(this).data('edit');
+//        console.log(url);
+        editer(url);
+    }) ;
+
+    //新增或编辑功能菜单信息
+    var editer = function (url) {
+        $.get(url, {}, function (edit_from) {
+            layer.open({
+                type: 1,
+                title: '新增或编辑功能菜单',
+                content: edit_from
+            });
+        });
     }
 </script>
 

@@ -1,0 +1,93 @@
+<div class="layui-form layui-form-pane" style="margin:10px 5px">
+    <div class="layui-form-item">
+        <label class="layui-form-label">选择父节点:</label>
+        <div class="layui-input-inline">
+            <!-- Tree #1 -->
+
+            <div id="tree" />
+            <div>Active node: <span id="echoActive1">-</span></div>
+            <div>Selection: <span id="echoSelection1">-</span></div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码:</label>
+        <div class="layui-input-inline">
+            <input type="password" name="sysUser.pwd" required lay-verify="required" placeholder="请输入密码" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            <button class="layui-btn" lay-submit lay-filter="edit_submit">提交</button>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+//    var NodeId = [[${sysFunc.id}]];
+//    console.log("NodeId:" + NodeId);
+    layui.use('form', function () {
+        var form = layui.form;
+        //监听提交
+        form.on('submit(edit_submit)', function (params) {
+            layer.msg(JSON.stringify(data.field));
+            var id = [[${sysFunc.id}]];
+            var editUrl = userId==null ? "/sys/func/add": "/sys/func/edit/" + userId ;
+            console.log(params.field);
+            sumbit(editUrl, params.field,null);
+
+        });
+
+    });
+
+    var treeData = [
+        {title: "Folder", folder: true, key: "id3", tooltip: "Look, a tool tip!",expanded: true,
+            children: [
+                {title: "Sub-item 3.1",
+                    children: [
+                        {title: "Sub-item 3.1.1", key: "id3.1.1" },
+                        {title: "Sub-item 3.1.2", key: "id3.1.2" }
+                    ]
+                },
+                {title: "Sub-item 3.2",
+                    children: [
+                        {title: "Sub-item 3.2.1", key: "id3.2.1" },
+                        {title: "Sub-item 3.2.2", key: "id3.2.2" }
+                    ]
+                }
+            ]
+        }
+    ];
+
+
+    $(function(){
+
+        // --- Initialize sample trees
+        $("#tree").fancytree({
+            // extensions: ["edit", "filter"],
+            checkbox: false,
+            selectMode: 1, // 1:single, 2:multi, 3:multi-hier
+            icon: true,
+            autoCollapse:true,
+            source: treeData,
+            activate: function(event, data) {
+                $("#echoActive1").text(data.node.title);
+            },
+            select: function(event, data) {
+                // Display list of selected nodes
+                var s = data.tree.getSelectedNodes().join(", ");
+                $("#echoSelection1").text(s);
+            },
+            dblclick: function(event, data) {
+                data.node.toggleSelected();
+            },
+            keydown: function(event, data) {
+                if( event.which === 32 ) {
+                    data.node.toggleSelected();
+                    return false;
+                }
+            }
+        });
+    });
+
+</script>
