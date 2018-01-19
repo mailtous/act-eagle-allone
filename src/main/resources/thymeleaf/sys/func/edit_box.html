@@ -1,12 +1,12 @@
 <div class="layui-form layui-form-pane" style="margin:10px 5px">
     <div class="layui-form-item">
-        <label class="layui-form-label">选择父节点:</label>
+        <label class="layui-form-label">所属父节点:</label>
         <div class="layui-input-inline">
             <!-- Tree #1 -->
-
             <div id="tree" />
-            <div>Active node: <span id="echoActive1">-</span></div>
-            <div>Selection: <span id="echoSelection1">-</span></div>
+            <div>节点ID:
+            <input type="text" id="nodeId" name="parentId" data-th-value="${sysFunc.id}" style="width: 30px;"/>
+            </div>
         </div>
     </div>
     <div class="layui-form-item">
@@ -26,42 +26,23 @@
 <script th:inline="javascript">
 //    var NodeId = [[${sysFunc.id}]];
 //    console.log("NodeId:" + NodeId);
-    layui.use('form', function () {
+    layui.use('form', function () { //编辑框提交保存
         var form = layui.form;
         //监听提交
         form.on('submit(edit_submit)', function (params) {
             layer.msg(JSON.stringify(data.field));
             var id = [[${sysFunc.id}]];
-            var editUrl = userId==null ? "/sys/func/add": "/sys/func/edit/" + userId ;
+            var editUrl = id==null ? "/sys/func/add": "/sys/func/edit/" + id ;
             console.log(params.field);
             sumbit(editUrl, params.field,null);
-
         });
 
     });
 
-    var treeData = [
-        {title: "Folder", folder: true, key: "id3", tooltip: "Look, a tool tip!",expanded: true,
-            children: [
-                {title: "Sub-item 3.1",
-                    children: [
-                        {title: "Sub-item 3.1.1", key: "id3.1.1" },
-                        {title: "Sub-item 3.1.2", key: "id3.1.2" }
-                    ]
-                },
-                {title: "Sub-item 3.2",
-                    children: [
-                        {title: "Sub-item 3.2.1", key: "id3.2.1" },
-                        {title: "Sub-item 3.2.2", key: "id3.2.2" }
-                    ]
-                }
-            ]
-        }
-    ];
 
-
+    var treeData=$.parseJSON([[${treeJsonStr}]]);  // 树型菜单的数据
+//    console.log(treeData);
     $(function(){
-
         // --- Initialize sample trees
         $("#tree").fancytree({
             // extensions: ["edit", "filter"],
@@ -71,12 +52,14 @@
             autoCollapse:true,
             source: treeData,
             activate: function(event, data) {
-                $("#echoActive1").text(data.node.title);
+//                $("#echoActive1").text(data.node.title);
+                $("#nodeId").val(data.node.key);
             },
             select: function(event, data) {
                 // Display list of selected nodes
-                var s = data.tree.getSelectedNodes().join(", ");
-                $("#echoSelection1").text(s);
+//                var s = data.tree.getSelectedNodes().join(", ");
+//                $("#echoSelection1").text(s);
+//                console.log("sss" + s);
             },
             dblclick: function(event, data) {
                 data.node.toggleSelected();

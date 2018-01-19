@@ -51,10 +51,11 @@ public class SysFuncController extends SysBaseController {
     }
 
     @GetAction("tree")
-    public RenderJSON tree() {
+    public String tree() {
         Map<Long, List<SysFunc>> moduleMap = sysFuncService.getModuleTreeMap();
         SysFunc topMenu = sysFuncService.buildFuncTree(moduleMap);
-        return json(topMenu);
+        String jsonStr = topMenu.childsToJqTreeStr();
+        return jsonStr;
     }
 
     @PostAction("add")
@@ -64,13 +65,20 @@ public class SysFuncController extends SysBaseController {
     }
 
     @GetAction("edit_box/{id}")
-    public RenderAny edit(@Param(defIntVal = 0) Long id ) {
+    public RenderAny edit(@Param(defLongVal = -1) Long id ) {
         SysFunc sysFunc = new SysFunc();
-        sysFunc.setId(id);
+        sysFunc.setId(id); // -1:新增
         if (id > 0) {
             sysFunc = sysFuncService.get(new Long(id));
         }
-        return render("edit_box.html",sysFunc);
+        //树型菜单的数据
+        Map<Long, List<SysFunc>> moduleMap = sysFuncService.getModuleTreeMap();
+        SysFunc topMenu = sysFuncService.buildFuncTree(moduleMap);
+        String treeJsonStr = topMenu.childsToJqTreeStr();
+        ctx.renderArg("treeJsonStr", treeJsonStr);
+        ctx.renderArg("sysFunc", sysFunc);
+
+        return render("edit_box.html");
     }
 
     @PostAction("edit/{id}")

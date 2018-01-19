@@ -4,13 +4,13 @@
  */
 var loadingtip = "数据加载中...请稍候...";
 var errortip = "程序异常，请联系管理员";
-var layer,laypage,table;
-layui.use(['layer','laypage','table'], function () { // 加载 layui的功能模块
+var layer,laypage,laytable,layform;
+layui.use(['layer','laypage','table','form'], function () { // 加载 layui的功能模块
     layer = layui.layer;
     laypage = layui.laypage;
-    table = layui.table;
+    laytable = layui.table;
+    layform = layui.form;
 });
-
 
 window.eventBus = riot.observable();  // riot 的事件观察
 

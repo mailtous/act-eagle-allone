@@ -19,14 +19,14 @@ import javax.inject.Inject;
  * @Autor: leeton
  * @Date : 11/30/17
  */
-@UrlContext("/sys/home")
+@UrlContext("/sys")
 @TemplateContext("/sys")
 public class SysHomeController extends SysBaseController {
 
     @Inject
     private SysMenuService sysMenuService;
 
-    @GetAction("")
+    @GetAction({"home",""})
     public RenderAny home(H.Session session,H.Request req) {
         H.Cookie cookie = SysUser.getMyCookie(req);
         if (null == cookie) {
@@ -42,20 +42,20 @@ public class SysHomeController extends SysBaseController {
         return render("home.html");
     }
 
-    @GetAction("menu")
+    @GetAction("home/menu")
     public RenderAny menu() {
         String menuDataUrl = "/sys/home/my/menu.json?userId=1";
         return render("menu.html", menuDataUrl);
     }
 
-    @GetAction("mz")
+    @GetAction("home/mz")
     public RenderAny mz() {
         Integer userId = 1; //TODO GET USER SESSION
         String menuDataUrl = "/sys/home/my/menu.json?userId=" + userId;
         return render("home_maizu.html", menuDataUrl);
     }
 
-    @GetAction("my/menu.json")
+    @GetAction("home/my/menu.json")
     public RenderJSON myMenu(Integer userId) {
         SysFunc sysFunc = sysMenuService.getMyMenu(userId);
 

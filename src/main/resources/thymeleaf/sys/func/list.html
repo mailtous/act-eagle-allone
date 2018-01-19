@@ -6,7 +6,7 @@
 
 <div class="main_info">
     <div class="box_full">
-        <span> >> <a class="top_nav" data-url="/sys/func/list">功能模块管理</a>
+        <span> 【M】 <a class="top_nav" data-url="/sys/func/list">功能模块管理</a>
             <a class="top_nav" th:each="parent:${parentStack}"  data-th-data-url="'/sys/func/childs/'+${parent.id}"
                th:text="' -- '+${parent.funcName}">用户管理</a>
         </span>
@@ -17,28 +17,48 @@
         <table width="100%" id="moudleTable" class="layui-table" border="0" cellspacing="0" cellpadding="0">
             <thead>
             <tr>
-                <th>功能名称</th>
+                <th width="6%">节点ID</th>
+                <th width="5%">类别</a></th>
+                <th>名称</th>
                 <th width="40%">功能URL</a></th>
-                <th width="10%">功能状态</th>
+                <th width="10%">开/闭</th>
+                <th width="10%">排序</a></th>
                 <th width="15%">操作</a></th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="func:${funcList}" data-th-id="${func.id }" data-th-pid="${func.parentId}">
+                <td width="6%" th:text="${func.id}">节点ID</td>
+                <td width="5%" th:text="${func.isMenu?'菜单':'功能'}">类别</td>
                 <td><i th:if=${func.hasChilds} class="layui-icon layui-tree-spread"></i>
                     <a class="show_childs" href="#" data-th-data-haschilds="${func.hasChilds}" data-th-data-url="'/sys/func/childs/'+${func.id}" th:text="${func.funcName}"></a>
                 </td>
                 <td width="40%" th:text="${func.funcUrl}">&nbsp;功能URL</td>
-                <td width="10%" th:text="${func.action eq 1?'启用中':'已禁用'}">功能状态</td>
+                <td width="10%"  >
+                    <div class="layui-form">
+                    <input type="checkbox" lay-skin="switch" lay-text="ON|OFF" data-th-checked="${func.action eq 1?true:false}" >
+                    </div>
+                </td>
+                <td width="10%" th:text="${func.sequence}">排序</td>
                 <td width="15%">
-                    <button data-th-data-edit="'/sys/func/edit_box/'+${func.id}" class="func_edit layui-btn layui-btn-xs">+子功能</button>
+                    <div class="layui-btn-group">
+                        <button data-edit="/sys/func/edit_box/-1" class="func_edit layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+                        <button data-th-data-edit="'/sys/func/edit_box/'+${func.id}" class="func_edit layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+                        <button data-th-data-edit="'/sys/func/del/'+${func.id}" class="func_del layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+                    </div>
                 </td>
             </tr>
             </tbody>
-        </table>
+         </table>
     </div>
 </div>
 <script>
+    var layform;
+    layui.use(['form'], function () { // 加载 layui的功能模块
+        layform = layui.form;
+        layform.render("checkbox"); // 重新渲染 checkbox
+    });
+
     $(".top_nav").click(function (e) {
         var url = $(this).data('url');
 //        console.log(url);
@@ -60,8 +80,14 @@
 
     $(".func_edit").click(function (e) {
         var url = $(this).data('edit');
-//        console.log(url);
+        console.log(url);
         editer(url);
+    }) ;
+
+    $(".func_del").click(function (e) {
+        var url = $(this).data('edit');
+        console.log(url);
+        toDel(url);
     }) ;
 
     //新增或编辑功能菜单信息
@@ -72,6 +98,11 @@
                 title: '新增或编辑功能菜单',
                 content: edit_from
             });
+        });
+    }
+
+    var toDel = function (url) {
+        $.post(url, {}, function (edit_from) {
         });
     }
 </script>

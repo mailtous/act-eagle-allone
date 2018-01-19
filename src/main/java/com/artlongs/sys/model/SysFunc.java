@@ -1,6 +1,9 @@
 package com.artlongs.sys.model;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.NameFilter;
 import com.artlongs.framework.model.BaseEntity;
+import org.osgl.util.C;
 
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -44,6 +47,46 @@ public class SysFunc extends BaseEntity {
         menu.setChilds(new ArrayList<>());
         return menu;
     }
+
+    /**
+     * 转为JQuery fancytree 树对象
+     * @param childs
+     * @return
+     */
+    @Transient
+    public String childsToJqTreeStr() {
+        String tree = JSON.toJSONString(new JqTreeVo());
+        if (C.notEmpty(this.childs)) {
+            tree = JSON.toJSONString(this.childs, nameFilter);
+        }
+        return tree;
+    }
+
+    /**
+     * Fastjson 转属性,好用呀
+     */
+    @Transient
+    public transient NameFilter nameFilter = new NameFilter() {
+        @Override
+        public String process(Object o, String propertyName, Object propertyValue) {
+            if (propertyName.equalsIgnoreCase("id")) {
+                return "key";
+            }
+            if (propertyName.equalsIgnoreCase("funcName")) {
+                return "title";
+            }
+            if (propertyName.equalsIgnoreCase("childs")) {
+                return "children";
+            }
+            if (propertyName.equalsIgnoreCase("funcUrl")) {
+                return "url";
+            }
+            if (propertyName.equalsIgnoreCase("hasChilds")) {
+                return "folder";
+            }
+            return propertyName;
+        }
+    };
 
 
     //=================

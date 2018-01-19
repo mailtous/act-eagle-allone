@@ -1,8 +1,11 @@
 package com.artlongs.sys.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.NameFilter;
 import com.artlongs.framework.page.Page;
 import com.artlongs.framework.service.BaseServiceImpl;
 import com.artlongs.sys.dao.SysFuncDao;
+import com.artlongs.sys.model.JqTreeVo;
 import com.artlongs.sys.model.SysFunc;
 import com.beust.jcommander.internal.Lists;
 import org.osgl.util.C;
@@ -99,6 +102,8 @@ public class SysFuncService extends BaseServiceImpl<SysFunc> {
         return topMenu;
     }
 
+
+
     public List<SysFunc> getAllFuncOfMap(Map<Long, List<SysFunc>> moduleMap) {
         List<SysFunc> allFuncs = Lists.newArrayList();
         if (C.notEmpty(moduleMap)) {
@@ -161,6 +166,9 @@ public class SysFuncService extends BaseServiceImpl<SysFunc> {
         }
         return funcStacks;
     }
+
+
+
 
 
 }
