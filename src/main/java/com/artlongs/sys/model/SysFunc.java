@@ -87,7 +87,14 @@ public class SysFunc extends BaseEntity {
             return propertyName;
         }
     };
+    public Integer getIsMenu() {
 
+        return isMenu==null?0:isMenu;
+    }
+
+    public Integer getAction() {
+        return null==action?0:action;
+    }
 
     //=================
 
@@ -123,16 +130,8 @@ public class SysFunc extends BaseEntity {
         this.funcUrl = funcUrl;
     }
 
-    public Integer getIsMenu() {
-        return isMenu;
-    }
-
     public void setIsMenu(Integer isMenu) {
         this.isMenu = isMenu;
-    }
-
-    public Integer getAction() {
-        return action;
     }
 
     public void setAction(Integer action) {

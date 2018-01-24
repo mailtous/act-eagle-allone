@@ -1,40 +1,75 @@
 <div class="layui-form layui-form-pane" style="margin:10px 5px">
+    <input type="hidden" name="sysFunc.node" data-th-value="${sysFunc.node}"/>
+    <input type="hidden" name="sysFunc.hasChilds" data-th-value="${sysFunc.hasChilds}"/>
+    <input type="hidden" name="sysFunc.id" data-th-value="${sysFunc.id}"/>
     <div class="layui-form-item">
         <label class="layui-form-label">所属父节点:</label>
         <div class="layui-input-inline">
             <!-- Tree #1 -->
             <div id="tree" />
-            <div>节点ID:
-            <input type="text" id="nodeId" name="parentId" data-th-value="${sysFunc.id}" style="width: 30px;"/>
+            <div>选中的节点ID:
+            <input type="text" id="parentId" name="sysFunc.parentId" data-th-value="${sysFunc.parentId}" style="width: 30px;"/>
             </div>
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">密码:</label>
+        <label class="layui-form-label">名称:</label>
         <div class="layui-input-inline">
-            <input type="password" name="sysUser.pwd" required lay-verify="required" placeholder="请输入密码" autocomplete="off"
-                   class="layui-input">
+            <input type="text" name="sysFunc.funcName" data-th-value="${sysFunc.funcName}" required lay-verify="required" placeholder="请输入功能(菜单)名称"  class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">URL:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="sysFunc.funcUrl" data-th-value="${sysFunc.funcUrl}" required lay-verify="required" placeholder="请输入功能(菜单)URL" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">排序</label>
+        <div class="layui-input-inline">
+            <input type="text" name="sysFunc.sequence" data-th-value="${sysFunc.sequence}" required lay-verify="required" placeholder="显示顺序(数字)" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">开|闭</label>
+        <div class="layui-input-inline">
+            <input type="checkbox" name="sysFunc.action" lay-skin="switch" value="1" lay-text="ON|OFF" data-th-checked="${sysFunc.action eq 1?true:false}" >
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">菜单|功能</label>
+        <div class="layui-input-inline">
+            <input type="checkbox" name="sysFunc.isMenu" lay-skin="switch" value="1" lay-text="ON|OFF"  data-th-checked="${sysFunc.isMenu eq 1?true:false}" >
         </div>
     </div>
     <div class="layui-form-item">
         <div class="layui-input-block">
-            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
             <button class="layui-btn" lay-submit lay-filter="edit_submit">提交</button>
         </div>
     </div>
 </div>
 <script th:inline="javascript">
-//    var NodeId = [[${sysFunc.id}]];
+    var layform;
+    layui.use(['form'], function () { // 加载 layui的功能模块
+        layform = layui.form;
+        layform.render("checkbox"); // 重新渲染 checkbox
+    });
+    var currentNodeId = [[${sysFunc.id}]];
+    var parentId = [[${sysFunc.parentId}]];
 //    console.log("NodeId:" + NodeId);
     layui.use('form', function () { //编辑框提交保存
         var form = layui.form;
+        var editUrl = (currentNodeId == -1) ? "/sys/func/add": "/sys/func/edit/" + currentNodeId ;
+        console.log('editUrl:'+editUrl);
         //监听提交
         form.on('submit(edit_submit)', function (params) {
-            layer.msg(JSON.stringify(data.field));
-            var id = [[${sysFunc.id}]];
-            var editUrl = id==null ? "/sys/func/add": "/sys/func/edit/" + id ;
             console.log(params.field);
             sumbit(editUrl, params.field,null);
+            var ok = sumbit(editUrl, params.field,null);
+            if(ok){
+                console.log(parentId);
+                route("/sys/func/childs/" + parentId);
+            }
         });
 
     });
@@ -50,27 +85,31 @@
             selectMode: 1, // 1:single, 2:multi, 3:multi-hier
             icon: true,
             autoCollapse:true,
+            activeVisible: true,
+            autoScroll: true,
             source: treeData,
-            activate: function(event, data) {
-//                $("#echoActive1").text(data.node.title);
-                $("#nodeId").val(data.node.key);
+            id:'func_tree',
+            activate: function(event, data) {//选中节点后
+                $("#parentId").val(data.node.key);
             },
-            select: function(event, data) {
-                // Display list of selected nodes
-//                var s = data.tree.getSelectedNodes().join(", ");
-//                $("#echoSelection1").text(s);
-//                console.log("sss" + s);
-            },
-            dblclick: function(event, data) {
-                data.node.toggleSelected();
-            },
-            keydown: function(event, data) {
-                if( event.which === 32 ) {
-                    data.node.toggleSelected();
-                    return false;
+            click: function(event, data) {
+                if (data.node.key.key != parentId) { //上一次选中的节点,恢复为未选中
+                    data.node.setSelected(true);
                 }
+            },
+        });
+
+        $("#tree").fancytree("getRootNode").visit(function(node) {
+            if (node.key == parentId ) { //展开节点,并选中
+                node.parent.setExpanded(true);
+                node.setExpanded(true);
+                node.setSelected(true);
+                console.log('SELECTED: '+node.key);
             }
         });
+
     });
+
+
 
 </script>

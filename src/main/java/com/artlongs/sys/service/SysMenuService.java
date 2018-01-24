@@ -173,7 +173,7 @@ public class SysMenuService {
         getMyAllFuncMap(sysUserID);
         funcSet = funcMap.get(sysUserID);
         if (C.notEmpty(funcSet)) {
-            funcSet.removeIf(f -> (SysFunc.OFF==f.getAction().intValue()));
+            funcSet.removeIf(f -> (SysFunc.OFF==f.getAction()));
         }else {
             return C.newList();
         }

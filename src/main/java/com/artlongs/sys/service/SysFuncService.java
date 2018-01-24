@@ -168,7 +168,9 @@ public class SysFuncService extends BaseServiceImpl<SysFunc> {
     }
 
 
-
+   public void clearMap(){
+       moduleMap = new ConcurrentHashMap<>();
+   }
 
 
 }

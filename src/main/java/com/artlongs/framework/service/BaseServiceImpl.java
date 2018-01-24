@@ -48,7 +48,7 @@ public abstract class BaseServiceImpl<T> implements BaseService<T> {
 
     @Override
     public int update(T t) {
-        return baseDao.save(t);
+        return baseDao.update(t);
     }
 
     @Override

@@ -30,7 +30,10 @@
             var userId = [[${sysUser.id}]];
             var editUrl = userId==null ? "/sys/user/add": "/sys/user/edit/" + userId ;
             console.log(params.field);
-            sumbit(editUrl, params.field,null);
+            var ok = sumbit(editUrl, params.field,null);
+            if(ok){
+                route("/sys/user/list");
+            }
 
         });
 

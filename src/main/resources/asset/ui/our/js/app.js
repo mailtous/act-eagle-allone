@@ -33,7 +33,6 @@ var sumbit = function (url, params, callback) {
                 callback(data);
             }else {
                 layer.msg(data.msg);
-                location.reload();
             }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {

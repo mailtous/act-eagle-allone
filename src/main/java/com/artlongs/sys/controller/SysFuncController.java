@@ -2,12 +2,10 @@ package com.artlongs.sys.controller;
 
 import act.controller.annotation.TemplateContext;
 import act.controller.annotation.UrlContext;
+import act.data.annotation.Data;
 import act.view.RenderAny;
-import com.alibaba.fastjson.JSON;
-import com.artlongs.framework.page.Page;
 import com.artlongs.framework.vo.BizRetVo;
 import com.artlongs.sys.model.SysFunc;
-import com.artlongs.sys.model.SysUser;
 import com.artlongs.sys.service.SysFuncService;
 import org.osgl.mvc.annotation.GetAction;
 import org.osgl.mvc.annotation.Param;
@@ -58,11 +56,6 @@ public class SysFuncController extends SysBaseController {
         return jsonStr;
     }
 
-    @PostAction("add")
-    public RenderJSON add(SysFunc sysFunc) {
-        sysFuncService.add(sysFunc);
-        return json(new BizRetVo<>().setSuccess("系统功能添加成功!"));
-    }
 
     @GetAction("edit_box/{id}")
     public RenderAny edit(@Param(defLongVal = -1) Long id ) {
@@ -83,9 +76,20 @@ public class SysFuncController extends SysBaseController {
 
     @PostAction("edit/{id}")
     public RenderJSON editSave(SysFunc sysFunc) {
-        sysFuncService.update(sysFunc);
+        if(sysFuncService.updateAndTime(sysFunc)>0){
+            sysFuncService.clearMap();
+        }
         return json(new BizRetVo<>().setSuccess("系统功能编辑成功!"));
     }
+
+    @PostAction("add")
+    public RenderJSON add(SysFunc sysFunc) {
+        if(sysFuncService.add(sysFunc)>0){
+            sysFuncService.clearMap();
+        }
+        return json(new BizRetVo<>().setSuccess("系统功能添加成功!"));
+    }
+
 
     @PostAction("del/{id}")
     public RenderJSON del(Long funcId) {

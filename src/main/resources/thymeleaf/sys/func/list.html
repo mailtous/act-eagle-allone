@@ -21,7 +21,7 @@
                 <th width="5%">类别</a></th>
                 <th>名称</th>
                 <th width="40%">功能URL</a></th>
-                <th width="10%">开/闭</th>
+                <th width="10%">开|闭</th>
                 <th width="10%">排序</a></th>
                 <th width="15%">操作</a></th>
             </tr>
@@ -67,7 +67,7 @@
     $(".show_childs").click(function (e) {
         var url = $(this).data('url');
         var hasChilds = $(this).data('haschilds');
-//        console.log(hasChilds);
+        console.log(url);
         if(hasChilds){
             pageTo(url);
         }
