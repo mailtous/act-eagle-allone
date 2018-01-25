@@ -2,20 +2,17 @@
     <div class="layui-form-item">
         <label class="layui-form-label">用户名</label>
         <div class="layui-input-inline">
-            <input type="text" name="sysUser.userName" required lay-verify="required" placeholder="请输入用户名" autocomplete="off"
-                   class="layui-input">
+            <input type="text" name="sysUser.userName" data-th-value="${sysUser.userName}" required lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">密码:</label>
         <div class="layui-input-inline">
-            <input type="password" name="sysUser.pwd" required lay-verify="required" placeholder="请输入密码" autocomplete="off"
-                   class="layui-input">
+            <input type="password" name="sysUser.pwd" data-th-value="${sysUser.pwd}" required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
         <div class="layui-input-block">
-            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
             <button class="layui-btn" lay-submit lay-filter="userEdit">提交</button>
         </div>
     </div>
@@ -26,15 +23,12 @@
         var form = layui.form;
         //监听提交
         form.on('submit(userEdit)', function (params) {
-//            layer.msg(JSON.stringify(data.field));
+            console.log(params.field);
             var userId = [[${sysUser.id}]];
             var editUrl = userId==null ? "/sys/user/add": "/sys/user/edit/" + userId ;
-            console.log(params.field);
-            var ok = sumbit(editUrl, params.field,null);
-            if(ok){
-                route("/sys/user/list");
-            }
-
+            var reloadUrl = "/sys/user/list";
+            mySubmit(editUrl, params.field,null,reloadUrl);
+            layer.closeAll();
         });
 
     });

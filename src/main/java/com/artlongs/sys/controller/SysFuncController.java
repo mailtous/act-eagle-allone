@@ -91,7 +91,7 @@ public class SysFuncController extends SysBaseController {
     }
 
 
-    @PostAction("del/{id}")
+    @PostAction("del/{funcId}")
     public RenderJSON del(Long funcId) {
         SysFunc sysFunc = sysFuncService.get(funcId);
         if (null != sysFunc) {
@@ -100,12 +100,12 @@ public class SysFuncController extends SysBaseController {
         return json(new BizRetVo<>().setSuccess("系统功能项删除成功!"));
     }
 
-    @PostAction("on/{id}")
+    @PostAction("on/{funcId}")
     public RenderJSON on(Long funcId) {
         return json(onOff(funcId,SysFunc.ON));
     }
 
-    @PostAction("off/{id}")
+    @PostAction("off/{funcId}")
     public RenderJSON off(Long funcId) {
         return json(onOff(funcId,SysFunc.OFF));
     }
@@ -114,6 +114,8 @@ public class SysFuncController extends SysBaseController {
         SysFunc sysFunc = sysFuncService.get(funcId);
         if (null != sysFunc) {
             sysFunc.setAction(onOff);
+            sysFuncService.update(sysFunc);
+            sysFuncService.clearMap();
             return new BizRetVo<>().setSuccess("功能项的状态已变更!");
         }
         return new BizRetVo<>().setError("找不到对应的功能或菜单!");

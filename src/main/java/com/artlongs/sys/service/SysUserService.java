@@ -1,6 +1,7 @@
 package com.artlongs.sys.service;
 
 import act.util.ActContext;
+import com.artlongs.framework.page.Page;
 import com.artlongs.framework.service.BaseServiceImpl;
 import com.artlongs.framework.vo.BizRetVo;
 import com.artlongs.sys.dao.SysUserDao;
@@ -45,19 +46,51 @@ public class SysUserService extends BaseServiceImpl<SysUser> {
         return null != sysUser ? vo.setSuccess("登录成功。") : vo.setError("用户名或密码错误!");
     }
 
-
+    public Page<SysUser> getPage(Page page) {
+        String sql = " select * from sys_user";
+        page = sysUserDao.getPage(page, sql ,null);
+        return page;
+    }
 
     /**
      * 创建新用户,密码加密过
      * @param sysUser
      * @return
      */
-    public boolean createNewUser(SysUser sysUser) {
-        sysUser.setPwdByEncode(sysUser.getPwd());
-        sysUser.setCreateDate(new Date());
+    public BizRetVo createNewUser(SysUser sysUser) {
+        BizRetVo  vo = new BizRetVo<>();
+        SysUser dbUser = getByName(sysUser.getUserName());
+        if (null == dbUser) {
+            sysUser.setEncodePwd(sysUser.getPwd()); //对前端输入的明文密码,进行加密
+            sysUser.setCreateDate(new Date());
+            sysUser.setModifyDate(new Date());
+            sysUser.setDelStatus(SysUser.UN_DEL);
+            int r = sysUserDao.save(sysUser);
+            vo = r > 0 ? vo.setSuccess("用户创建成功!") : vo.setError("用户创建失败!");
+        }else {
+            vo.setError("用户已经存在!");
+        }
+        return vo;
+    }
+
+    public SysUser getByName(String userName) {
+        String sql = " select * from sys_user where user_name = ?";
+        SysUser sysUser = sysUserDao.getObj(sql, new Object[]{userName});
+        return sysUser;
+    }
+
+    public int update(SysUser sysUser) {
         sysUser.setModifyDate(new Date());
-        int r = sysUserDao.save(sysUser);
-        return r > 0;
+        int r = sysUserDao.update(sysUser);
+        return r;
+    }
+
+    public int del(SysUser sysUser) {
+        sysUser.setModifyDate(new Date());
+        sysUser.setDelStatus(SysUser.DELETED);
+        sysUser.setModifyDate(new Date());
+        int r = sysUserDao.update(sysUser);
+        return r;
     }
 
     /**

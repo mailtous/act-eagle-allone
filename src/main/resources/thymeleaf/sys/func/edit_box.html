@@ -64,12 +64,8 @@
         //监听提交
         form.on('submit(edit_submit)', function (params) {
             console.log(params.field);
-            sumbit(editUrl, params.field,null);
-            var ok = sumbit(editUrl, params.field,null);
-            if(ok){
-                console.log(parentId);
-                route("/sys/func/childs/" + parentId);
-            }
+            var reloadUrl = "/sys/func/childs/" + parentId;
+            mySubmit(editUrl, params.field,null,reloadUrl);
         });
 
     });

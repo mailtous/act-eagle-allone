@@ -36,7 +36,7 @@
                 <td width="40%" th:text="${func.funcUrl}">&nbsp;功能URL</td>
                 <td width="10%"  >
                     <div class="layui-form">
-                    <input type="checkbox" lay-skin="switch" lay-text="ON|OFF" data-th-checked="${func.action eq 1?true:false}" >
+                    <input type="checkbox" lay-filter="onoff" lay-skin="switch" lay-text="ON|OFF" data-th-data-id="${func.id}" data-th-checked="${func.action eq 1?true:false}" >
                     </div>
                 </td>
                 <td width="10%" th:text="${func.sequence}">排序</td>
@@ -89,6 +89,19 @@
         console.log(url);
         toDel(url);
     }) ;
+
+
+    layform.on('switch(onoff)', function(obj){
+//        console.log(obj.elem); //得到checkbox原始DOM对象
+        // 获取当前控件
+        var id = $(obj.elem).data('id');
+        if(obj.elem.checked == true) {//是主键
+            mySubmit("/sys/func/on/" + id);
+        }else {
+            mySubmit("/sys/func/off/" + id);
+        }
+
+    });
 
     //新增或编辑功能菜单信息
     var editer = function (url) {

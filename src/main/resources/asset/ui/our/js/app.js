@@ -17,11 +17,12 @@ window.eventBus = riot.observable();  // riot 的事件观察
 
 /**
  * 提交
- * @param url
- * @param params
- * @param callback
+ * @param url       提交到后台的url
+ * @param params    入参
+ * @param callback  回调的方法
+ * @param reloadUrl 回调的页面url
  */
-var sumbit = function (url, params, callback) {
+var mySubmit = function (url, params, callback,reloadUrl) {
     if (!url || url == "") return;
     $.ajax({
         url: url,
@@ -32,7 +33,13 @@ var sumbit = function (url, params, callback) {
             if (typeof callback == "function") {
                 callback(data);
             }else {
-                layer.msg(data.msg);
+                layer.confirm(data.msg, {btn:'OK', time: 2000}, function () {
+                    layer.closeAll();
+                    if(reloadUrl){
+                        route(reloadUrl);
+                        window.location.reload(reloadUrl);
+                    }
+                });
             }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {

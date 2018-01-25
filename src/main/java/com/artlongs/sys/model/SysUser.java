@@ -9,6 +9,7 @@ import org.osgl.inject.annotation.Configuration;
 import org.osgl.util.C;
 import org.osgl.util.S;
 
+import javax.persistence.Transient;
 import java.util.List;
 
 /**
@@ -37,7 +38,13 @@ public class SysUser extends BaseEntity {
         return roleIdList;
     }
 
-    public SysUser setPwdByEncode(String pwd) {
+    /**
+     * 对前端输入的明文密码,进行加密
+     * @param pwd
+     * @return
+     */
+    @Transient
+    public SysUser setEncodePwd(String pwd) {
         if(null != this && S.noBlank(pwd)){
             this.pwd = Act.crypto().passwordHash(pwd);
         }
@@ -49,6 +56,7 @@ public class SysUser extends BaseEntity {
      * @param pwdTxt 明文密码
      * @return
      */
+    @Transient
     public boolean verifyPassword(String pwdTxt) {
         if(null == this) return false;
         return Act.crypto().verifyPassword(pwdTxt,this.getPwd());

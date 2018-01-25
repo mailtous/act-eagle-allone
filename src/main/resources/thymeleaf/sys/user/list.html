@@ -2,27 +2,58 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <div class="float-right">
-    <button onclick="editer('/sys/user/edit_box/0');" class="layui-btn layui-btn-xs">新增用户</button>
+    <button onclick="editer('/sys/user/edit_box/0');" class="layui-btn layui-btn-xs">+新增用户</button>
 </div>
 <div>
     <table class="layui-table">
         <thead>
         <tr>
-            <th>id</th>
-            <th>username</th>
-            <th>create</th>
+            <th>用户ID</th>
+            <th>用户名</th>
+            <th>部门</th>
+            <th>权限角色</th>
+            <th>状态</th>
+            <th>创建日期</th>
+            <th>修改日期</th>
+            <th>操作</th>
         </tr>
         </thead>
         <tr th:each="user:${page.items}">
-            <th th:text="${user.id}">1</th>
-            <th th:text="${user.userName}">leeton</th>
-            <th th:text="${#dates.format(user.createDate, 'yyyy-MM-dd')}">2017-10-01</th>
+            <td th:text="${user.id}">1</td>
+            <td th:text="${user.userName}">leeton</td>
+            <td th:text="${user.deptId}">leeton</td>
+            <td th:text="${user.roleIds}">leeton</td>
+            <td th:text="${user.delStatus eq -1?'已删除':'正常'}">已删除</td>
+            <td th:text="${#dates.format(user.createDate, 'yyyy-MM-dd')}">2017-10-01</td>
+            <td th:text="${#dates.format(user.modifyDate, 'yyyy-MM-dd')}">2017-10-01</td>
+            <td>
+                <div class="layui-btn-group">
+                    <button data-th-data-url="'/sys/user/edit_box/'+${user.id}" class="user_edit layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+                    <button data-th-data-url="'/sys/user/del/'+${user.id}" class="user_del layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+                </div>
+            </td>
         </tr>
     </table>
 </div>
 <div id="pager" class="pagerBar"></div>
 
 <script th:inline="javascript">
+
+    $(".user_edit").click(function (e) {
+        var url = $(this).data('url');
+        console.log(url);
+        editer(url);
+    }) ;
+
+    $(".user_del").click(function (e) {
+        var url = $(this).data('url');
+        console.log(url);
+        layer.confirm("你确认要删除些用户吗?", {btn: ['确定', '取消'], time: 3000}, function () {
+            mySubmit(url, {}, null, "/sys/user/list");
+        });
+
+    });
+
     var editer = function (url) {
         $.get(url, {}, function (edit_from) {
             layer.open({

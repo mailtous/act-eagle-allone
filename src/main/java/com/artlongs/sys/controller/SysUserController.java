@@ -35,16 +35,14 @@ public class SysUserController extends SysBaseController {
     @GetAction("list")
     public RenderAny list(Integer pageNo) {
         Page<SysUser> page = new Page<>().setPageNo(pageNo);
-        String sql = " select * from sys_user";
-        page = sysUserService.getPage(page, sql, null);
+        page = sysUserService.getPage(page);
         return render("list.html",page);
     }
 
     @GetAction("list.json")
     public RenderJSON listJson(Integer pageNo) {
         Page<SysUser> page = new Page<>().setPageNo(pageNo);
-        String sql = " select * from sys_user";
-        page = sysUserService.getPage(page, sql, null);
+        page = sysUserService.getPage(page);
         return renderJson(page);
     }
 
@@ -71,17 +69,19 @@ public class SysUserController extends SysBaseController {
 
     @PostAction("add")
     public RenderJSON add(SysUser sysUser) {
-        boolean b = sysUserService.createNewUser(sysUser);
-        return json(b?BizRetVo.success("系统用户添加成功!"):BizRetVo.error("系统用户添加失败!"));
+        BizRetVo b = sysUserService.createNewUser(sysUser);
+        return json(b);
     }
 
     @PostAction("del/{id}")
-    public RenderJSON del(Long sysUserId) {
-        SysUser sysUser = sysUserService.get(sysUserId);
+    public RenderJSON del(Long id) {
+        SysUser sysUser = sysUserService.get(id);
         if (null != sysUser) {
             sysUser.setDelStatus(BaseEntity.DELETED);
+            sysUserService.update(sysUser);
+            return json(BizRetVo.success("用户删除成功!"));
         }
-        return json(BizRetVo.success("用户删除成功!"));
+        return json(BizRetVo.error("用户删除失败!"));
     }
 
 
