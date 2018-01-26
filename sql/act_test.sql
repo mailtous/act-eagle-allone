@@ -1,5 +1,4 @@
 /*
- 数据结构+简单的测试数据
  Navicat Premium Data Transfer
 
  Source Server         : 172.28.1.3 内部DEV
@@ -12,7 +11,7 @@
  Target Server Version : 50621
  File Encoding         : utf-8
 
- Date: 12/13/2017 16:32:37 PM
+ Date: 01/26/2018 10:13:13 AM
 */
 
 SET NAMES utf8;
@@ -70,13 +69,13 @@ CREATE TABLE `sys_func` (
   `create_date` datetime DEFAULT NULL,
   `modify_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='功能点及菜单列表';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='功能点及菜单列表';
 
 -- ----------------------------
 --  Records of `sys_func`
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_func` VALUES ('1', '0', '用户管理', null, '0', '1', '1', '1', '2017-12-04 16:41:24', '2017-12-04 16:41:27'), ('2', '1', '用户列表', '/sys/user/list', '1', '1', '1', '2', '2017-12-04 10:48:18', '2017-12-04 10:48:22'), ('3', '1', '增加用户', '/sys/user/add', '1', '0', '1', '3', '2017-12-04 10:48:56', '2017-12-04 10:48:59'), ('4', '1', '编辑用户资料', '/sys/user/edit/*', '1', '0', '1', '4', '2017-12-04 10:49:38', '2017-12-04 10:49:41');
+INSERT INTO `sys_func` VALUES ('1', '0', '用户管理', null, '0', '1', '1', '1', '2017-12-04 16:41:24', '2017-12-04 16:41:27'), ('2', '1', '用户列表', '/sys/user/list', '1', '1', '1', '2', '2017-12-04 10:48:18', '2017-12-04 10:48:22'), ('3', '1', '增加用户', '/sys/user/add', '1', '0', '0', '3', '2018-01-25 16:49:42', '2018-01-25 16:49:42'), ('4', '1', '编辑用户资料', '/sys/user/edit/*', '1', '0', '1', '4', '2018-01-25 16:00:56', '2018-01-25 16:00:56'), ('5', '0', '系统管理', null, '0', '1', '1', '2', '2018-01-15 17:38:18', '2018-01-15 17:38:20'), ('6', '5', '功能模块管理', '/sys/func/list', '1', '1', '1', '1', '2018-01-15 17:39:01', '2018-01-15 17:39:03');
 COMMIT;
 
 -- ----------------------------
@@ -90,13 +89,13 @@ CREATE TABLE `sys_permission` (
   `create_date` datetime DEFAULT NULL,
   `modify_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='权限表';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='权限表';
 
 -- ----------------------------
 --  Records of `sys_permission`
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_permission` VALUES ('1', '1', '1', '2017-12-04 11:24:17', '2017-12-04 11:24:19'), ('2', '1', '2', '2017-12-04 11:25:03', '2017-12-04 11:25:04'), ('3', '1', '3', '2017-12-04 11:25:16', '2017-12-04 11:25:18'), ('4', '1', '4', '2017-12-04 17:15:25', '2017-12-04 17:15:26');
+INSERT INTO `sys_permission` VALUES ('1', '1', '1', '2017-12-04 11:24:17', '2017-12-04 11:24:19'), ('2', '1', '2', '2017-12-04 11:25:03', '2017-12-04 11:25:04'), ('3', '1', '3', '2017-12-04 11:25:16', '2017-12-04 11:25:18'), ('4', '1', '4', '2017-12-04 17:15:25', '2017-12-04 17:15:26'), ('5', '1', '5', '2018-01-15 17:47:39', '2018-01-15 17:47:41'), ('6', '1', '6', '2018-01-15 17:47:49', '2018-01-15 17:47:51');
 COMMIT;
 
 -- ----------------------------
@@ -132,14 +131,22 @@ CREATE TABLE `sys_user` (
   `modify_date` datetime DEFAULT NULL,
   `create_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='系统用户';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='系统用户';
 
 -- ----------------------------
 --  Records of `sys_user`
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_user` VALUES ('1', 'alice', '111', '[1]', '1', '0', '2017-12-04 10:47:21', '2017-12-04 10:47:23');
+INSERT INTO `sys_user` VALUES ('1', 'alice', '$2a$10$R4NjM9cl5MhnGG79xsLD0O0kv2sJdS.yAurMqlMEcIhVTpzYz2pIq', '[1]', '1', '0', '2017-12-27 14:52:54', '2017-12-27 14:52:54'), ('2', 'feng', '$2a$10$sWBIWVDAPt6Lt5ZTJOxfYeLW0xRK4TU48XxUuXmO4nsNo.rou9qxK', null, null, '-1', '2018-01-25 16:50:28', '2018-01-24 11:01:30');
 COMMIT;
+
+-- ----------------------------
+--  Table structure for `temp1`
+-- ----------------------------
+DROP TABLE IF EXISTS `temp1`;
+CREATE TABLE `temp1` (
+  `id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `user`
@@ -153,13 +160,13 @@ CREATE TABLE `user` (
   `create_date` datetime DEFAULT NULL,
   `modify_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Records of `user`
 -- ----------------------------
 BEGIN;
-INSERT INTO `user` VALUES ('1', 'alice', '123', '1', '2017-10-09 14:23:53', '2017-10-09 14:23:53'), ('5', 'alice', '123', '1', '2017-10-11 14:46:30', '2017-10-11 14:46:30'), ('6', 'alice', '123', '1', '2017-11-24 18:27:27', '2017-11-24 18:27:27');
+INSERT INTO `user` VALUES ('1', 'alice', '123', '1', '2017-10-09 14:23:53', '2017-10-09 14:23:53');
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
