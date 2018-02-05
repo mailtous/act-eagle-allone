@@ -26,7 +26,7 @@ public class SysFuncDao extends BeetlSqlDao<SysFunc> {
 
     }
 
-    public boolean realDelFunc(Long funcId) {
+    public boolean realDel(Long funcId) {
         int num = delete(funcId);
         return num > 0;
     }

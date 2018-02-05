@@ -2,13 +2,10 @@ package com.artlongs.sys.controller;
 
 import act.controller.annotation.TemplateContext;
 import act.controller.annotation.UrlContext;
-import act.data.annotation.Data;
-import act.db.DB;
-import act.db.DbBind;
 import act.view.RenderAny;
 import com.artlongs.framework.model.BaseEntity;
 import com.artlongs.framework.page.Page;
-import com.artlongs.framework.vo.BizRetVo;
+import com.artlongs.framework.vo.RetVo;
 import com.artlongs.sys.model.SysUser;
 import com.artlongs.sys.service.SysUserService;
 import org.osgl.mvc.annotation.GetAction;
@@ -17,11 +14,9 @@ import org.osgl.mvc.annotation.PostAction;
 import org.osgl.mvc.result.RenderJSON;
 
 import javax.inject.Inject;
-import java.util.Date;
 
 /**
- * Function:
- *
+ * Function:后台--系统用户管理
  * @Autor: leeton
  * @Date : 11/22/17
  */
@@ -64,12 +59,12 @@ public class SysUserController extends SysBaseController {
     @PostAction("edit/{id}")
     public RenderJSON editSave(SysUser sysUser) {
         sysUserService.update(sysUser);
-        return json(BizRetVo.success("用户资料编辑成功!"));
+        return json(RetVo.success("用户资料编辑成功!"));
     }
 
     @PostAction("add")
     public RenderJSON add(SysUser sysUser) {
-        BizRetVo b = sysUserService.createNewUser(sysUser);
+        RetVo b = sysUserService.createNewUser(sysUser);
         return json(b);
     }
 
@@ -79,9 +74,9 @@ public class SysUserController extends SysBaseController {
         if (null != sysUser) {
             sysUser.setDelStatus(BaseEntity.DELETED);
             sysUserService.update(sysUser);
-            return json(BizRetVo.success("用户删除成功!"));
+            return json(RetVo.success("用户删除成功!"));
         }
-        return json(BizRetVo.error("用户删除失败!"));
+        return json(RetVo.error("用户删除失败!"));
     }
 
 

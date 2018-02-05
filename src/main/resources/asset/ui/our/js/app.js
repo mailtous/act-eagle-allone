@@ -93,7 +93,7 @@ var ajaxHTML= function(url,params,callback) {
 //页面分页搜索功能
 var page={
     pageNoName:"pn",
-    $pageListPanel:$("#htmlContainer"),
+    $pageListPanel:$("#htmlbox"),
     pageUrl:'',
     loadPageHTML:function(url,data,$pageListPanel){
         $pageListPanel

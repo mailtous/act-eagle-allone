@@ -14,7 +14,7 @@ import org.osgl.mvc.result.RenderJSON;
 import javax.inject.Inject;
 
 /**
- * Function:
+ * Function:后台首页
  *
  * @Autor: leeton
  * @Date : 11/30/17

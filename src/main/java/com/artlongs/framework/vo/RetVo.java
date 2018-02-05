@@ -9,34 +9,34 @@ package com.artlongs.framework.vo;
  * @author: lqf
  * @since 1.0
  */
-public class BizRetVo<T> {
+public class RetVo<T> {
 
-    private BizRetCode retcode = BizRetCode.SUCCESS;
+    private RetCode retcode = RetCode.SUCCESS;
     private String ref= "";  //页面跳转地址
     private String msg= "";  //返回提示信息
     private T item;//返回对象(单个或列表)
 
-    public BizRetVo() {
+    public RetVo() {
     }
 
-    public BizRetVo(BizRetCode retcode) {
+    public RetVo(RetCode retcode) {
         this(retcode, null, "", null);
     }
 
-    public BizRetVo(BizRetCode retcode, T item) {
+    public RetVo(RetCode retcode, T item) {
         this(retcode, null,"", item);
     }
 
 
-    public BizRetVo(BizRetCode retcode, String msg) {
+    public RetVo(RetCode retcode, String msg) {
         this(retcode, msg, "", null);
     }
 
-    public BizRetVo(BizRetCode retcode, String msg, String ref) {
+    public RetVo(RetCode retcode, String msg, String ref) {
         this(retcode, msg, ref,null);
     }
 
-    public BizRetVo(BizRetCode retcode, String msg, String ref, T item) {
+    public RetVo(RetCode retcode, String msg, String ref, T item) {
         this.retcode = retcode;
         this.ref = ref;
         this.item = item;
@@ -50,10 +50,10 @@ public class BizRetVo<T> {
      * @param msg
      * @return
      */
-    public static BizRetVo error(String msg) {
-        BizRetVo vo = new BizRetVo();
+    public static RetVo error(String msg) {
+        RetVo vo = new RetVo();
         vo.setMsg(msg);
-        vo.setRetcode(BizRetCode.FAIL);
+        vo.setRetcode(RetCode.FAIL);
         return vo;
     }
 
@@ -62,34 +62,34 @@ public class BizRetVo<T> {
      * @param msg
      * @return
      */
-    public static BizRetVo success(String msg) {
-        BizRetVo vo = new BizRetVo();
-        vo.setRetcode(BizRetCode.SUCCESS);
+    public static RetVo success(String msg) {
+        RetVo vo = new RetVo();
+        vo.setRetcode(RetCode.SUCCESS);
         vo.setMsg(msg);
         return vo;
     }
 
-    public BizRetVo setError(String msg) {
-        this.setRetcode(BizRetCode.FAIL);
+    public RetVo setError(String msg) {
+        this.setRetcode(RetCode.FAIL);
         this.setMsg(msg);
         return this;
     }
 
-    public BizRetVo setSuccess(String msg) {
-        this.setRetcode(BizRetCode.SUCCESS);
+    public RetVo setSuccess(String msg) {
+        this.setRetcode(RetCode.SUCCESS);
         this.setMsg(msg);
         return this;
     }
 
     public boolean isSucc(){
-        return BizRetCode.SUCCESS == retcode;
+        return RetCode.SUCCESS == retcode;
     }
 
-    public BizRetCode getRetcode() {
+    public RetCode getRetcode() {
         return retcode;
     }
 
-    public BizRetVo setRetcode(BizRetCode retcode) {
+    public RetVo setRetcode(RetCode retcode) {
         this.retcode = retcode;
         return this;
     }
@@ -98,7 +98,7 @@ public class BizRetVo<T> {
         return (null==this.msg || msg.trim().length() == 0)? retcode.getMsg():this.msg;
     }
 
-    public BizRetVo setMsg(String msg) {
+    public RetVo setMsg(String msg) {
         this.msg = msg;
         return this;
     }
@@ -107,7 +107,7 @@ public class BizRetVo<T> {
         return ref;
     }
 
-    public BizRetVo setRef(String ref) {
+    public RetVo setRef(String ref) {
         this.ref = ref;
         return this;
     }
@@ -116,7 +116,7 @@ public class BizRetVo<T> {
         return item;
     }
 
-    public BizRetVo setItem(T item) {
+    public RetVo setItem(T item) {
         this.item = item;
         return this;
     }

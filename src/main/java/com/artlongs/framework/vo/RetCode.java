@@ -8,7 +8,7 @@ package com.artlongs.framework.vo;
  * @author lqf
  * @since 1.0
  */
-public enum BizRetCode {
+public enum RetCode {
 
     /**
      * 操作成功
@@ -112,7 +112,7 @@ public enum BizRetCode {
 
     private String msg;
 
-    private BizRetCode(String msg) {
+    private RetCode(String msg) {
         this.msg = msg;
     }
     public String getMsg() {

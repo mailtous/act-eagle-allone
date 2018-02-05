@@ -1,11 +1,8 @@
 package com.artlongs.sys.service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.NameFilter;
 import com.artlongs.framework.page.Page;
 import com.artlongs.framework.service.BaseServiceImpl;
 import com.artlongs.sys.dao.SysFuncDao;
-import com.artlongs.sys.model.JqTreeVo;
 import com.artlongs.sys.model.SysFunc;
 import com.beust.jcommander.internal.Lists;
 import org.osgl.util.C;
@@ -22,14 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SysFuncService extends BaseServiceImpl<SysFunc> {
 
-
     private SysFuncDao sysFuncDao;
-
-    /**
-     * MAP<父亲节点ID,子节点列表>
-     */
-    private static Map<Long, List<SysFunc>> moduleMap = new ConcurrentHashMap<>();
-
     @Inject
     public SysFuncService(SysFuncDao sysFuncDao) {
         this.baseDao = sysFuncDao;
@@ -38,6 +28,15 @@ public class SysFuncService extends BaseServiceImpl<SysFunc> {
 
     @Inject
     private SysPermissionService sysPermissionService;
+
+
+
+
+    /**
+     * MAP<父亲节点ID,子节点列表>
+     */
+    private static Map<Long, List<SysFunc>> moduleMap = new ConcurrentHashMap<>();
+
 
     public Page<SysFunc> getAllOfPage(Page page){
         return sysFuncDao.getAllOfPage(page);
@@ -49,7 +48,7 @@ public class SysFuncService extends BaseServiceImpl<SysFunc> {
     }
 
     public boolean realDelFuncAndPermisson(Long funcId) {
-       if(sysFuncDao.realDelFunc(funcId)){
+       if(sysFuncDao.realDel(funcId)){
            return sysPermissionService.realDelByFuncId(funcId);
         }
         return false;

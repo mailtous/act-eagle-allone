@@ -3,7 +3,7 @@ package com.artlongs.sys.service;
 import act.util.ActContext;
 import com.artlongs.framework.page.Page;
 import com.artlongs.framework.service.BaseServiceImpl;
-import com.artlongs.framework.vo.BizRetVo;
+import com.artlongs.framework.vo.RetVo;
 import com.artlongs.sys.dao.SysUserDao;
 import com.artlongs.sys.model.SysPermission;
 import com.artlongs.sys.model.SysUser;
@@ -26,9 +26,6 @@ public class SysUserService extends BaseServiceImpl<SysUser> {
     private SysUserDao sysUserDao;
 
     @Inject
-    ActContext actContext;
-
-    @Inject
     public SysUserService(SysUserDao sysUserDao) {
         this.baseDao = sysUserDao;
         this.sysUserDao = sysUserDao;
@@ -39,8 +36,8 @@ public class SysUserService extends BaseServiceImpl<SysUser> {
     @Inject
     private SysFuncService sysFuncService;
 
-    public BizRetVo checkLogin(String userName, String pwd) {
-        BizRetVo vo = new BizRetVo();
+    public RetVo checkLogin(String userName, String pwd) {
+        RetVo vo = new RetVo();
         SysUser sysUser = sysUserDao.checkLogin(userName, pwd);
         vo.setItem(sysUser);
         return null != sysUser ? vo.setSuccess("登录成功。") : vo.setError("用户名或密码错误!");
@@ -57,8 +54,8 @@ public class SysUserService extends BaseServiceImpl<SysUser> {
      * @param sysUser
      * @return
      */
-    public BizRetVo createNewUser(SysUser sysUser) {
-        BizRetVo  vo = new BizRetVo<>();
+    public RetVo createNewUser(SysUser sysUser) {
+        RetVo vo = new RetVo<>();
         SysUser dbUser = getByName(sysUser.getUserName());
         if (null == dbUser) {
             sysUser.setEncodePwd(sysUser.getPwd()); //对前端输入的明文密码,进行加密
