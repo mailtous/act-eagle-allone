@@ -12,9 +12,11 @@ import org.osgl.mvc.annotation.PostAction;
 import org.osgl.mvc.result.RenderJSON;
 
 import javax.inject.Inject;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 /**
  * Function:功能模块列表

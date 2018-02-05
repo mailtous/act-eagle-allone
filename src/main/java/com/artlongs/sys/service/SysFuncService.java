@@ -1,15 +1,18 @@
 package com.artlongs.sys.service;
 
+import act.data.MapUtil;
 import com.artlongs.framework.page.Page;
 import com.artlongs.framework.service.BaseServiceImpl;
 import com.artlongs.sys.dao.SysFuncDao;
 import com.artlongs.sys.model.SysFunc;
 import com.beust.jcommander.internal.Lists;
+import com.beust.jcommander.internal.Maps;
 import org.osgl.util.C;
 
 import javax.inject.Inject;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Function: 模块(功能)
@@ -35,7 +38,7 @@ public class SysFuncService extends BaseServiceImpl<SysFunc> {
     /**
      * MAP<父亲节点ID,子节点列表>
      */
-    private static Map<Long, List<SysFunc>> moduleMap = new ConcurrentHashMap<>();
+    private static Map<Long, List<SysFunc>> moduleMap = new LinkedHashMap<>();
 
 
     public Page<SysFunc> getAllOfPage(Page page){
@@ -131,6 +134,7 @@ public class SysFuncService extends BaseServiceImpl<SysFunc> {
             }
         }
         markHasChild(map); //标记父节点
+        sortChilds(map);//排序
         return map;
     }
 
@@ -166,9 +170,22 @@ public class SysFuncService extends BaseServiceImpl<SysFunc> {
         return funcStacks;
     }
 
+    /**
+     * 把各级菜单按指定的序号排序
+     * @param map
+     */
+    private void sortChilds(Map<Long, List<SysFunc>> map) {
+        for (Long key : map.keySet()) {
+            List<SysFunc> funcs = map.get(key);
+            funcs = funcs.stream().sorted(Comparator.comparing(SysFunc::getSequence)).collect(Collectors.toList());
+            map.put(key, funcs);
+        }
+
+    }
+
 
    public void clearMap(){
-       moduleMap = new ConcurrentHashMap<>();
+       moduleMap = new LinkedHashMap<>();
    }
 
 

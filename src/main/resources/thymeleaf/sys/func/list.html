@@ -57,6 +57,17 @@
     layui.use(['form'], function () { // 加载 layui的功能模块
         layform = layui.form;
         layform.render("checkbox"); // 重新渲染 checkbox
+
+        layform.on('switch(onoff)', function(obj){ // switch 点击事件
+            // 获取当前控件
+            var id = $(obj.elem).data('id');
+            if(obj.elem.checked == true) {//是主键
+                mySubmit("/sys/func/on/" + id);
+            }else {
+                mySubmit("/sys/func/off/" + id);
+            }
+        });
+
     });
 
     $(".top_nav").click(function (e) {
@@ -81,42 +92,18 @@
     $(".func_edit").click(function (e) {
         var url = $(this).data('edit');
         console.log(url);
-        editer(url);
+        editer(url,'新增或编辑功能菜单');
     }) ;
 
-    $(".func_del").click(function (e) {
+    $(".func_del").click(function (e) {                   s
         var url = $(this).data('edit');
         console.log(url);
         toDel(url);
     }) ;
 
 
-    layform.on('switch(onoff)', function(obj){
-//        console.log(obj.elem); //得到checkbox原始DOM对象
-        // 获取当前控件
-        var id = $(obj.elem).data('id');
-        if(obj.elem.checked == true) {//是主键
-            mySubmit("/sys/func/on/" + id);
-        }else {
-            mySubmit("/sys/func/off/" + id);
-        }
 
-    });
 
-    //新增或编辑功能菜单信息
-    var editer = function (url) {
-        $.get(url, {}, function (edit_from) {
-            layer.open({
-                type: 1,
-                title: '新增或编辑功能菜单',
-                content: edit_from
-            });
-        });
-    }
 
-    var toDel = function (url) {
-        $.post(url, {}, function (edit_from) {
-        });
-    }
 </script>
 

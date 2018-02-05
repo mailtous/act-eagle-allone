@@ -7,7 +7,7 @@
 <div class="main_info">
     <div class="box_full">
         <div class="float-right">
-            <button onclick="editer('/sys/func/edit_box/-1');" class="layui-btn layui-btn-xs">+角色</button>
+            <button onclick="editer('/sys/role/edit_box/-1');" class="layui-btn layui-btn-xs">+角色</button>
         </div>
         <table width="100%" id="moudleTable" class="layui-table" border="0" cellspacing="0" cellpadding="0">
             <thead>
@@ -23,8 +23,8 @@
                 <td width="40%" th:text="${role.roleName}">角色名称</td>
                 <td width="15%">
                     <div class="layui-btn-group">
-                        <button data-th-data-edit="'/sys/role/edit_box/'+${func.id}" class="role_edit layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
-                        <button data-th-data-edit="'/sys/role/del/'+${func.id}" class="role_del layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+                        <button data-th-data-edit="'/sys/role/edit_box/'+${role.id}" class="role_edit layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+                        <button data-th-data-edit="'/sys/role/del/'+${role.id}" class="role_del layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
                     </div>
                 </td>
             </tr>

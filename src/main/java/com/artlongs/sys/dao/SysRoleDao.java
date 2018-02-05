@@ -14,7 +14,7 @@ import com.artlongs.sys.model.SysRole;
 public class SysRoleDao extends BeetlSqlDao<SysRole>{
 
     public Page<SysRole> getAllOfPage(Page page){
-        String sql = " select * from sys_func";
+        String sql = " select * from sys_role";
         return getPage(page, sql, null);
     }
 

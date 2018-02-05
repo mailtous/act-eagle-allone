@@ -119,3 +119,20 @@ var page={
         });
     }
 }
+
+//打开编辑页面的窗口
+var editer = function (url,title) {
+    $.get(url, {}, function (edit_from) {
+        layer.open({
+            type: 1,
+            title: title,
+            content: edit_from
+        });
+    });
+};
+
+//删除BUTTON
+var toDel = function (url) {
+    $.post(url, {}, function (edit_from) {
+    });
+};

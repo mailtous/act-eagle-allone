@@ -21,6 +21,7 @@ public class Hello extends BaseController {
     @Inject
     UserService userService;
 
+/*
 
     @GetAction("foo")
     public RenderAny foo(Foo foo) throws SQLException {
@@ -28,6 +29,7 @@ public class Hello extends BaseController {
         foo.setName(msg);
         return render("hello.html",foo);
     }
+*/
 
 
 
