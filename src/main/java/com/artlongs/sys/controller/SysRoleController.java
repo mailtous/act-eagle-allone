@@ -28,8 +28,9 @@ public class SysRoleController extends SysBaseController {
     private SysRoleService sysRoleService;
 
     @GetAction("list")
-    public RenderAny list(Page page) {
-        page = sysRoleService.getAllOfPage(page);
+    public RenderAny list(Integer pageNo) {
+        Page page = new Page().setPageNo(pageNo);
+        sysRoleService.getAllOfPage(page);
         ctx.renderArg("page", page);
         return render("list.html");
     }
