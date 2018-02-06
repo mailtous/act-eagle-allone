@@ -1,9 +1,8 @@
 package com.artlongs.sys.service;
 
-import act.util.ActContext;
 import com.artlongs.framework.page.Page;
 import com.artlongs.framework.service.BaseServiceImpl;
-import com.artlongs.framework.vo.RetVo;
+import com.artlongs.framework.vo.R;
 import com.artlongs.sys.dao.SysUserDao;
 import com.artlongs.sys.model.SysPermission;
 import com.artlongs.sys.model.SysUser;
@@ -36,11 +35,11 @@ public class SysUserService extends BaseServiceImpl<SysUser> {
     @Inject
     private SysFuncService sysFuncService;
 
-    public RetVo checkLogin(String userName, String pwd) {
-        RetVo vo = new RetVo();
+    public R checkLogin(String userName, String pwd) {
+        R r = new R();
         SysUser sysUser = sysUserDao.checkLogin(userName, pwd);
-        vo.setItem(sysUser);
-        return null != sysUser ? vo.setSuccess("登录成功。") : vo.setError("用户名或密码错误!");
+        r.setItem(sysUser);
+        return null != sysUser ? r.setSuccess("登录成功。") : r.setFail("用户名或密码错误!");
     }
 
     public Page<SysUser> getPage(Page page) {
@@ -54,8 +53,8 @@ public class SysUserService extends BaseServiceImpl<SysUser> {
      * @param sysUser
      * @return
      */
-    public RetVo createNewUser(SysUser sysUser) {
-        RetVo vo = new RetVo<>();
+    public R createNewUser(SysUser sysUser) {
+        R vo = new R<>();
         SysUser dbUser = getByName(sysUser.getUserName());
         if (null == dbUser) {
             sysUser.setEncodePwd(sysUser.getPwd()); //对前端输入的明文密码,进行加密
@@ -63,9 +62,9 @@ public class SysUserService extends BaseServiceImpl<SysUser> {
             sysUser.setModifyDate(new Date());
             sysUser.setDelStatus(SysUser.UN_DEL);
             int r = sysUserDao.save(sysUser);
-            vo = r > 0 ? vo.setSuccess("用户创建成功!") : vo.setError("用户创建失败!");
+            vo = r > 0 ? vo.setSuccess("用户创建成功!") : vo.setFail("用户创建失败!");
         }else {
-            vo.setError("用户已经存在!");
+            vo.setFail("用户已经存在!");
         }
         return vo;
     }
@@ -78,16 +77,16 @@ public class SysUserService extends BaseServiceImpl<SysUser> {
 
     public int update(SysUser sysUser) {
         sysUser.setModifyDate(new Date());
-        int r = sysUserDao.update(sysUser);
-        return r;
+        int rows = sysUserDao.update(sysUser);
+        return rows;
     }
 
     public int del(SysUser sysUser) {
         sysUser.setModifyDate(new Date());
         sysUser.setDelStatus(SysUser.DELETED);
         sysUser.setModifyDate(new Date());
-        int r = sysUserDao.update(sysUser);
-        return r;
+        int rows = sysUserDao.update(sysUser);
+        return rows;
     }
 
     /**
@@ -95,7 +94,7 @@ public class SysUserService extends BaseServiceImpl<SysUser> {
      * @param roleId
      * @return
      */
-    public List<SysPermission> getPermissionList(Integer roleId){
+    public List<SysPermission> getPermissionList(Long roleId){
       return sysPermissionService.getPermissionList(roleId);
     }
 

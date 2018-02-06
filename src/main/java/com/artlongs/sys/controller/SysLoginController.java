@@ -3,7 +3,7 @@ package com.artlongs.sys.controller;
 import act.controller.annotation.TemplateContext;
 import act.controller.annotation.UrlContext;
 import act.view.RenderAny;
-import com.artlongs.framework.vo.RetVo;
+import com.artlongs.framework.vo.R;
 import com.artlongs.sys.model.SysUser;
 import com.artlongs.sys.service.SysUserService;
 import org.osgl.http.H;
@@ -39,7 +39,7 @@ public class SysLoginController extends SysBaseController {
 
     @PostAction("post")
     public RenderAny loginPost(String userName ,String pwd,H.Session session,H.Response response) {
-        RetVo vo = loginCheck(userName ,pwd,session,response);
+        R vo = loginCheck(userName ,pwd,session,response);
         if(vo.isSucc()){
             to("/sys/home");
         }
@@ -47,16 +47,16 @@ public class SysLoginController extends SysBaseController {
        return render("login.html");
     }
 
-    private RetVo loginCheck(String userName , String pwd, H.Session session, H.Response response){
-        RetVo<SysUser> bizRetVo = sysUserService.checkLogin(userName, pwd);
-        if (bizRetVo.isSucc()) { //用户登录检查成功,保存到session
-            SysUser sysUser = bizRetVo.getItem();
+    private R loginCheck(String userName , String pwd, H.Session session, H.Response response){
+        R<SysUser> r = sysUserService.checkLogin(userName, pwd);
+        if (r.isSucc()) { //用户登录检查成功,保存到session
+            SysUser sysUser = r.getItem();
             sysUser.saveToSession(session);
             //写cookie
             response.addCookie(sysUser.buildMyCookie(sysUser.getId().toString()));
-            bizRetVo.getItem().setPwd("");
+            r.getItem().setPwd("");
         }
-        return bizRetVo;
+        return r;
     }
 
 

@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 /**
  * Created by leeton on 9/27/17.
  */
-@Entity
 public class User extends BaseEntity {
 
     private String userName;

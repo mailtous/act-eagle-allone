@@ -3,7 +3,7 @@ package com.artlongs.sys.controller;
 import act.controller.annotation.TemplateContext;
 import act.controller.annotation.UrlContext;
 import act.view.RenderAny;
-import com.artlongs.framework.vo.RetVo;
+import com.artlongs.framework.vo.R;
 import com.artlongs.sys.model.SysFunc;
 import com.artlongs.sys.service.SysFuncService;
 import org.osgl.mvc.annotation.GetAction;
@@ -12,11 +12,9 @@ import org.osgl.mvc.annotation.PostAction;
 import org.osgl.mvc.result.RenderJSON;
 
 import javax.inject.Inject;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-import java.util.stream.Collectors;
 
 /**
  * Function:功能模块列表
@@ -80,7 +78,7 @@ public class SysFuncController extends SysBaseController {
         if(sysFuncService.updateAndTime(sysFunc)>0){
             sysFuncService.clearMap();
         }
-        return json(new RetVo<>().setSuccess("系统功能编辑成功!"));
+        return json(new R<>().setSuccess("系统功能编辑成功!"));
     }
 
     @PostAction("add")
@@ -88,7 +86,7 @@ public class SysFuncController extends SysBaseController {
         if(sysFuncService.add(sysFunc)>0){
             sysFuncService.clearMap();
         }
-        return json(new RetVo<>().setSuccess("系统功能添加成功!"));
+        return json(new R<>().setSuccess("系统功能添加成功!"));
     }
 
 
@@ -98,7 +96,7 @@ public class SysFuncController extends SysBaseController {
         if (null != sysFunc) {
             sysFuncService.realDelFuncAndPermisson(funcId);
         }
-        return json(new RetVo<>().setSuccess("系统功能项删除成功!"));
+        return json(new R<>().setSuccess("系统功能项删除成功!"));
     }
 
     @PostAction("on/{funcId}")
@@ -111,15 +109,15 @@ public class SysFuncController extends SysBaseController {
         return json(onOff(funcId,SysFunc.OFF));
     }
 
-    private RetVo onOff(Long funcId, int onOff) {
+    private R onOff(Long funcId, int onOff) {
         SysFunc sysFunc = sysFuncService.get(funcId);
         if (null != sysFunc) {
             sysFunc.setAction(onOff);
             sysFuncService.update(sysFunc);
             sysFuncService.clearMap();
-            return new RetVo<>().setSuccess("功能项的状态已变更!");
+            return new R<>().setSuccess("功能项的状态已变更!");
         }
-        return new RetVo<>().setError("找不到对应的功能或菜单!");
+        return new R<>().setFail("找不到对应的功能或菜单!");
     }
 
 }

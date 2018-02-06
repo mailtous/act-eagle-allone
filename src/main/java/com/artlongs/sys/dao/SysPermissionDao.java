@@ -20,7 +20,7 @@ public class SysPermissionDao extends BeetlSqlDao<SysPermission> {
         return true;
     }
 
-    public List<SysPermission> getPermissionListByRoleid(Integer roleId) {
+    public List<SysPermission> getPermissionListByRoleid(Long roleId) {
         String sql = " select * from sys_permission where role_id = ?";
         List<SysPermission> permissionList = getList(sql, new Object[]{roleId});
         return permissionList;

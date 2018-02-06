@@ -48,7 +48,7 @@ public class SysMenuService {
         if (C.isEmpty(roleIds)) return permissionMap;
         for (Integer roleId : roleIds) {
             if (null == permissionMap.get(roleId)) {
-                List<SysPermission> permissionList = sysPermissionService.getPermissionList(roleId);
+                List<SysPermission> permissionList = sysPermissionService.getPermissionList(new Long(roleId));
                 if (C.notEmpty(permissionList)) {
                     permissionMap.putIfAbsent(roleId, permissionList);
                 }

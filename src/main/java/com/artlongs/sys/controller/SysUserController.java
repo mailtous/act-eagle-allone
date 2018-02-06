@@ -5,7 +5,7 @@ import act.controller.annotation.UrlContext;
 import act.view.RenderAny;
 import com.artlongs.framework.model.BaseEntity;
 import com.artlongs.framework.page.Page;
-import com.artlongs.framework.vo.RetVo;
+import com.artlongs.framework.vo.R;
 import com.artlongs.sys.model.SysUser;
 import com.artlongs.sys.service.SysUserService;
 import org.osgl.mvc.annotation.GetAction;
@@ -59,12 +59,12 @@ public class SysUserController extends SysBaseController {
     @PostAction("edit/{id}")
     public RenderJSON editSave(SysUser sysUser) {
         sysUserService.update(sysUser);
-        return json(RetVo.success("用户资料编辑成功!"));
+        return json(R.success("用户资料编辑成功!"));
     }
 
     @PostAction("add")
     public RenderJSON add(SysUser sysUser) {
-        RetVo b = sysUserService.createNewUser(sysUser);
+        R b = sysUserService.createNewUser(sysUser);
         return json(b);
     }
 
@@ -74,9 +74,9 @@ public class SysUserController extends SysBaseController {
         if (null != sysUser) {
             sysUser.setDelStatus(BaseEntity.DELETED);
             sysUserService.update(sysUser);
-            return json(RetVo.success("用户删除成功!"));
+            return json(R.success("用户删除成功!"));
         }
-        return json(RetVo.error("用户删除失败!"));
+        return json(R.fail("用户删除失败!"));
     }
 
 

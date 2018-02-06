@@ -9,34 +9,34 @@ package com.artlongs.framework.vo;
  * @author: lqf
  * @since 1.0
  */
-public class RetVo<T> {
+public class R<T> {
 
-    private RetCode retcode = RetCode.SUCCESS;
+    private Rcode retcode = Rcode.SUCCESS;
     private String ref= "";  //页面跳转地址
     private String msg= "";  //返回提示信息
     private T item;//返回对象(单个或列表)
 
-    public RetVo() {
+    public R() {
     }
 
-    public RetVo(RetCode retcode) {
+    public R(Rcode retcode) {
         this(retcode, null, "", null);
     }
 
-    public RetVo(RetCode retcode, T item) {
+    public R(Rcode retcode, T item) {
         this(retcode, null,"", item);
     }
 
 
-    public RetVo(RetCode retcode, String msg) {
+    public R(Rcode retcode, String msg) {
         this(retcode, msg, "", null);
     }
 
-    public RetVo(RetCode retcode, String msg, String ref) {
+    public R(Rcode retcode, String msg, String ref) {
         this(retcode, msg, ref,null);
     }
 
-    public RetVo(RetCode retcode, String msg, String ref, T item) {
+    public R(Rcode retcode, String msg, String ref, T item) {
         this.retcode = retcode;
         this.ref = ref;
         this.item = item;
@@ -45,15 +45,23 @@ public class RetVo<T> {
         }
     }
 
+    public R setTF(boolean tf) {
+       return tf ? setRetcode(Rcode.SUCCESS):setRetcode(Rcode.FAIL);
+    }
+
+    public R setTF(int number) {
+        return number>0 ? setRetcode(Rcode.SUCCESS):setRetcode(Rcode.FAIL);
+    }
+
     /**
      * 注意这个NEW了一下,你明白的
      * @param msg
      * @return
      */
-    public static RetVo error(String msg) {
-        RetVo vo = new RetVo();
+    public static R fail(String msg) {
+        com.artlongs.framework.vo.R vo = new R();
         vo.setMsg(msg);
-        vo.setRetcode(RetCode.FAIL);
+        vo.setRetcode(Rcode.FAIL);
         return vo;
     }
 
@@ -62,34 +70,34 @@ public class RetVo<T> {
      * @param msg
      * @return
      */
-    public static RetVo success(String msg) {
-        RetVo vo = new RetVo();
-        vo.setRetcode(RetCode.SUCCESS);
+    public static R success(String msg) {
+        com.artlongs.framework.vo.R vo = new R();
+        vo.setRetcode(Rcode.SUCCESS);
         vo.setMsg(msg);
         return vo;
     }
 
-    public RetVo setError(String msg) {
-        this.setRetcode(RetCode.FAIL);
+    public R setFail(String msg) {
+        this.setRetcode(Rcode.FAIL);
         this.setMsg(msg);
         return this;
     }
 
-    public RetVo setSuccess(String msg) {
-        this.setRetcode(RetCode.SUCCESS);
+    public R setSuccess(String msg) {
+        this.setRetcode(Rcode.SUCCESS);
         this.setMsg(msg);
         return this;
     }
 
     public boolean isSucc(){
-        return RetCode.SUCCESS == retcode;
+        return Rcode.SUCCESS == retcode;
     }
 
-    public RetCode getRetcode() {
+    public Rcode getRetcode() {
         return retcode;
     }
 
-    public RetVo setRetcode(RetCode retcode) {
+    public R setRetcode(Rcode retcode) {
         this.retcode = retcode;
         return this;
     }
@@ -98,7 +106,7 @@ public class RetVo<T> {
         return (null==this.msg || msg.trim().length() == 0)? retcode.getMsg():this.msg;
     }
 
-    public RetVo setMsg(String msg) {
+    public R setMsg(String msg) {
         this.msg = msg;
         return this;
     }
@@ -107,7 +115,7 @@ public class RetVo<T> {
         return ref;
     }
 
-    public RetVo setRef(String ref) {
+    public R setRef(String ref) {
         this.ref = ref;
         return this;
     }
@@ -116,17 +124,17 @@ public class RetVo<T> {
         return item;
     }
 
-    public RetVo setItem(T item) {
+    public R setItem(T item) {
         this.item = item;
         return this;
     }
 
     @Override
     public String toString() {
-        return "BizRetVo{" +
+        return "R{" +
                 "retcode=" + retcode +
-                ", ref='" + ref +
-                ", msg='" + msg +
+                ", ref='" + ref + '\'' +
+                ", msg='" + msg + '\'' +
                 ", item=" + item +
                 '}';
     }

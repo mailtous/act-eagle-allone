@@ -23,7 +23,7 @@ public class SysPermissionService extends BaseServiceImpl<SysPermission> {
         this.sysPermissionDao = sysPermissionDao;
     }
 
-    public List<SysPermission> getPermissionList(Integer roleId) {
+    public List<SysPermission> getPermissionList(Long roleId) {
         List<SysPermission> permissionList = sysPermissionDao.getPermissionListByRoleid(roleId);
 
         return permissionList;

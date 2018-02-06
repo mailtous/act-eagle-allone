@@ -18,7 +18,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="role:${page.items}" data-th-id="${role.id }" data-th-pid="${role.id}">
+            <tr th:each="role:${sysRoleList}" data-th-id="${role.id }" data-th-pid="${role.id}">
                 <td width="6%" th:text="${role.id}">ID</td>
                 <td width="40%" th:text="${role.roleName}">角色名称</td>
                 <td width="15%">
