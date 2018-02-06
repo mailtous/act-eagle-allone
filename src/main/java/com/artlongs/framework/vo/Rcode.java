@@ -112,7 +112,7 @@ public enum Rcode {
 
     private String msg;
 
-    private Rcode(String msg) {
+    Rcode(String msg) {
         this.msg = msg;
     }
     public String getMsg() {
@@ -125,7 +125,7 @@ public enum Rcode {
 
     @Override
     public String toString() {
-        return "retCode{" +
+        return "rCode{" +
                 "msg='" + msg + '\'' +
                 '}';
     }

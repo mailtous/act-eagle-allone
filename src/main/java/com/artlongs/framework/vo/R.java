@@ -59,7 +59,7 @@ public class R<T> {
      * @return
      */
     public static R fail(String msg) {
-        com.artlongs.framework.vo.R vo = new R();
+        R vo = new R();
         vo.setMsg(msg);
         vo.setRetcode(Rcode.FAIL);
         return vo;
@@ -71,7 +71,7 @@ public class R<T> {
      * @return
      */
     public static R success(String msg) {
-        com.artlongs.framework.vo.R vo = new R();
+        R vo = new R();
         vo.setRetcode(Rcode.SUCCESS);
         vo.setMsg(msg);
         return vo;
