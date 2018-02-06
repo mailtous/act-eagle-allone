@@ -39,18 +39,17 @@ public class SysRoleService extends BaseServiceImpl<SysRole> {
 
 
     public R realDel(Long id) {
-        R r = R.success("删除成功!");
 
         SysRole sysRole = get(id);
         if (null == sysRole) {
-           return r.setFail("找不到对应的角色!");
+           return R.fail("找不到对应的角色!");
         }
 
         List<SysPermission> permissionList = permissionService.getPermissionList(id);
         if (C.notEmpty(permissionList)) {
-            return r.setFail("角色已经分配了权限,不允许删除。");
+            return R.fail("角色已经分配了权限,不允许删除。");
         }
 
-        return r.setTF(sysRoleDao.realDel(id));
+        return R.tf(sysRoleDao.realDel(id));
     }
 }

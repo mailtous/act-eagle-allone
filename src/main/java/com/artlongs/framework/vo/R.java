@@ -53,6 +53,13 @@ public class R<T> {
         return number>0 ? setRetcode(Rcode.SUCCESS):setRetcode(Rcode.FAIL);
     }
 
+    public static R tf(boolean tf) {
+        return new R().setTF(tf);
+    }
+    public static R tf(int number) {
+        return new R().setTF(number);
+    }
+
     /**
      * 注意这个NEW了一下,你明白的
      * @param msg
