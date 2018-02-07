@@ -42,7 +42,7 @@
     $(".user_edit").click(function (e) {
         var url = $(this).data('url');
         console.log(url);
-        editer(url);
+        editer(url,"新增或编辑用户信息");
     }) ;
 
     $(".user_del").click(function (e) {
@@ -54,19 +54,10 @@
 
     });
 
-    var editer = function (url) {
-        $.get(url, {}, function (edit_from) {
-            layer.open({
-                type: 1,
-                title: '新增或编辑用户信息',
-                content: edit_from
-            });
-        });
-    }
 
     //分页参数
     var pageOptions = {
-        pagenumber:[[${page.pageNo}]],
+        pagenumber:[[${page.pageNumber}]],
         pagecount:[[${page.totalPages}]],
         totalCount:[[${page.total}]],
         recordBegin:[[${page.first+1}]],
@@ -77,7 +68,7 @@
     var $searchBtn = $("#btn_query");//搜索按钮
     var $page = $("#pager");//分页条容器
     //搜索
-    page.pageNoName = "pageNo";
+    page.pageNoName = "pageNumber";
     page.$pageListPanel = $("#htmlbox");
     page.initSearch($queryForm, $searchBtn, url);
     //分页

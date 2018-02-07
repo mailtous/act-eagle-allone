@@ -44,6 +44,7 @@
                     <div class="layui-btn-group">
                         <button data-edit="/sys/func/edit_box/-1" class="func_edit layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
                         <button data-th-data-edit="'/sys/func/edit_box/'+${func.id}" class="func_edit layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+                        <button data-th-data-edit="'/sys/func/perm_box/'+${func.id}" class="prem_edit layui-btn layui-btn-sm"><i class="layui-icon">权</i></button>
                         <button data-th-data-edit="'/sys/func/del/'+${func.id}" class="func_del layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
                     </div>
                 </td>
@@ -93,6 +94,12 @@
         var url = $(this).data('edit');
         console.log(url);
         editer(url,'新增或编辑功能菜单');
+    }) ;
+
+    $(".prem_edit").click(function (e) {
+        var url = $(this).data('edit');
+        console.log(url);
+        editer(url,'分配权限给角色');
     }) ;
 
     $(".func_del").click(function (e) {

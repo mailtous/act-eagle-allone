@@ -29,14 +29,14 @@ public class SysUserController extends SysBaseController {
 
     @GetAction("list")
     public RenderAny list(Integer pageNo) {
-        Page<SysUser> page = new Page<>().setPageNo(pageNo);
+        Page<SysUser> page = new Page<>().setPageNumber(pageNo);
         page = sysUserService.getPage(page);
         return render("list.html",page);
     }
 
     @GetAction("list.json")
     public RenderJSON listJson(Integer pageNo) {
-        Page<SysUser> page = new Page<>().setPageNo(pageNo);
+        Page<SysUser> page = new Page<>().setPageNumber(pageNo);
         page = sysUserService.getPage(page);
         return renderJson(page);
     }

@@ -67,17 +67,31 @@ public abstract class BaseServiceImpl<T> implements BaseService<T> {
         return baseDao.delete(id);
     }
 
-    public T getObj(String sql,Object... args){
-       return baseDao.getObj(sql, args);
+    public T getObj(String frameSql,Object... args){
+       return baseDao.getObj(frameSql, args);
     }
 
-    public Long count(String sql,Object... args){
-        return baseDao.count(sql, args);
+    public T getObj(Class<T>clz,String frameSql,Object... args){
+       return baseDao.getObj(clz,frameSql, args);
+    }
+
+    public Long count(String frameSql,Object... args){
+        return baseDao.count(frameSql, args);
     }
 
     @Override
     public List<T> getList(String frameSql, Object... args) {
         return baseDao.getList(frameSql, args);
+    }
+
+    @Override
+    public List<T> getList(Class<T>clz,String sql) {
+        return baseDao.getList(clz,sql);
+    }
+
+    @Override
+    public List<T> getList(Class<T>clz,String frameSql, Object... args) {
+        return baseDao.getList(clz,frameSql, args);
     }
 
     @Override

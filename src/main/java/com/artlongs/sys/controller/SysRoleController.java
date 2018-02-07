@@ -4,7 +4,10 @@ import act.controller.annotation.TemplateContext;
 import act.controller.annotation.UrlContext;
 import act.view.RenderAny;
 import com.artlongs.framework.vo.R;
+import com.artlongs.sys.model.SysFunc;
 import com.artlongs.sys.model.SysRole;
+import com.artlongs.sys.service.SysFuncService;
+import com.artlongs.sys.service.SysPermissionService;
 import com.artlongs.sys.service.SysRoleService;
 import org.osgl.mvc.annotation.GetAction;
 import org.osgl.mvc.annotation.Param;
@@ -13,6 +16,7 @@ import org.osgl.mvc.result.RenderJSON;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Function:后台--角色管理
@@ -26,6 +30,10 @@ public class SysRoleController extends SysBaseController {
 
     @Inject
     private SysRoleService sysRoleService;
+    @Inject
+    private SysPermissionService sysPermissionService;
+    @Inject
+    private SysFuncService sysFuncService;
 
     @GetAction("list")
     public RenderAny list() {
@@ -63,4 +71,6 @@ public class SysRoleController extends SysBaseController {
     public RenderJSON del(Long id) {
         return json(sysRoleService.realDel(id));
     }
+
+
 }

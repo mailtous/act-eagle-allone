@@ -1,11 +1,17 @@
 package com.artlongs.sys.service;
 
 import com.artlongs.framework.service.BaseServiceImpl;
+import com.artlongs.framework.vo.R;
 import com.artlongs.sys.dao.SysPermissionDao;
+import com.artlongs.sys.model.RoleAssignVo;
 import com.artlongs.sys.model.SysPermission;
+import org.osgl.util.C;
 
 import javax.inject.Inject;
+import java.security.Permission;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Function:
@@ -25,13 +31,57 @@ public class SysPermissionService extends BaseServiceImpl<SysPermission> {
 
     public List<SysPermission> getPermissionList(Long roleId) {
         List<SysPermission> permissionList = sysPermissionDao.getPermissionListByRoleid(roleId);
-
         return permissionList;
+    }
+
+    public SysPermission getPermissionOf(Integer funcId, Integer roleId) {
+        return sysPermissionDao.getPermissionOf(funcId, roleId);
+    }
+    public List<Long> getRoleIdsOfFuncId(Long funcId) {
+        return sysPermissionDao.getRoleIdsOfFuncId(funcId);
+    }
+
+    public Map<Long, Boolean> roleMapOfpermission(List<Long> roleIds) {
+        Map<Long, Boolean> roleMap = C.newMap();
+        for (Long roleId : roleIds) {
+            roleMap.put(roleId, true);
+        }
+        return roleMap;
     }
 
     public boolean realDelByFuncId(Long funcId) {
         return sysPermissionDao.realDelByFuncId(funcId);
     }
+
+    public R savePermissionOfAssign(List<RoleAssignVo> roleAssignVoList){
+        if(C.empty(roleAssignVoList)) return R.fail("权限分配没有指定角色。");
+
+        for (RoleAssignVo roleAssignVo : roleAssignVoList) {
+            SysPermission sysPermissionOfDB = getPermissionOf(roleAssignVo.getFuncId(), roleAssignVo.getRoleId());
+            if (RoleAssignVo.on == roleAssignVo.getOnoff()) { // 添加角色的权限
+                if (null == sysPermissionOfDB) {
+                    SysPermission sysPermission = new SysPermission();
+                    sysPermission.setRoleId(new Long(roleAssignVo.getRoleId()));
+                    sysPermission.setFuncId(new Long(roleAssignVo.getFuncId()));
+                    sysPermission.setCreateDate(new Date());
+                    sysPermission.setModifyDate(new Date());
+                    sysPermissionDao.save(sysPermission);
+                }
+            }
+
+            if (RoleAssignVo.off == roleAssignVo.getOnoff()) {// 删除角色的权限
+                if (null != sysPermissionOfDB) {
+                    sysPermissionDao.delete(sysPermissionOfDB);
+                }
+            }
+
+        }
+        return R.success("角色的权限设置成功。");
+    }
+
+
+
+
 
 
 }

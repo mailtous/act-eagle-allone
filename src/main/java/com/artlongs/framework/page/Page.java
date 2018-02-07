@@ -1,7 +1,5 @@
 package com.artlongs.framework.page;
 
-import org.osgl.util.S;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,10 +13,9 @@ public class Page<T> implements Serializable {
     public static final String DESC = "desc";
     public static final int DEFAULT_PAGE_SIZE = 10;
     // -- 分页参数 --//
-    protected Integer pageNo = 1;
+    protected Integer pageNumber = 1;
     protected Integer pageSize = DEFAULT_PAGE_SIZE;
-    protected String sf = "";      //排序字段，获得排序字段,无默认值.多个排序字段时用','分隔.
-    protected String sc = "";      //排序方向，可选值为desc或asc,多个排序字段时用','分隔
+    protected String orderBy = "";      //排序表达式(id desc,name asc)
     protected boolean autoCount = true;
     protected String[] groupBy ;    //分组条件
 
@@ -37,18 +34,18 @@ public class Page<T> implements Serializable {
     /**
      * 获得当前页的页号,序号从1开始,默认为1.
      */
-    public int getPageNo() {
-        return pageNo;
+    public int getPageNumber() {
+        return pageNumber;
     }
 
     /**
      * 设置当前页的页号,序号从1开始,低于1时自动调整为1.
      */
-    public Page setPageNo(Integer pageNo) {
-        if (null == pageNo || pageNo < 1) {
-            pageNo = 1;
+    public Page setPageNumber(Integer pageNumber) {
+        if (null == pageNumber || pageNumber < 1) {
+            pageNumber = 1;
         }
-        this.pageNo = pageNo;
+        this.pageNumber = pageNumber;
         return this;
     }
 
@@ -74,7 +71,7 @@ public class Page<T> implements Serializable {
      * 根据pageNo和pageSize计算当前页第一条记录在总结果集中的位置,序号从0开始.
      */
     public int getFirst() {
-        return (pageNo - 1) * pageSize;
+        return (pageNumber - 1) * pageSize;
     }
 
     /**
@@ -89,48 +86,6 @@ public class Page<T> implements Serializable {
         return getFirst() + items.size();
     }
 
-
-    /**
-     * 设置排序字段,多个排序字段时用','分隔.
-     */
-    public void setSf(final String sortByField) {
-        this.sf = sortByField;
-    }
-
-    public String getSf() {
-        return sf;
-    }
-
-    /**
-     * 获得排序方向.
-     */
-    public String getsc() {
-        return sc;
-    }
-
-    /**
-     * 设置排序方式向.
-     *
-     * @param sc 可选值为desc或asc,多个排序字段时用','分隔.
-     */
-    public Page setSc(final String sc) {
-        // 检查order字符串的合法值
-        List<String> orders = S.split(sc.toLowerCase(), ',');
-        for (String orderStr : orders) {
-            if (S.neq(DESC, orderStr) && !S.eq(ASC, orderStr)) {
-                throw new IllegalArgumentException("排序方向" + orderStr + "不是合法值");
-            }
-        }
-        this.sc = sc.toLowerCase();
-        return this;
-    }
-
-    /**
-     * 是否已设置排序字段,无默认值.
-     */
-    public boolean isOrderBySetted() {
-        return (S.isNotBlank(sf) && S.isNotBlank(sc));
-    }
 
     /**
      * 查询对象时是否自动另外执行count查询获取总记录数, 默认为true.
@@ -194,7 +149,7 @@ public class Page<T> implements Serializable {
      * 是否还有下一页.
      */
     public boolean isHasNext() {
-        return (pageNo + 1 <= getTotalPages());
+        return (pageNumber + 1 <= getTotalPages());
     }
 
     /**
@@ -202,9 +157,9 @@ public class Page<T> implements Serializable {
      */
     public int getNextPage() {
         if (isHasNext()) {
-            return pageNo + 1;
+            return pageNumber + 1;
         } else {
-            return pageNo;
+            return pageNumber;
         }
     }
 
@@ -212,7 +167,7 @@ public class Page<T> implements Serializable {
      * 是否还有上一页.
      */
     public boolean isHasPre() {
-        return (pageNo - 1 >= 1);
+        return (pageNumber - 1 >= 1);
     }
 
     /**
@@ -220,9 +175,9 @@ public class Page<T> implements Serializable {
      */
     public int getPrePage() {
         if (isHasPre()) {
-            return pageNo - 1;
+            return pageNumber - 1;
         } else {
-            return pageNo;
+            return pageNumber;
         }
     }
 
@@ -240,5 +195,13 @@ public class Page<T> implements Serializable {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getOrderBy() {
+        return orderBy;
+    }
+
+    public void setOrderBy(String orderBy) {
+        this.orderBy = orderBy;
     }
 }

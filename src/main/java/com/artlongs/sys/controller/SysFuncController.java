@@ -4,8 +4,12 @@ import act.controller.annotation.TemplateContext;
 import act.controller.annotation.UrlContext;
 import act.view.RenderAny;
 import com.artlongs.framework.vo.R;
+import com.artlongs.sys.model.RoleAssignVo;
 import com.artlongs.sys.model.SysFunc;
+import com.artlongs.sys.model.SysRole;
 import com.artlongs.sys.service.SysFuncService;
+import com.artlongs.sys.service.SysPermissionService;
+import com.artlongs.sys.service.SysRoleService;
 import org.osgl.mvc.annotation.GetAction;
 import org.osgl.mvc.annotation.Param;
 import org.osgl.mvc.annotation.PostAction;
@@ -28,6 +32,10 @@ public class SysFuncController extends SysBaseController {
 
     @Inject
     private SysFuncService sysFuncService;
+    @Inject
+    private SysRoleService sysRoleService;
+    @Inject
+    private SysPermissionService sysPermissionService;
 
     @GetAction("list")
     public RenderAny list() {
@@ -118,6 +126,41 @@ public class SysFuncController extends SysBaseController {
             return new R<>().setSuccess("功能项的状态已变更!");
         }
         return new R<>().setFail("找不到对应的功能或菜单!");
+    }
+
+    /**
+     * 权限分配窗口页
+     * @param id
+     * @return
+     */
+    @GetAction("perm_box/{funcId}")
+    public RenderAny perm_edit(Long funcId ) {
+        SysFunc sysFunc = sysFuncService.get(new Long(funcId));
+        List<SysRole> sysRoleList = sysRoleService.getAllOfList();
+        List<Long> roleIds = sysPermissionService.getRoleIdsOfFuncId(funcId);
+        Map<Long, Boolean> roleMap = sysPermissionService.roleMapOfpermission(roleIds);
+
+        ctx.renderArg("sysRoleList", sysRoleList);
+        ctx.renderArg("sysFunc", sysFunc);
+        ctx.renderArg("roleMap", roleMap);
+
+        return render("perm_box.html");
+    }
+
+    /**
+     * 保存--权限分配
+     * @param funcId
+     * @param roleAssignVoList
+     * @return
+     */
+    @PostAction("assign/perm/{funcId}")
+    public RenderJSON assignPerm(Long funcId, List<RoleAssignVo> roleAssignVoList) {
+        SysFunc sysFunc = sysFuncService.get(new Long(funcId));
+        if(null == sysFunc) return json(R.fail("功能或菜单不存在。"));
+
+        R r = sysPermissionService.savePermissionOfAssign(roleAssignVoList);
+
+        return json(r);
     }
 
 }

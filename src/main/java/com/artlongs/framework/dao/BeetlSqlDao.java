@@ -12,6 +12,7 @@ import org.osgl.util.N;
 import org.osgl.util.S;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -65,6 +66,11 @@ public class BeetlSqlDao<T> implements BaseDao<T> {
 
     public T getObj(String sql,Object... args){
         List<T> resultList = sqlm.execute(new SQLReady(sql,args), this.persistentClass);
+        return getObj(this.persistentClass,sql,args);
+    }
+
+    public T getObj(Class<T> clz,String sql,Object... args){
+        List<T> resultList = sqlm.execute(new SQLReady(sql,args), clz);
         return C.isEmpty(resultList) ? null : resultList.get(0);
     }
 
@@ -77,12 +83,25 @@ public class BeetlSqlDao<T> implements BaseDao<T> {
 
     public List<T> getList(String sql) {
         List<T> resultList = sqlm.execute(new SQLReady(sql), this.persistentClass);
+        return getList(this.persistentClass, sql);
+    }
+
+
+    @Override
+    public List<T> getList(Class<T> clz, String sql) {
+        List<T> resultList = sqlm.execute(new SQLReady(sql), clz);
         return C.isEmpty(resultList) ? new ArrayList<T>() : resultList;
     }
 
     @Override
     public List<T> getList(String frameSql, Object... args) {
         List<T> resultList = sqlm.execute(new SQLReady(frameSql, args), this.persistentClass);
+        return getList(this.persistentClass, frameSql, args);
+    }
+
+    @Override
+    public List<T> getList(Class<T> clz,String frameSql, Object... args) {
+        List<T> resultList = sqlm.execute(new SQLReady(frameSql, args), clz);
         return C.isEmpty(resultList) ? new ArrayList<T>() : resultList;
     }
 
@@ -112,8 +131,8 @@ public class BeetlSqlDao<T> implements BaseDao<T> {
         page.setItems(pq.getList());
         page.setPageSize(N.Num.valueOf(pq.getPageSize()).intValue());
         page.setTotal(pq.getTotalRow());
-        page.setPageNo(N.Num.valueOf(pq.getPageNumber()).intValue());
-        page.setSf(pq.getOrderBy());
+        page.setPageNumber(N.Num.valueOf(pq.getPageNumber()).intValue());
+        page.setOrderBy(pq.getOrderBy());
         return page;
     }
 
@@ -125,10 +144,10 @@ public class BeetlSqlDao<T> implements BaseDao<T> {
      */
     public PageQuery myPageToPageQuery(Page page,PageQuery pq) {
         pq.setList(page.getItems());
-        pq.setPageNumber(page.getPageNo());
+        pq.setPageNumber(page.getPageNumber());
         pq.setTotalRow(page.getTotal());
         pq.setPageSize(page.getPageSize());
-        pq.setOrderBy(page.getSf());
+        pq.setOrderBy(page.getOrderBy());
         return pq;
     }
 

@@ -43,7 +43,7 @@
     $(".role_edit").click(function (e) {
         var url = $(this).data('edit');
         console.log(url);
-        editer(url);
+        editer(url,"新增或编辑角色");
     }) ;
 
     $(".role_del").click(function (e) {
@@ -52,20 +52,5 @@
         toDel(url);
     }) ;
 
-    //新增或编辑功能菜单信息
-    var editer = function (url) {
-        $.get(url, {}, function (edit_from) {
-            layer.open({
-                type: 1,
-                title: '新增或编辑角色',
-                content: edit_from
-            });
-        });
-    }
-
-    var toDel = function (url) {
-        $.post(url, {}, function (edit_from) {
-        });
-    }
 </script>
 

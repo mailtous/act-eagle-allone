@@ -37,7 +37,6 @@ public class SysRoleService extends BaseServiceImpl<SysRole> {
         return sysRoleDao.getAllOfList();
     }
 
-
     public R realDel(Long id) {
 
         SysRole sysRole = get(id);

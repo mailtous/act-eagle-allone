@@ -92,7 +92,7 @@ var ajaxHTML= function(url,params,callback) {
 
 //页面分页搜索功能
 var page={
-    pageNoName:"pn",
+    pageNumberName:"pageNumber",
     $pageListPanel:$("#htmlbox"),
     pageUrl:'',
     loadPageHTML:function(url,data,$pageListPanel){
@@ -101,7 +101,7 @@ var page={
     search:function($queryForm,url,pn,callback){
         var This=this;
         var p = url.indexOf("?") == -1 ? "?" : "&";
-        window.loadPage(url+p+This.pageNoName+'='+pn, $queryForm.serialize(),(this.$panel_edit?this.$pageListPanel:undefined),function () {
+        window.loadPage(url+p+This.pageNumberName+'='+pn, $queryForm.serialize(),(this.$panel_edit?this.$pageListPanel:undefined),function () {
             if(typeof callback == "function"){
                 callback();
             }
@@ -136,3 +136,28 @@ var toDel = function (url) {
     $.post(url, {}, function (edit_from) {
     });
 };
+
+/**
+ 　 *　方法:Array.baoremove(dx)
+ 　 *　功能:删除数组元素.
+ 　 *　参数:dx删除元素的下标.
+ 　 *　返回:在原数组上修改数组.
+ **/
+Array.prototype.remove = function(dx)
+{
+    if(isNaN(dx)||dx>this.length){return false;}
+    this.splice(dx,1);
+}
+
+/**
+ * 对象的值转为Array
+ * @param map {key:val}
+ * @returns {Array}
+ */
+var mapValueToArr = function(map){
+    var arr = new Array();
+    for(var key in map){
+        arr.push(map[key]);
+    }
+    return arr;
+}

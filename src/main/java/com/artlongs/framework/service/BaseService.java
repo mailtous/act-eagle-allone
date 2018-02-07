@@ -24,13 +24,34 @@ public interface BaseService<T> {
 
     int delete(Long id);
 
-    T getObj(String sql, Object... args);
+    /**
+     * T 为默认的实体类
+     *
+     * @param frameSql
+     * @param args
+     * @return
+     */
+    T getObj(String frameSql, Object... args);
 
-    Long count(String sql, Object... args);
+    /**
+     * 按指定的 class 返回
+     *
+     * @param clz
+     * @param frameSql
+     * @param args
+     * @return
+     */
+    T getObj(Class<T> clz, String frameSql, Object... args);
+
+    Long count(String frameSql, Object... args);
 
     List<T> getList(String sql);
 
+    List<T> getList(Class<T> clz, String sql);
+
     List<T> getList(String frameSql, Object... args);
+
+    List<T> getList(Class<T> clz, String frameSql, Object... args);
 
     Page<T> getPage(Page page, String frameSql, Object[] args);
 

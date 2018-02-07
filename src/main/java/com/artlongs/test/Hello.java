@@ -71,9 +71,9 @@ public class Hello extends BaseController {
 
 /*
     @GetAction("user/page")
-    public RenderAny page(Integer pageNo) throws SQLException {
+    public RenderAny page(Integer pageNumber) throws SQLException {
         String sql = " select * from user where id > ?";
-        Page<User> page = new Page<>().setPageNo(pageNo);
+        Page<User> page = new Page<>().setPageNumber(pageNumber);
         page = userService.getPage(page, sql, new Object[]{0});
         page.setUrl("page");
         render(page);
