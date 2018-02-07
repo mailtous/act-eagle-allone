@@ -1,16 +1,20 @@
 package com.artlongs.sys.service;
 
+import com.alibaba.fastjson.JSON;
 import com.artlongs.framework.page.Page;
 import com.artlongs.framework.service.BaseServiceImpl;
 import com.artlongs.framework.vo.R;
 import com.artlongs.sys.dao.SysUserDao;
+import com.artlongs.sys.model.RoleAssignVo;
 import com.artlongs.sys.model.SysPermission;
 import com.artlongs.sys.model.SysUser;
 import org.osgl.util.C;
 
 import javax.inject.Inject;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Function:
@@ -34,6 +38,7 @@ public class SysUserService extends BaseServiceImpl<SysUser> {
     private SysPermissionService sysPermissionService;
     @Inject
     private SysFuncService sysFuncService;
+    private SysMenuService sysMenuService;
 
     public R checkLogin(String userName, String pwd) {
         R r = new R();
@@ -107,6 +112,25 @@ public class SysUserService extends BaseServiceImpl<SysUser> {
         return roleIdList;
     }
 
+
+    public R assignRole(List<RoleAssignVo> roleAssignVoList,SysUser sysUser){
+        if (C.notEmpty(roleAssignVoList)) {
+            Set<Integer> roleIds = C.newSet(sysUser.roleIdList());
+            for (RoleAssignVo roleAssignVo : roleAssignVoList) {
+                if(RoleAssignVo.on==roleAssignVo.getOnoff()) {
+                    roleIds.add(roleAssignVo.getFuncId());
+                }else {
+                    roleIds.remove(roleAssignVo.getRoleId());
+                }
+            }
+            sysUser.setRoleIds(JSON.toJSONString(roleIds));
+        }
+        int rows = updateAndTime(sysUser);
+        if(rows>0){
+//            sysMenuService.clear();
+        }
+        return R.success("用户设置角色成功");
+    }
 
 
 

@@ -11,6 +11,7 @@ import org.osgl.util.S;
 
 import javax.persistence.Transient;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Function:
@@ -36,6 +37,15 @@ public class SysUser extends BaseEntity {
             roleIdList = JSON.parseArray(roleIds, Integer.class);
         }
         return roleIdList;
+    }
+
+    public  Map<Integer, Boolean> roleMap() {
+        List<Integer> roleIdList = roleIdList();
+        Map<Integer, Boolean> roleMap = C.newMap();
+        for (Integer roleId : roleIdList) {
+            roleMap.put(roleId, true);
+        }
+        return roleMap;
     }
 
     /**

@@ -1,0 +1,77 @@
+<div class="layui-form layui-form-pane" style="margin:10px 5px">
+    <input type="hidden" name="sysUser.id" data-th-value="${sysUser.id}"/>
+    <button th:text="${'用户: '+sysUser.userName}" class="layui-btn"></button>
+
+    <table width="100%" id="moudleTable" class="layui-table" border="0" cellspacing="0" cellpadding="0">
+        <thead>
+        <tr>
+            <th width="10%">选择
+                <input type="checkbox" name="" lay-filter="allChoose">
+            </th>
+            <th width="40%">角色名称</a></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="role:${sysRoleList}" >
+            <td width="10%" >
+                <input type="checkbox" lay-filter="onoff" data-th-roleid="${role.id}" lay-skin="switch" data-th-checked="${roleMap[role.id]}" />
+            </td>
+            <td width="40%" th:text="${role.roleName}">角色名称</td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="edit_submit">提交</button>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    var assignMap = {}; //角色分配对象
+    var currentNodeId = [[${sysUser.id}]];
+    var layform;
+    layui.use(['form'], function () { // 加载 layui的功能模块
+        layform = layui.form;
+        layform.render("checkbox"); // 重新渲染 checkbox
+        //全选
+        layform.on('checkbox(allChoose)', function(obj){
+            var child = $(obj.elem).parents('table').find('tbody input[type="checkbox"]');
+            child.each(function(index, item){
+                item.checked = obj.elem.checked;
+                var id = $(this).attr('roleid');
+                var assign={};
+                assign.roleId=id;
+                assign.funcId=currentNodeId;
+                assign.onoff=obj.elem.checked?1:0;
+                assignMap[id]=assign ;
+            });
+            layform.render('checkbox');
+//            console.log("assignMap= ", assignMap);
+        });
+
+
+        //编辑框提交保存
+        var editUrl = "/sys/user/assign/role/" + currentNodeId;
+        console.log('editUrl:'+editUrl);
+        layform.on('submit(edit_submit)', function (submit) { //编辑框提交保存
+            var assignList = mapValueToArr(assignMap);
+            mySubmit(editUrl, {"roleAssignVoList":assignList},null,null);
+        });
+
+        //单项选择
+        layform.on('switch(onoff)', function(obj){ // switch 点击事件
+            // 获取当前控件
+            var id = $(this).attr('roleid');
+            var assign={};
+            assign.roleId=id;
+            assign.funcId=currentNodeId;
+            assign.onoff=obj.elem.checked?1:0;
+            assignMap[id] = assign;
+            console.log("assignMap= ", assignMap);
+
+        });
+
+    });
+
+
+</script>

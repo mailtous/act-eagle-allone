@@ -29,6 +29,7 @@
             <td>
                 <div class="layui-btn-group">
                     <button data-th-data-url="'/sys/user/edit_box/'+${user.id}" class="user_edit layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
+                    <button data-th-data-edit="'/sys/user/role_box/'+${user.id}" class="role_edit layui-btn layui-btn-sm"><i class="layui-icon">角色</i></button>
                     <button data-th-data-url="'/sys/user/del/'+${user.id}" class="user_del layui-btn layui-btn-sm"><i class="layui-icon"></i></button>
                 </div>
             </td>
@@ -53,6 +54,12 @@
         });
 
     });
+
+    $(".role_edit").click(function (e) {
+        var url = $(this).data('edit');
+        console.log(url);
+        editer(url,'给用户分配角色(权限)');
+    }) ;
 
 
     //分页参数
