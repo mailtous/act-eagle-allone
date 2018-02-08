@@ -1,8 +1,9 @@
 package com.artlongs.sys.dao;
 
-import com.artlongs.framework.dao.BeetlSqlDao;
+import act.util.Stateless;
 import com.artlongs.framework.page.Page;
 import com.artlongs.sys.model.SysRole;
+import org.osgl.inject.annotation.Provided;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
  * @Autor: leeton
  * @Date : 11/21/17
  */
-public class SysRoleDao extends BeetlSqlDao<SysRole>{
+public class SysRoleDao extends SysRole.Dao<SysRole>{
 
     public Page<SysRole> getAllOfPage(Page page){
         String sql = " select * from sys_role";

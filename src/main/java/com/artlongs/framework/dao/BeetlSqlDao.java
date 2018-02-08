@@ -2,6 +2,7 @@ package com.artlongs.framework.dao;
 
 import act.Act;
 import act.db.beetlsql.BeetlSqlService;
+import act.util.Stateless;
 import com.artlongs.framework.page.Page;
 import com.artlongs.framework.utils.GenericsUtils;
 import org.beetl.sql.core.SQLManager;
@@ -11,14 +12,15 @@ import org.osgl.util.C;
 import org.osgl.util.N;
 import org.osgl.util.S;
 
+import javax.inject.Singleton;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * 基本的 CRUD, DAO基类
  * Created by leeton on 9/30/17.
  */
+@Singleton
 public class BeetlSqlDao<T> implements BaseDao<T> {
 
     protected SQLManager sqlm;             // Beelsql 的实际操作类

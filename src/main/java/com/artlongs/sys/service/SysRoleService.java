@@ -10,6 +10,7 @@ import org.osgl.util.C;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Function:
@@ -24,10 +25,13 @@ public class SysRoleService extends BaseServiceImpl<SysRole> {
     public SysRoleService(SysRoleDao sysRoleDao) {
         this.baseDao = sysRoleDao;
         this.sysRoleDao = sysRoleDao;
+        this.allRoleMap = getAllRoleMap();
     }
 
     @Inject
     private SysPermissionService permissionService;
+
+    public static Map<Long, String> allRoleMap = C.newMap();  //所有的角色MAP ,数据量应当不大
 
     public Page<SysRole> getAllOfPage(Page<SysRole> page){
         return sysRoleDao.getAllOfPage(page);
@@ -50,5 +54,21 @@ public class SysRoleService extends BaseServiceImpl<SysRole> {
         }
 
         return R.tf(sysRoleDao.realDel(id));
+    }
+
+    public Map<Long,String> getAllRoleMap(){
+        if (C.isEmpty(allRoleMap)){
+            List<SysRole> roleList = getAllOfList();
+            if (C.notEmpty(roleList)) {
+                for (SysRole sysRole : roleList) {
+                    allRoleMap.putIfAbsent(sysRole.getId(), sysRole.getRoleName());
+                }
+            }
+        }
+        return allRoleMap;
+    }
+
+    public void clearRoleMap(){
+        allRoleMap = C.newMap();
     }
 }

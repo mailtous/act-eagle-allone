@@ -1,6 +1,7 @@
 package com.artlongs.sys.service;
 
 import act.data.MapUtil;
+import act.util.Stateless;
 import com.artlongs.framework.page.Page;
 import com.artlongs.framework.service.BaseServiceImpl;
 import com.artlongs.sys.dao.SysFuncDao;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
  * @Autor: leeton
  * @Date : 11/29/17
  */
+@Stateless
 public class SysFuncService extends BaseServiceImpl<SysFunc> {
 
     private SysFuncDao sysFuncDao;

@@ -1,5 +1,6 @@
 package com.artlongs.sys.service;
 
+import act.util.Stateless;
 import com.artlongs.framework.service.BaseServiceImpl;
 import com.artlongs.framework.vo.R;
 import com.artlongs.sys.dao.SysPermissionDao;
@@ -8,7 +9,6 @@ import com.artlongs.sys.model.SysPermission;
 import org.osgl.util.C;
 
 import javax.inject.Inject;
-import java.security.Permission;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +19,7 @@ import java.util.Map;
  * @Autor: leeton
  * @Date : 11/29/17
  */
+@Stateless
 public class SysPermissionService extends BaseServiceImpl<SysPermission> {
 
     private SysPermissionDao sysPermissionDao;

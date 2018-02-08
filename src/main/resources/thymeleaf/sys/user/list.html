@@ -22,7 +22,7 @@
             <td th:text="${user.id}">1</td>
             <td th:text="${user.userName}">leeton</td>
             <td th:text="${user.deptId}">leeton</td>
-            <td th:text="${user.roleIds}">leeton</td>
+            <td><label th:each="role:${user.roleList}" th:text="${role.roleName}">xxx</label> </td>
             <td th:text="${user.delStatus eq -1?'已删除':'正常'}">已删除</td>
             <td th:text="${#dates.format(user.createDate, 'yyyy-MM-dd')}">2017-10-01</td>
             <td th:text="${#dates.format(user.modifyDate, 'yyyy-MM-dd')}">2017-10-01</td>

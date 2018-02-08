@@ -2,16 +2,26 @@ package com.artlongs.sys.model;
 
 
 import act.Act;
+import act.util.Stateless;
 import com.alibaba.fastjson.JSON;
+import com.artlongs.framework.dao.BeetlSqlDao;
 import com.artlongs.framework.model.BaseEntity;
+import com.artlongs.sys.dao.SysRoleDao;
+import com.artlongs.sys.service.SysRoleService;
 import org.osgl.http.H;
 import org.osgl.inject.annotation.Configuration;
+import org.osgl.inject.annotation.Provided;
 import org.osgl.util.C;
 import org.osgl.util.S;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
 import javax.persistence.Transient;
 import java.util.List;
 import java.util.Map;
+
+import static com.sun.xml.internal.fastinfoset.alphabet.BuiltInRestrictedAlphabets.table;
 
 /**
  * Function:
@@ -22,13 +32,28 @@ import java.util.Map;
 public class SysUser extends BaseEntity {
 
     @Configuration("sysuser.cookies.name")
-    public static String cookies_name;
+    private static String cookies_name;
 
     private String userName;
     private String pwd;
     private String roleIds;
     private Long deptId;
     private Integer delStatus;
+
+    public static Map<Long, String> roleMap = SysRoleService.allRoleMap;
+
+    @Stateless
+    public static class Dao<T> extends BeetlSqlDao<SysUser>{
+        @Inject
+        public static SysRole.Dao<SysRole> sysRoleDao;
+
+        public static String table = "sys_user";
+        public static String userName = "user_name";
+        public static String pwd="pwd";
+        public static String roleIds = "role_ids";
+        public static String deptId="dept_id";
+        public static String delStatus="del_status";
+    }
 
 
     public List<Integer> roleIdList() {
@@ -39,7 +64,27 @@ public class SysUser extends BaseEntity {
         return roleIdList;
     }
 
-    public  Map<Integer, Boolean> roleMap() {
+    /**
+     * 返回用户拥有的所有权限
+     * @return
+     */
+    public List<SysRole> roleList() {
+        List<SysRole> sysRoleList = C.newList();
+        List<Integer> roleIdList = roleIdList();
+        if (C.notEmpty(roleIdList)) {
+            for (Integer roleId : roleIdList) {
+                /*SysRole role = new SysRole();
+                role.setId(new Long(roleId));
+                role.setRoleName(SysRoleService.allRoleMap.get(roleId));
+                sysRoleList.add(role); */
+                sysRoleList  = Dao.sysRoleDao.getAllOfList();
+            }
+        }
+        return sysRoleList;
+    }
+
+    @Transient
+    public Map<Integer, Boolean> hasRoleMap() {
         List<Integer> roleIdList = roleIdList();
         Map<Integer, Boolean> roleMap = C.newMap();
         for (Integer roleId : roleIdList) {

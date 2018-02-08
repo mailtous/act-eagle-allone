@@ -3,12 +3,10 @@ package com.artlongs.sys.controller;
 import act.controller.annotation.TemplateContext;
 import act.controller.annotation.UrlContext;
 import act.view.RenderAny;
-import com.alibaba.fastjson.JSON;
 import com.artlongs.framework.model.BaseEntity;
 import com.artlongs.framework.page.Page;
 import com.artlongs.framework.vo.R;
 import com.artlongs.sys.model.RoleAssignVo;
-import com.artlongs.sys.model.SysFunc;
 import com.artlongs.sys.model.SysRole;
 import com.artlongs.sys.model.SysUser;
 import com.artlongs.sys.service.SysRoleService;
@@ -17,10 +15,8 @@ import org.osgl.mvc.annotation.GetAction;
 import org.osgl.mvc.annotation.Param;
 import org.osgl.mvc.annotation.PostAction;
 import org.osgl.mvc.result.RenderJSON;
-import org.osgl.util.C;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -102,7 +98,7 @@ public class SysUserController extends SysBaseController {
 
         ctx.renderArg("sysRoleList", sysRoleList);
         ctx.renderArg("sysUser", sysUser);
-        ctx.renderArg("roleMap", sysUser.roleMap());
+        ctx.renderArg("hasRoleMap", sysUser.hasRoleMap());
 
         return render("role_box.html");
     }

@@ -1,5 +1,6 @@
 package com.artlongs.sys.service;
 
+import act.util.Stateless;
 import com.artlongs.sys.model.SysFunc;
 import com.artlongs.sys.model.SysPermission;
 import org.osgl.util.C;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
  * @Autor: leeton
  * @Date : 11/30/17
  */
+@Stateless
 public class SysMenuService {
 
     @Inject

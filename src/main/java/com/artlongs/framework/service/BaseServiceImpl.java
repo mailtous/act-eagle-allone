@@ -5,6 +5,7 @@ import com.artlongs.framework.model.BaseEntity;
 import com.artlongs.framework.page.Page;
 import org.beetl.sql.core.DSTransactionManager;
 
+import javax.inject.Singleton;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
  * Service基类,包含基本的CRUD
  * Created by leeton on 9/29/17.
  */
+@Singleton
 public abstract class BaseServiceImpl<T> implements BaseService<T> {
 
     protected BaseDao<T> baseDao;
