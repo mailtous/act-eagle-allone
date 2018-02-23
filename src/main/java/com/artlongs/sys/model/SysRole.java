@@ -19,6 +19,7 @@ public class SysRole extends BaseEntity {
     @Stateless
     @act.inject.AutoBind
     public static abstract class Dao<SysRole> extends BeetlSqlDao<SysRole>{
+        public static String table = "sys_role";
         public static String roleName = "role_name";
 
         public abstract List<SysRole> getAllOfList();

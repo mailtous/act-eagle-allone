@@ -21,7 +21,6 @@ import javax.persistence.Transient;
 import java.util.List;
 import java.util.Map;
 
-import static com.sun.xml.internal.fastinfoset.alphabet.BuiltInRestrictedAlphabets.table;
 
 /**
  * Function:
@@ -32,7 +31,7 @@ import static com.sun.xml.internal.fastinfoset.alphabet.BuiltInRestrictedAlphabe
 public class SysUser extends BaseEntity {
 
     @Configuration("sysuser.cookies.name")
-    private static String cookies_name;
+    private static String cookies_name="artlongs_suser_cookies_name";
 
     private String userName;
     private String pwd;

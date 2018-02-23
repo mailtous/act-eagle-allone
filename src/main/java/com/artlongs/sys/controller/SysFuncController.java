@@ -142,7 +142,7 @@ public class SysFuncController extends SysBaseController {
 
         ctx.renderArg("sysRoleList", sysRoleList);
         ctx.renderArg("sysFunc", sysFunc);
-        ctx.renderArg("hasRoleMap", roleMap);
+        ctx.renderArg("roleMap", roleMap);
 
         return render("perm_box.html");
     }

@@ -16,12 +16,12 @@ import java.util.List;
 public class SysRoleDao extends SysRole.Dao<SysRole>{
 
     public Page<SysRole> getAllOfPage(Page page){
-        String sql = " select * from sys_role";
+        String sql = " select * from " + SysRole.Dao.table;
         return getPage(page, sql, null);
     }
 
     public List<SysRole> getAllOfList() {
-        String sql = " select * from sys_role";
+        String sql = " select * from " + SysRole.Dao.table;
         return getList(sql);
     }
 

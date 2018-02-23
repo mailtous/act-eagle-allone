@@ -21,15 +21,12 @@ public class Hello extends BaseController {
     @Inject
     UserService userService;
 
-/*
 
     @GetAction("foo")
     public RenderAny foo(Foo foo) throws SQLException {
         String msg = " hello to leeton.";
-        foo.setName(msg);
         return render("hello.html",foo);
     }
-*/
 
 
 

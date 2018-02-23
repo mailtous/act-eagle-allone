@@ -1,5 +1,8 @@
 package com.artlongs.test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Function:
  *
@@ -7,13 +10,13 @@ package com.artlongs.test;
  * @Date : 2/5/18
  */
 public class Foo<T> {
-    private String name;
+    private List<T> items = new ArrayList<T>();  //返回数据列表
 
-    public String getName() {
-        return name;
+    public List<T> getItems() {
+        return items;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setItems(List<T> items) {
+        this.items = items;
     }
 }
