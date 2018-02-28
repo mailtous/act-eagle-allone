@@ -2,9 +2,11 @@ package com.artlongs.sys.model;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.NameFilter;
+import com.artlongs.framework.dao.BeetlSqlDao;
 import com.artlongs.framework.model.BaseEntity;
 import org.osgl.util.C;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 import java.util.ArrayList;
@@ -34,6 +36,19 @@ public class SysFunc extends BaseEntity {
 
     @Transient
     private List<SysFunc> childs; //子菜单
+
+    public static abstract class Dao<SysFunc> extends BeetlSqlDao<SysFunc> {
+        public static String table = "sys_func";
+        public static String parentId="parent_id";
+        public static String funcName ="func_name";
+        public static String node="node";
+        public static String funcUrl="func_url";
+        public static String isMenu="is_menu";
+        public static String action="action";
+        public static String sequence="sequence";
+
+    }
+
 
     /** 顶层菜单 **/
     @Transient

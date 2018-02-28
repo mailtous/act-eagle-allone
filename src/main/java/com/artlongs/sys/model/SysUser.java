@@ -2,21 +2,18 @@ package com.artlongs.sys.model;
 
 
 import act.Act;
+import act.app.conf.AutoConfig;
 import act.util.Stateless;
 import com.alibaba.fastjson.JSON;
 import com.artlongs.framework.dao.BeetlSqlDao;
 import com.artlongs.framework.model.BaseEntity;
-import com.artlongs.sys.dao.SysRoleDao;
 import com.artlongs.sys.service.SysRoleService;
 import org.osgl.http.H;
 import org.osgl.inject.annotation.Configuration;
-import org.osgl.inject.annotation.Provided;
 import org.osgl.util.C;
 import org.osgl.util.S;
 
 import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
 import javax.persistence.Transient;
 import java.util.List;
 import java.util.Map;
@@ -28,10 +25,11 @@ import java.util.Map;
  * @Autor: leeton
  * @Date : 11/21/17
  */
+@AutoConfig
 public class SysUser extends BaseEntity {
 
     @Configuration("sysuser.cookies.name")
-    private static String cookies_name="artlongs_suser_cookies_name";
+    public static String cookies_name;
 
     private String userName;
     private String pwd;
@@ -72,11 +70,10 @@ public class SysUser extends BaseEntity {
         List<Integer> roleIdList = roleIdList();
         if (C.notEmpty(roleIdList)) {
             for (Integer roleId : roleIdList) {
-                /*SysRole role = new SysRole();
+                SysRole role = new SysRole();
                 role.setId(new Long(roleId));
                 role.setRoleName(SysRoleService.allRoleMap.get(roleId));
-                sysRoleList.add(role); */
-                sysRoleList  = Dao.sysRoleDao.getAllOfList();
+                sysRoleList.add(role);
             }
         }
         return sysRoleList;

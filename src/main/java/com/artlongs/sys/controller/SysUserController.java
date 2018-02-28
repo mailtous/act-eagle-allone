@@ -98,7 +98,7 @@ public class SysUserController extends SysBaseController {
 
         ctx.renderArg("sysRoleList", sysRoleList);
         ctx.renderArg("sysUser", sysUser);
-        ctx.renderArg("hasRoleMap", sysUser.hasRoleMap());
+        ctx.renderArg("roleMap", sysUser.hasRoleMap());
 
         return render("role_box.html");
     }
