@@ -39,6 +39,9 @@ public class SysFunc extends BaseEntity {
 
     public static abstract class Dao<SysFunc> extends BeetlSqlDao<SysFunc> {
         public static String table = "sys_func";
+        public static String id = "id";
+        public static String createDate="create_date";
+        public static String modifyDate="modify_date";
         public static String parentId="parent_id";
         public static String funcName ="func_name";
         public static String node="node";

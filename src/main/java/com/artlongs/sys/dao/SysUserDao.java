@@ -2,7 +2,10 @@ package com.artlongs.sys.dao;
 
 import act.util.Stateless;
 import com.artlongs.framework.dao.BeetlSqlDao;
+import com.artlongs.framework.utils.QE;
 import com.artlongs.sys.model.SysUser;
+
+import static act.mail.Mailer.Util.from;
 
 /**
  * Function:
@@ -14,9 +17,8 @@ import com.artlongs.sys.model.SysUser;
 public class SysUserDao extends SysUser.Dao<SysUser> {
 
     public SysUser checkLogin(String userName, String pwd) {
-        String sql = " select * from %s where %s =?";
-        sql = String.format(sql, SysUser.Dao.table, SysUser.Dao.userName);
-        SysUser sysUser = getObj(sql, userName);
+        String sql = QE.selectAll().from(SysUser.Dao.table).where(QE.k(SysUser.Dao.userName).eq(userName)).sql();
+        SysUser sysUser = getObj(sql);
         return (sysUser != null && sysUser.verifyPassword(pwd))?sysUser:null;
     }
 

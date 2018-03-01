@@ -118,8 +118,8 @@ public class EntityUtils {
         String str = "Select * from sys_func where @funcName = ? and @funcUrl = ?";
         System.err.println(formatSql(str, SysFunc.class));
 
-        QE qe = new QE();
-        qe.k(SysUser.Dao.userName).eq("linton");
+        String sql2 = QE.k(SysUser.Dao.userName).eq("linton").or(QE.k(SysUser.Dao.userName).eq("alice"));
+        System.out.println(sql2);
 
     }
 

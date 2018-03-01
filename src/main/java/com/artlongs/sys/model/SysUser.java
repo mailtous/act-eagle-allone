@@ -29,7 +29,7 @@ import java.util.Map;
 public class SysUser extends BaseEntity {
 
     @Configuration("sysuser.cookies.name")
-    public static String cookies_name;
+    public static String cookies_name="sysuser.cookies.name";
 
     private String userName;
     private String pwd;
@@ -40,16 +40,20 @@ public class SysUser extends BaseEntity {
     public static Map<Long, String> roleMap = SysRoleService.allRoleMap;
 
     @Stateless
-    public static class Dao<T> extends BeetlSqlDao<SysUser>{
+    public static abstract class Dao<T> extends BeetlSqlDao<SysUser>{
         @Inject
         public static SysRole.Dao<SysRole> sysRoleDao;
 
         public static String table = "sys_user";
+        public static String id = "id";
+        public static String createDate="create_date";
+        public static String modifyDate="modify_date";
         public static String userName = "user_name";
         public static String pwd="pwd";
         public static String roleIds = "role_ids";
         public static String deptId="dept_id";
         public static String delStatus="del_status";
+
     }
 
 

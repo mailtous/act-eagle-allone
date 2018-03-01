@@ -14,7 +14,7 @@ import java.util.List;
  * @Date : 11/21/17
  */
 @Stateless
-public class SysPermissionDao extends BeetlSqlDao<SysPermission> {
+public class SysPermissionDao extends SysPermission.Dao<SysPermission> {
 
     public List<Long> getRoleIdsOfFuncId(Long funcId) {
         String sql = " select role_id from sys_permission where func_id = ?";

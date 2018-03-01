@@ -11,5 +11,5 @@ import com.artlongs.sys.model.SysDept;
  * @Date : 11/21/17
  */
 @Stateless
-public class SysDeptDao extends BeetlSqlDao<SysDept> {
+public class SysDeptDao extends SysDept.Dao<SysDept> {
 }
