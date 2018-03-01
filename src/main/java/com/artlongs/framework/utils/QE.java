@@ -1,7 +1,6 @@
 package com.artlongs.framework.utils;
 
 import com.artlongs.sys.model.SysDept;
-import com.artlongs.sys.model.SysRole;
 import com.artlongs.sys.model.SysUser;
 import org.osgl.util.S;
 
@@ -46,6 +45,12 @@ public class QE {
     public static QE selectAll() {
         QE qe = new QE();
         qe.sql.append(SELECT.of("*"));
+        return qe;
+    }
+
+    public static QE del(String table) {
+        QE qe = new QE();
+        qe.sql.append(DEL.of(table));
         return qe;
     }
 
@@ -146,12 +151,14 @@ public class QE {
         return this;
     }
 
-    public String and(QE qe) {
-        return AND.sql(this.sql, qe.sql);
+    public QE and(QE qe) {
+        sql.append(AND.of(qe.sql));
+        return this;
     }
 
-    public String or(QE qe) {
-        return OR.sql(this.sql, qe.sql);
+    public QE or(QE qe) {
+        sql.append(OR.of(qe.sql));
+        return this;
     }
 
     public QE orderEnd() {
@@ -349,6 +356,13 @@ public class QE {
                 return String.format(framg.toString(), v);
             }
         },
+        DEL() {
+            @Override
+            public String of(Object... v) {
+                String expr = " DELETE FROM %s ";
+                return String.format(expr, v);
+            }
+        },
 
         FROM() {
             @Override
@@ -427,16 +441,16 @@ public class QE {
         },
         AND() {
             @Override
-            public String sql(Object l, Object r) {
-                String expr = " ((%s) AND (%s)) ";
-                return String.format(expr, l, r);
+            public String of(Object...v) {
+                String expr = "  AND (%s) ";
+                return String.format(expr,v);
             }
         },
         OR() {
             @Override
-            public String sql(Object l, Object r) {
-                String expr = " ((%s) OR (%s)) ";
-                return String.format(expr, l, r);
+            public String of(Object...v) {
+                String expr = " OR (%s) ";
+                return String.format(expr, v);
             }
         };
 
@@ -470,24 +484,30 @@ public class QE {
                 .from(SysUser.Dao.table)
                 .leftJoin(SysDept.Dao.table)
                 .on(SysUser.Dao.table, SysUser.Dao.deptId, Opt.EQ, SysDept.Dao.table, SysDept.Dao.id)
-                .where(QE.k(SysUser.Dao.deptId).eq(1))
+                .where(
+                        QE.k(SysUser.Dao.deptId).eq(1).or(QE.k(SysUser.Dao.deptId).eq(2))
+                )
                 .asc(SysUser.Dao.deptId)
                 .desc(SysUser.Dao.userName)
                 .orderEnd()
                 .limit(0, 1);
 
-        System.out.println("sql= " + sql);
+        System.out.println("sql=" + sql);
 
-      /*  String and_sql = QE.k(SysUser.Dao.userName).eq("linton").and(QE.k(SysUser.Dao.userName).eq("alice"));
+        String and_sql = QE.k(SysUser.Dao.userName).eq("linton").and(QE.k(SysUser.Dao.userName).eq("alice")).sql();
         System.out.println("and_sql=" + and_sql);
 
 
-        String in = QE.k(SysUser.Dao.deptId).eq(1).and(QE.k(SysUser.Dao.deptId).eq(2));
-        System.out.println("in=" + in);
+        String or = QE.k(SysUser.Dao.deptId).eq(1).or(QE.k(SysUser.Dao.deptId).eq(2)).sql();
+        System.out.println("or=" + or);
 
 
         String between = QE.k(SysUser.Dao.createDate).between(new Date(), new Date()).sql();
-        System.out.println("between=" + between);*/
+        System.out.println("between=" + between);
+
+        String del = QE.del(SysUser.Dao.table).where(QE.k(SysUser.Dao.deptId).eq(1)).sql();
+
+        System.out.println("del= " + del);
 
     }
 
