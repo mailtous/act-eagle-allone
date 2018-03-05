@@ -1,9 +1,9 @@
 # act-eagle
 act framework + beetlsql + thymeleaf 的 boostrap
 
-增了thymeleaf对应的分页条内镶页
-
-page<T> 目前在controller 做为入参类型会报错，我的解决方案是改genice。等大神修正这个BUG
+增了 thymeleaf 对应的分页条内镶页
+增了 QE 面向对象方式的 SQL 查询方式
+JS技术采用 riotjs 及 layui
 
 后台登录http://localhost:5460/sys
 用户名:alice

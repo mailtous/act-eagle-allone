@@ -41,7 +41,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <act.version>1.7.1</act.version>
+        <act.version>1.8.0</act.version>
         <act-beetlsql.version>1.4.0</act-beetlsql.version>
         <act.thymeleaf.version>1.3.0</act.thymeleaf.version>
 

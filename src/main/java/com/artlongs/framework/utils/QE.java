@@ -1,5 +1,6 @@
 package com.artlongs.framework.utils;
 
+import act.Act;
 import com.artlongs.sys.model.SysDept;
 import com.artlongs.sys.model.SysUser;
 import org.osgl.util.S;
@@ -26,16 +27,16 @@ public class QE {
     }
 
     private static String k;
+    private Integer id = 0;
     private StringBuffer sql = new StringBuffer();
     private StringBuffer order = new StringBuffer();
-    private Map<String, String> alias = new HashMap<>();
 
     public String k() {
         return k;
     }
 
     public String sql() {
-        return sql.toString();
+        return this.sql.toString();
     }
 
     public QE select(String... v) {
@@ -55,7 +56,6 @@ public class QE {
     }
 
     public QE from(String table) {
-        this.alias.putIfAbsent(table, table);
         sql.append(FROM.sql(table, table));
         return this;
     }
@@ -67,7 +67,6 @@ public class QE {
     }
 
     public QE leftJoin(String table) {
-        this.alias.putIfAbsent(table, table);
         sql.append(LEFTJOIN.of(table));
         return this;
     }
@@ -179,6 +178,24 @@ public class QE {
 
     public String limit(Object v1, Object v2) {
         return LIMIT.between(this.sql, v1, v2);
+    }
+
+    public Integer id(String sql){
+        String s = "QE_" + sql;
+        Integer id = hash(s.getBytes());
+        return id;
+    }
+    public static int hash(byte[] data) {
+        final int p = 16777619;
+        int hash = (int) 2166136261L;
+        for (byte b : data)
+            hash = (hash ^ b) * p;
+        hash += hash << 13;
+        hash ^= hash >> 7;
+        hash += hash << 3;
+        hash ^= hash >> 17;
+        hash += hash << 5;
+        return hash;
     }
 
 
