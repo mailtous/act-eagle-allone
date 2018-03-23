@@ -29,15 +29,13 @@ import java.util.Map;
 public class SysUser extends BaseEntity {
 
     @Configuration("sysuser.cookies.name")
-    public static String cookies_name="sysuser.cookies.name";
+    public static String cookies_name;
 
     private String userName;
     private String pwd;
     private String roleIds;
     private Long deptId;
     private Integer delStatus;
-
-    public static Map<Long, String> roleMap = SysRoleService.allRoleMap;
 
     @Stateless
     public static abstract class Dao<T> extends BeetlSqlDao<SysUser>{
@@ -84,11 +82,11 @@ public class SysUser extends BaseEntity {
     }
 
     @Transient
-    public Map<Integer, Boolean> hasRoleMap() {
+    public Map<Long, Boolean> hasRoleMap() {
         List<Integer> roleIdList = roleIdList();
-        Map<Integer, Boolean> roleMap = C.newMap();
+        Map<Long, Boolean> roleMap = C.newMap();
         for (Integer roleId : roleIdList) {
-            roleMap.put(roleId, true);
+            roleMap.put(new Long(roleId), true);
         }
         return roleMap;
     }

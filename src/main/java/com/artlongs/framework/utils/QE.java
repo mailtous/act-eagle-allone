@@ -1,15 +1,14 @@
 package com.artlongs.framework.utils;
 
-import act.Act;
 import com.artlongs.sys.model.SysDept;
 import com.artlongs.sys.model.SysUser;
+import org.beetl.sql.core.UnderlinedNameConversion;
+import org.beetl.sql.core.kit.BeanKit;
 import org.osgl.util.S;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
-import static com.artlongs.framework.utils.QE.Opt.*;
+import static com.artlongs.framework.utils.Qe.Opt.*;
 
 /**
  * Function: 查询表达式
@@ -17,185 +16,195 @@ import static com.artlongs.framework.utils.QE.Opt.*;
  * @Autor: leeton
  * @Date : 2/27/18
  */
-public class QE {
+public class Qe<T> {
 
-    public QE() {
+    protected Integer id = 0;
+    protected Class clz;
+    protected String mainTableName = "";
+    protected String select = " SELECT * ";
+    protected String from = " FROM ";
+    protected String having = "";
+    protected String sqlTemplate = " {select} {from} {where} {order} {having} ";
+    protected StringBuffer sql = new StringBuffer();
+    protected StringBuffer order = new StringBuffer();
+
+    public Qe() {
     }
 
-    public QE(String key) {
-        k = key;
+    public Qe(Class<T> mainTableClass) {
+        this.clz = mainTableClass;
+        this.mainTableName = getTableName(mainTableClass);
+        this.from = FROM.sql(mainTableName,mainTableName);
     }
 
-    private static String k;
-    private Integer id = 0;
-    private StringBuffer sql = new StringBuffer();
-    private StringBuffer order = new StringBuffer();
-
-    public String k() {
-        return k;
+    public Qe(String mainTableName) {
+        this.mainTableName = mainTableName;
     }
 
+    public Lq<T> lambda() {
+        if (BeanKit.queryLambdasSupport) {
+            Lq<T> lq = new Lq<T>();
+            if (this.sql != null) {
+                throw new UnsupportedOperationException("LamdbaQuery必须在调用其他AP前获取");
+            }
+            return lq;
+        } else {
+            throw new UnsupportedOperationException("需要使用Java8以上，并且依赖com.trigersoft:jaque,请查阅官网文档");
+        }
+
+    }
+
+    public static String getTableName(Class clz) {
+        return new UnderlinedNameConversion().getTableName(clz);
+    }
+
+    public String count(){
+        if(this.sql.indexOf("SELECT") ==-1 && this.sql.indexOf("select") ==-1){
+            this.sql.insert(0," SELECT count(*) ");
+        }
+        return sql();
+    }
+
+    public String build(){
+        String sql = this.sqlTemplate.toString();
+        if(this.sql().indexOf("DELETE FROM")==-1){
+            sql = sql.replace("{select}", this.select)
+                    .replace("{from}", this.from)
+                    .replace("{where}", this.sql)
+                    .replace("{having}", this.having);
+
+            if(0<this.order.length()){
+                sql = sql.replace("{order}", ORDER.of(this.order));
+            }else {
+                sql = sql.replace("{order}", "");
+            }
+            if(0<this.having.length()){
+                sql = sql.replace("{having}", ORDER.of(this.having));
+            }else {
+                sql = sql.replace("{having}", "");
+            }
+        }else {
+            sql = this.sql.toString();
+        }
+
+        return sql;
+    }
     public String sql() {
         return this.sql.toString();
     }
 
-    public QE select(String... v) {
-        sql.append(SELECT.of(v));
+    private Qe<T> append(String sql) {
+        this.sql.append(sql);
         return this;
     }
-    public static QE selectAll() {
-        QE qe = new QE();
-        qe.sql.append(SELECT.of("*"));
-        return qe;
+
+    public Qe select(String... val) {
+        if (val.length > 0) {
+            this.select = SELECT.of(val);
+        }
+        return this;
     }
 
-    public static QE del(String table) {
-        QE qe = new QE();
+    public static Qe del(String table) {
+        Qe qe = new Qe();
         qe.sql.append(DEL.of(table));
         return qe;
     }
 
-    public QE from(String table) {
-        sql.append(FROM.sql(table, table));
+    public Qe where(Qe qe) {
+        return append(WHERE.of(qe.sql()));
+    }
+
+    public Qe leftJoin(String joinTableName, String joinTableKey, String mainTableKey) {
+        if (S.blank(this.mainTableName)) throw new RuntimeException("主表不能为空。");
+        this.sql.append(LEFTJOIN.of(joinTableName));
+        return append(ON.on(this.mainTableName, mainTableKey, joinTableName, joinTableKey));
+    }
+
+    public Qe leftJoin(Class<T> clz, String joinTableKey, String mainTableKey) {
+        return leftJoin(getTableName(clz), joinTableKey, mainTableKey);
+    }
+
+    public Qe eq(String column, Object val) {
+        return append(EQ.sql(column, val));
+    }
+
+    public Qe ne(String column, Object val) {
+        return append(NE.sql(column, val));
+    }
+
+    public Qe lt(String column, Object val) {
+        return append(LT.sql(column, val));
+    }
+
+    public Qe gt(String column, Object val) {
+        return append(GT.sql(column, val));
+    }
+
+    public Qe le(String column, Object val) {
+        return append(LE.sql(column, val));
+    }
+
+    public Qe ge(String column, Object val) {
+        return append(GE.sql(column, val));
+    }
+
+    public Qe in(String column, Object val) {
+        return append(IN.sql(column, val));
+    }
+
+    public Qe between(String column, Object val1, Object val2) {
+        return append(BETWEEN.between(column, val1, val2));
+    }
+
+    public Qe isnull(String column) {
+        return append(ISNULL.sql(column, ""));
+    }
+
+    public Qe notnull(String column) {
+        sql.append(NOTNULL.sql(column, ""));
         return this;
     }
 
-
-    public QE where(QE qe) {
-        sql.append(WHERE.of(qe.sql()));
-        return this;
+    public Qe like(String column, Object val) {
+        return append(LIKE.sql(column, val));
     }
 
-    public QE leftJoin(String table) {
-        sql.append(LEFTJOIN.of(table));
-        return this;
+    public Qe likestart(String column, Object val) {
+        return append(LIKESTART.sql(column, val));
     }
 
-    public QE on(String table1, String v1, Opt opt, String table2, String v2) {
-        sql.append(ON.on(table1, v1, opt, table2, v2));
-        return this;
+    public Qe likeend(String column, Object val) {
+        return append(LIKEEND.sql(column, val));
     }
 
-    public static QE k(String key) {
-        return new QE(key);
+    public Qe likeall(String column, Object val) {
+        return append(LIKEAll.sql(column, val));
     }
 
-    public QE eq(Object v) {
-        sql.append(EQ.sql(k, v));
-        return this;
+    public Qe and(Qe qe) {
+        return append(AND.of(qe.sql));
     }
 
-    public QE ne(Object v) {
-        sql.append(NE.sql(k, v));
-        return this;
-    }
-
-    public QE lt(Object v) {
-        sql.append(LT.sql(k, v));
-        return this;
-    }
-
-    public QE gt(Object v) {
-        sql.append(GT.sql(k, v));
-        return this;
-    }
-
-    public QE le(Object v) {
-        sql.append(LE.sql(k, v));
-        return this;
-    }
-
-    public QE ge(Object v) {
-        sql.append(GE.sql(k, v));
-        return this;
-    }
-
-    public QE in(Object v) {
-        sql.append(IN.sql(k, v));
-        return this;
-    }
-
-    public QE between(Object v1, Object v2) {
-        sql.append(BETWEEN.between(k, v1, v2));
-        return this;
-    }
-
-    public QE isnull() {
-        sql.append(ISNULL.sql(k, ""));
-        return this;
-    }
-
-    public QE notnull() {
-        sql.append(NOTNULL.sql(k, ""));
-        return this;
-    }
-
-    public QE like(Object v) {
-        sql.append(LIKE.sql(k, v));
-        return this;
-    }
-
-    public QE likestart(Object v) {
-        sql.append(LIKESTART.sql(k, v));
-        return this;
-    }
-
-    public QE likeend(Object v) {
-        sql.append(LIKEEND.sql(k, v));
-        return this;
-    }
-
-    public QE likeall(Object v) {
-        sql.append(LIKEAll.sql(k, v));
-        return this;
-    }
-
-    public QE and(QE qe) {
-        sql.append(AND.of(qe.sql));
-        return this;
-    }
-
-    public QE or(QE qe) {
+    public Qe or(Qe qe) {
         sql.append(OR.of(qe.sql));
         return this;
     }
 
-    public QE orderEnd() {
-        sql.append(ORDER.of(this.order));
+    public Qe asc(Object... val) {
+        if (0<order.length()) order.append(" ,");
+        order.append(ASC.of(val));
         return this;
     }
 
-    public QE asc(Object... v) {
-        if(S.noBlank(order.toString()))  order.append(" ,");
-        order.append(ASC.of(v));
-        return this;
-    }
-    public QE desc(Object... v) {
-        if(S.noBlank(order.toString()))  order.append(" ,");
-        order.append(DESC.of(v));
+    public Qe desc(Object... val) {
+        if (0<order.length()) order.append(" ,");
+        order.append(DESC.of(val));
         return this;
     }
 
-    public String limit(Object v1, Object v2) {
-        return LIMIT.between(this.sql, v1, v2);
-    }
-
-    public Integer id(String sql){
-        String s = "QE_" + sql;
-        Integer id = hash(s.getBytes());
-        return id;
-    }
-    public static int hash(byte[] data) {
-        final int p = 16777619;
-        int hash = (int) 2166136261L;
-        for (byte b : data)
-            hash = (hash ^ b) * p;
-        hash += hash << 13;
-        hash ^= hash >> 7;
-        hash += hash << 3;
-        hash ^= hash >> 17;
-        hash += hash << 5;
-        return hash;
+    public String limit(Object val1, Object val2) {
+        return LIMIT.between(build(), val1, val2);
     }
 
 
@@ -207,9 +216,9 @@ public class QE {
             }
 
             @Override
-            public String sql(Object k, Object v) {
+            public String sql(Object k, Object val) {
                 String expr = " %s = '%s' ";
-                return String.format(expr, k, v);
+                return String.format(expr, k, val);
             }
         },
 
@@ -220,9 +229,9 @@ public class QE {
             }
 
             @Override
-            public String sql(Object k, Object v) {
+            public String sql(Object k, Object val) {
                 String expr = " %s != '%s' ";
-                return String.format(expr, k, v);
+                return String.format(expr, k, val);
             }
         },
         LT() {
@@ -232,9 +241,9 @@ public class QE {
             }
 
             @Override
-            public String sql(Object k, Object v) {
+            public String sql(Object k, Object val) {
                 String expr = " %s < '%s' ";
-                return String.format(expr, k, v);
+                return String.format(expr, k, val);
             }
         },
         GT() {
@@ -244,9 +253,9 @@ public class QE {
             }
 
             @Override
-            public String sql(Object k, Object v) {
+            public String sql(Object k, Object val) {
                 String expr = " %s > '%s' ";
-                return String.format(expr, k, v);
+                return String.format(expr, k, val);
             }
         },
         LE() {
@@ -256,9 +265,9 @@ public class QE {
             }
 
             @Override
-            public String sql(Object k, Object v) {
+            public String sql(Object k, Object val) {
                 String expr = " %s <= '%s' ";
-                return String.format(expr, k, v);
+                return String.format(expr, k, val);
             }
         },
         GE() {
@@ -268,9 +277,9 @@ public class QE {
             }
 
             @Override
-            public String sql(Object k, Object v) {
+            public String sql(Object k, Object val) {
                 String expr = " %s >= '%s' ";
-                return String.format(expr, k, v);
+                return String.format(expr, k, val);
             }
         },
         IN() {
@@ -280,9 +289,9 @@ public class QE {
             }
 
             @Override
-            public String sql(Object k, Object v) {
+            public String sql(Object k, Object val) {
                 String expr = " %s IN (%s) ";
-                return String.format(expr, k, v);
+                return String.format(expr, k, val);
             }
         },
         ISNULL() {
@@ -292,7 +301,7 @@ public class QE {
             }
 
             @Override
-            public String sql(Object k, Object v) {
+            public String sql(Object k, Object val) {
                 String expr = " %s IS NULL ";
                 return String.format(expr, k);
             }
@@ -304,7 +313,7 @@ public class QE {
             }
 
             @Override
-            public String sql(Object k, Object v) {
+            public String sql(Object k, Object val) {
                 String expr = " %s IS NOT NULL ";
                 return String.format(expr, k);
             }
@@ -316,15 +325,15 @@ public class QE {
             }
 
             @Override
-            public String between(Object k, Object v1, Object v2) {
-                if (v1 instanceof Date) {
-                    v1 = ((Date) v1).getTime();
+            public String between(Object k, Object val1, Object val2) {
+                if (val1 instanceof Date) {
+                    val1 = ((Date) val1).getTime();
                 }
-                if (v2 instanceof Date) {
-                    v2 = ((Date) v2).getTime();
+                if (val2 instanceof Date) {
+                    val2 = ((Date) val2).getTime();
                 }
                 String expr = " (%s between '%s' and '%s') ";
-                return String.format(expr, k, v1, v2);
+                return String.format(expr, k, val1, val2);
             }
         },
         LIKE() {
@@ -334,140 +343,140 @@ public class QE {
             }
 
             @Override
-            public String sql(Object k, Object v) {
+            public String sql(Object k, Object val) {
                 String expr = "( %s like %s )";
-                return String.format(expr, k, v);
+                return String.format(expr, k, val);
             }
         },
         LIKESTART() {
             @Override
-            public String sql(Object k, Object v) {
+            public String sql(Object k, Object val) {
                 String expr = "( %s like %% %s )";
-                return String.format(expr, k, v);
+                return String.format(expr, k, val);
             }
         },
         LIKEEND() {
             @Override
-            public String sql(Object k, Object v) {
+            public String sql(Object k, Object val) {
                 String expr = "( %s like %s %% )";
-                return String.format(expr, k, v);
+                return String.format(expr, k, val);
             }
         },
         LIKEAll() {
             @Override
-            public String sql(Object k, Object v) {
+            public String sql(Object k, Object val) {
                 String expr = "( %s like %% %s %%)";
-                return String.format(expr, k, v);
+                return String.format(expr, k, val);
             }
         },
         SELECT() {
             @Override
-            public String of(Object... v) {
-                StringBuffer framg = new StringBuffer(" SELECT ");
+            public String of(Object... val) {
+                StringBuffer framSql = new StringBuffer( " SELECT ");
                 int i = 0;
-                while (i < v.length) {
-                    framg.append("%s");
-                    if (i < v.length - 1) framg.append(", ");
+                while (i < val.length) {
+                    framSql.append(val[i]);
+                    framSql.append(",");
                     i++;
                 }
-                return String.format(framg.toString(), v);
+                return framSql.deleteCharAt(framSql.length() - 1).toString();
             }
         },
         DEL() {
             @Override
-            public String of(Object... v) {
+            public String of(Object... val) {
                 String expr = " DELETE FROM %s ";
-                return String.format(expr, v);
+                return String.format(expr, val);
             }
         },
 
         FROM() {
             @Override
-            public String sql(Object v1, Object v2) {
+            public String sql(Object val1, Object val2) {
                 String expr = " FROM %s AS %s ";
-                return String.format(expr, v1, v2);
+                return String.format(expr, val1, val2);
             }
         },
         AS() {
             @Override
-            public String sql(Object v1, Object v2) {
+            public String sql(Object val1, Object val2) {
                 String expr = " %s AS %s ";
-                return String.format(expr, v1, v2);
+                return String.format(expr, val1, val2);
             }
         },
         WHERE() {
             @Override
-            public String of(Object... v1) {
+            public String of(Object... val1) {
                 String expr = " WHERE (%s)";
-                return String.format(expr, v1);
+                return String.format(expr, val1);
             }
         },
         LEFTJOIN() {
             @Override
-            public String of(Object... v1) {
+            public String of(Object... val1) {
                 String expr = " LEFT JOIN %s ";
-                return String.format(expr, v1);
+                return String.format(expr, val1);
             }
         },
         ON() {
             @Override
-            public String on(String table1, Object v1, Opt opt, String table2, Object v2) {
-                String expr = " ON(%s.%s %s %s.%s)";
-                return String.format(expr, table1, v1, opt.key(), table2, v2);
+            public String on(String table1, Object val1,String table2, Object val2) {
+                String expr = " ON(%s.%s = %s.%s)";
+                return String.format(expr, table1, val1, table2, val2);
             }
         },
         ORDER() {
             @Override
-            public String of(Object... v) {
+            public String of(Object... val) {
                 String expr = " ORDER BY %s ";
-                return String.format(expr, v);
+                return String.format(expr, val);
             }
         },
         ASC() {
             @Override
-            public String of(Object... v) {
+            public String of(Object... val) {
                 StringBuffer framg = new StringBuffer();
                 int i = 0;
-                while (i < v.length) {
+                while (i < val.length) {
                     framg.append(" %s ASC");
-                    if (i < v.length - 1) framg.append(", ");
+                    if (i < val.length - 1) framg.append(", ");
                     i++;
                 }
-                return String.format(framg.toString(), v);
+                return String.format(framg.toString(), val);
             }
         },
         DESC() {
             @Override
-            public String of(Object... v) {
+            public String of(Object... val) {
                 StringBuffer framg = new StringBuffer();
                 int i = 0;
-                while (i < v.length) {
+                while (i < val.length) {
                     framg.append(" %s DESC");
-                    if (i < v.length - 1) framg.append(", ");
+                    if (i < val.length - 1) framg.append(", ");
                     i++;
                 }
-                return String.format(framg.toString(), v);
+                return String.format(framg.toString(), val);
             }
         },
         LIMIT() {
             @Override
-            public String between(Object k, Object v1, Object v2) {
+            public String between(Object k, Object val1, Object val2) {
                 String expr = " %s LIMIT %s, %s";
-                return String.format(expr, k, v1, v2);
+                return String.format(expr, k, val1, val2);
             }
         },
         AND() {
             @Override
-            public String of(Object...v) {
+            public String of(Object... val) {
                 String expr = "  AND (%s) ";
-                return String.format(expr,v);
+                return String.format(expr, val);
             }
         },
         OR() {
             @Override
-            public String of(Object...v) {
+            public String of(Object... val) {
                 String expr = " OR (%s) ";
-                return String.format(expr, v);
+                return String.format(expr, val);
             }
         };
 
@@ -479,50 +488,45 @@ public class QE {
             return "";
         }
 
-        public String sql(Object k, Object v) {
+        public String sql(Object k, Object val) {
             return "";
         }
 
-        public String between(Object k, Object v1, Object v2) {
+        public String between(Object k, Object val1, Object val2) {
             return "";
         }
 
-        public String on(String table1, Object v1, Opt opt, String table2, Object v2) {
-            String expr = " ON(%1.%2 %3 %4.%5) ";
-            return String.format(expr, table1, v1, opt.key(), table2, v2);
+        public String on(String table1, Object val1, String table2, Object val2) {
+            String expr = " ON(%1.%2 = %4.%5) ";
+            return String.format(expr, table1, val1, table2, val2);
         }
 
     }
 
 
     public static void main(String[] args) throws Exception {
-        String sql = new QE()
+        String sql = new Qe(SysUser.class)
                 .select(SysUser.Dao.userName, SysUser.Dao.deptId, SysDept.Dao.deptName)
-                .from(SysUser.Dao.table)
-                .leftJoin(SysDept.Dao.table)
-                .on(SysUser.Dao.table, SysUser.Dao.deptId, Opt.EQ, SysDept.Dao.table, SysDept.Dao.id)
-                .where(
-                        QE.k(SysUser.Dao.deptId).eq(1).or(QE.k(SysUser.Dao.deptId).eq(2))
-                )
+                .leftJoin(SysDept.class,SysDept.Dao.id,SysUser.Dao.deptId)
+                .where(new Qe().eq(SysUser.Dao.deptId, 1))
                 .asc(SysUser.Dao.deptId)
                 .desc(SysUser.Dao.userName)
-                .orderEnd()
                 .limit(0, 1);
 
         System.out.println("sql=" + sql);
 
-        String and_sql = QE.k(SysUser.Dao.userName).eq("linton").and(QE.k(SysUser.Dao.userName).eq("alice")).sql();
+        String and_sql = new Qe().eq(SysUser.Dao.userName, "linton").and(new Qe().eq(SysUser.Dao.userName, "alice")).sql();
         System.out.println("and_sql=" + and_sql);
 
 
-        String or = QE.k(SysUser.Dao.deptId).eq(1).or(QE.k(SysUser.Dao.deptId).eq(2)).sql();
+        String or = new Qe().eq(SysUser.Dao.deptId, 1).or(new Qe().eq(SysUser.Dao.deptId, 2)).sql();
         System.out.println("or=" + or);
 
 
-        String between = QE.k(SysUser.Dao.createDate).between(new Date(), new Date()).sql();
+        String between = new Qe().between(SysUser.Dao.createDate, new Date(), new Date()).build();
         System.out.println("between=" + between);
 
-        String del = QE.del(SysUser.Dao.table).where(QE.k(SysUser.Dao.deptId).eq(1)).sql();
+        String del = Qe.del(SysUser.Dao.table).where(new Qe().eq(SysUser.Dao.deptId, 1)).build();
 
         System.out.println("del= " + del);
 

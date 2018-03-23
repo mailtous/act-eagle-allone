@@ -1,5 +1,6 @@
 package com.artlongs.sys.service;
 
+import act.util.Stateless;
 import com.artlongs.framework.page.Page;
 import com.artlongs.framework.service.BaseServiceImpl;
 import com.artlongs.framework.vo.R;
@@ -13,11 +14,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Function:
+ * Function: 系统用户的角色
  *
  * @Autor: leeton
  * @Date : 11/29/17
  */
+@Stateless
 public class SysRoleService extends BaseServiceImpl<SysRole> {
 
     private SysRoleDao sysRoleDao;
@@ -68,7 +70,7 @@ public class SysRoleService extends BaseServiceImpl<SysRole> {
         return allRoleMap;
     }
 
-    public void clearRoleMap(){
+    public static void clearRoleCache(){
         allRoleMap = C.newMap();
     }
 }

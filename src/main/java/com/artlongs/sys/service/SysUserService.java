@@ -116,19 +116,17 @@ public class SysUserService extends BaseServiceImpl<SysUser> {
         if (C.notEmpty(roleAssignVoList)) {
             Set<Integer> roleIds = C.newSet(sysUser.roleIdList());
             for (RoleAssignVo roleAssignVo : roleAssignVoList) {
-                if(RoleAssignVo.on==roleAssignVo.getOnoff()) {
-                    roleIds.add(roleAssignVo.getFuncId());
-                }else {
+                if (RoleAssignVo.on == roleAssignVo.getOnoff()) {
+                    roleIds.add(roleAssignVo.getRoleId());
+                } else {
                     roleIds.remove(roleAssignVo.getRoleId());
                 }
+
             }
             sysUser.setRoleIds(JSON.toJSONString(roleIds));
         }
         int rows = updateAndTime(sysUser);
-        if(rows>0){
-//            sysMenuService.clear();
-        }
-        return R.success("用户设置角色成功");
+        return rows>0?R.success("用户设置角色成功!"):R.fail("用户设置角色失败!");
     }
 
 

@@ -1,8 +1,11 @@
 package com.artlongs.sys.dao;
 
 import act.util.Stateless;
-import com.artlongs.framework.utils.QE;
+import com.artlongs.framework.utils.Lq;
 import com.artlongs.sys.model.SysUser;
+import org.beetl.sql.core.query.Query;
+
+import java.util.List;
 
 
 /**
@@ -15,9 +18,9 @@ import com.artlongs.sys.model.SysUser;
 public class SysUserDao extends SysUser.Dao<SysUser> {
 
     public SysUser checkLogin(String name, String pwd) {
-        String sql = QE.selectAll().from(table).where(QE.k(userName).eq(name)).sql();
-        SysUser sysUser = getObj(sql);
-        return (sysUser != null && sysUser.verifyPassword(pwd))?sysUser:null;
+         // beetlsql query
+        SysUser  sysUser = sqlm.query(SysUser.class).lambda().andEq(SysUser::getUserName, name).single();
+        return (sysUser != null && sysUser.verifyPassword(pwd)) ? sysUser : null;
     }
 
 

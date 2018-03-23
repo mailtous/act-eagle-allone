@@ -10,6 +10,5 @@ JS技术采用 riotjs 及 layui
 密码:111
 数据库脚本在项目sql目录下
 
-注意: hello controller 的foo方法有问题,请删除后再启动项目。
 
   

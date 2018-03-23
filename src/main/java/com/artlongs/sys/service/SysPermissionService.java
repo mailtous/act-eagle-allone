@@ -77,6 +77,7 @@ public class SysPermissionService extends BaseServiceImpl<SysPermission> {
             }
 
         }
+        SysRoleService.clearRoleCache();
         return R.success("角色的权限设置成功。");
     }
 

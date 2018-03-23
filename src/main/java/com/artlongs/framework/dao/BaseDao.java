@@ -49,5 +49,6 @@ public interface BaseDao<T> {
     List<T> getList(Class<T> clz, String frameSql, Object... args);
 
     Page<T> getPage(Page page, String frameSql, Object[] args);
+    Page<T> getPage(Class<T> clz, Page page, String frameSql, Object[] args);
 
 }

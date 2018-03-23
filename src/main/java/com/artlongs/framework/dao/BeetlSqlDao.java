@@ -115,6 +115,14 @@ public class BeetlSqlDao<T> implements BaseDao<T> {
         return pageQueryToMyPage(pq,page);
     }
 
+    @Override
+    public Page<T> getPage(Class<T> clz, Page page,String frameSql, Object[] args) {
+        PageQuery<T> pq = myPageToPageQuery(page,new PageQuery());
+        SQLReady sqlReady = new SQLReady(frameSql, args);
+        pq = sqlm.execute(sqlReady, clz, pq);
+        return pageQueryToMyPage(pq,page);
+    }
+
     /**
      * 获得实体对应的数据表名
      * @return
