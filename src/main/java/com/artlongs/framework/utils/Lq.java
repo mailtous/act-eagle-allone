@@ -6,7 +6,6 @@ import com.trigersoft.jaque.expression.InvocationExpression;
 import com.trigersoft.jaque.expression.LambdaExpression;
 import com.trigersoft.jaque.expression.MemberExpression;
 import org.beetl.sql.core.UnderlinedNameConversion;
-import org.beetl.sql.core.query.LamdbaQuery;
 
 import java.io.Serializable;
 import java.lang.reflect.Member;
@@ -18,7 +17,7 @@ import java.util.function.Function;
  * Date: 3/14/18
  * Time: 2:33 PM
  */
-public class Lq<T> extends Qe<T> {
+public class Lq<T> extends Qee<T> {
 
     public Lq(){}
     public Lq(Class<T> clz) {
