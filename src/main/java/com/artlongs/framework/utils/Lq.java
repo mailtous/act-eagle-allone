@@ -17,7 +17,7 @@ import java.util.function.Function;
  * Date: 3/14/18
  * Time: 2:33 PM
  */
-public class Lq<T> extends Qee<T> {
+public class Lq<T> extends Qe<T> {
 
     public Lq(){}
     public Lq(Class<T> clz) {

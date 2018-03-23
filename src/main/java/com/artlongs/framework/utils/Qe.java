@@ -8,7 +8,7 @@ import org.osgl.util.S;
 
 import java.util.Date;
 
-import static com.artlongs.framework.utils.Qee.Opt.*;
+import static com.artlongs.framework.utils.Qe.Opt.*;
 
 /**
  * Function: 查询表达式
@@ -16,7 +16,7 @@ import static com.artlongs.framework.utils.Qee.Opt.*;
  * @Autor: leeton
  * @Date : 2/27/18
  */
-public class Qee<T> {
+public class Qe<T> {
 
     protected Integer id = 0;
     protected Class clz;
@@ -28,16 +28,16 @@ public class Qee<T> {
     protected StringBuffer sql = new StringBuffer();
     protected StringBuffer order = new StringBuffer();
 
-    public Qee() {
+    public Qe() {
     }
 
-    public Qee(Class<T> mainTableClass) {
+    public Qe(Class<T> mainTableClass) {
         this.clz = mainTableClass;
         this.mainTableName = getTableName(mainTableClass);
         this.from = FROM.sql(mainTableName,mainTableName);
     }
 
-    public Qee(String mainTableName) {
+    public Qe(String mainTableName) {
         this.mainTableName = mainTableName;
     }
 
@@ -93,111 +93,111 @@ public class Qee<T> {
         return this.sql.toString();
     }
 
-    private Qee<T> append(String sql) {
+    private Qe<T> append(String sql) {
         this.sql.append(sql);
         return this;
     }
 
-    public Qee select(String... val) {
+    public Qe select(String... val) {
         if (val.length > 0) {
             this.select = SELECT.of(val);
         }
         return this;
     }
 
-    public static Qee del(String table) {
-        Qee qe = new Qee();
+    public static Qe del(String table) {
+        Qe qe = new Qe();
         qe.sql.append(DEL.of(table));
         return qe;
     }
 
-    public Qee where(Qee qe) {
+    public Qe where(Qe qe) {
         return append(WHERE.of(qe.sql()));
     }
 
-    public Qee leftJoin(String joinTableName, String joinTableKey, String mainTableKey) {
+    public Qe leftJoin(String joinTableName, String joinTableKey, String mainTableKey) {
         if (S.blank(this.mainTableName)) throw new RuntimeException("主表不能为空。");
         this.sql.append(LEFTJOIN.of(joinTableName));
         return append(ON.on(this.mainTableName, mainTableKey, joinTableName, joinTableKey));
     }
 
-    public Qee leftJoin(Class<T> clz, String joinTableKey, String mainTableKey) {
+    public Qe leftJoin(Class<T> clz, String joinTableKey, String mainTableKey) {
         return leftJoin(getTableName(clz), joinTableKey, mainTableKey);
     }
 
-    public Qee eq(String column, Object val) {
+    public Qe eq(String column, Object val) {
         return append(EQ.sql(column, val));
     }
 
-    public Qee ne(String column, Object val) {
+    public Qe ne(String column, Object val) {
         return append(NE.sql(column, val));
     }
 
-    public Qee lt(String column, Object val) {
+    public Qe lt(String column, Object val) {
         return append(LT.sql(column, val));
     }
 
-    public Qee gt(String column, Object val) {
+    public Qe gt(String column, Object val) {
         return append(GT.sql(column, val));
     }
 
-    public Qee le(String column, Object val) {
+    public Qe le(String column, Object val) {
         return append(LE.sql(column, val));
     }
 
-    public Qee ge(String column, Object val) {
+    public Qe ge(String column, Object val) {
         return append(GE.sql(column, val));
     }
 
-    public Qee in(String column, Object val) {
+    public Qe in(String column, Object val) {
         return append(IN.sql(column, val));
     }
 
-    public Qee between(String column, Object val1, Object val2) {
+    public Qe between(String column, Object val1, Object val2) {
         return append(BETWEEN.between(column, val1, val2));
     }
 
-    public Qee isnull(String column) {
+    public Qe isnull(String column) {
         return append(ISNULL.sql(column, ""));
     }
 
-    public Qee notnull(String column) {
+    public Qe notnull(String column) {
         sql.append(NOTNULL.sql(column, ""));
         return this;
     }
 
-    public Qee like(String column, Object val) {
+    public Qe like(String column, Object val) {
         return append(LIKE.sql(column, val));
     }
 
-    public Qee likestart(String column, Object val) {
+    public Qe likestart(String column, Object val) {
         return append(LIKESTART.sql(column, val));
     }
 
-    public Qee likeend(String column, Object val) {
+    public Qe likeend(String column, Object val) {
         return append(LIKEEND.sql(column, val));
     }
 
-    public Qee likeall(String column, Object val) {
+    public Qe likeall(String column, Object val) {
         return append(LIKEAll.sql(column, val));
     }
 
-    public Qee and(Qee qe) {
+    public Qe and(Qe qe) {
         return append(AND.of(qe.sql));
     }
 
-    public Qee or(Qee qe) {
+    public Qe or(Qe qe) {
         sql.append(OR.of(qe.sql));
         return this;
     }
 
-    public Qee asc(Object... val) {
+    public Qe asc(Object... val) {
         if (0<order.length()) order.append(" ,");
         order.append(ASC.of(val));
         return this;
     }
 
-    public Qee desc(Object... val) {
+    public Qe desc(Object... val) {
         if (0<order.length()) order.append(" ,");
         order.append(DESC.of(val));
         return this;
@@ -505,28 +505,28 @@ public class Qee<T> {
 
 
     public static void main(String[] args) throws Exception {
-        String sql = new Qee(SysUser.class)
+        String sql = new Qe(SysUser.class)
                 .select(SysUser.Dao.userName, SysUser.Dao.deptId, SysDept.Dao.deptName)
                 .leftJoin(SysDept.class,SysDept.Dao.id,SysUser.Dao.deptId)
-                .where(new Qee().eq(SysUser.Dao.deptId, 1))
+                .where(new Qe().eq(SysUser.Dao.deptId, 1))
                 .asc(SysUser.Dao.deptId)
                 .desc(SysUser.Dao.userName)
                 .limit(0, 1);
 
         System.out.println("sql=" + sql);
 
-        String and_sql = new Qee().eq(SysUser.Dao.userName, "linton").and(new Qee().eq(SysUser.Dao.userName, "alice")).sql();
+        String and_sql = new Qe().eq(SysUser.Dao.userName, "linton").and(new Qe().eq(SysUser.Dao.userName, "alice")).sql();
         System.out.println("and_sql=" + and_sql);
 
 
-        String or = new Qee().eq(SysUser.Dao.deptId, 1).or(new Qee().eq(SysUser.Dao.deptId, 2)).sql();
+        String or = new Qe().eq(SysUser.Dao.deptId, 1).or(new Qe().eq(SysUser.Dao.deptId, 2)).sql();
         System.out.println("or=" + or);
 
 
-        String between = new Qee().between(SysUser.Dao.createDate, new Date(), new Date()).build();
+        String between = new Qe().between(SysUser.Dao.createDate, new Date(), new Date()).build();
         System.out.println("between=" + between);
 
-        String del = Qee.del(SysUser.Dao.table).where(new Qee().eq(SysUser.Dao.deptId, 1)).build();
+        String del = Qe.del(SysUser.Dao.table).where(new Qe().eq(SysUser.Dao.deptId, 1)).build();
 
         System.out.println("del= " + del);
 
