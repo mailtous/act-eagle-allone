@@ -11,6 +11,8 @@ import java.io.Serializable;
 import java.lang.reflect.Member;
 import java.util.function.Function;
 
+import static com.artlongs.framework.utils.Qe.Opt.FROM;
+
 /**
  * FUNC: Lambda 风格的 Query Expression.
  * User: leeton
@@ -24,6 +26,7 @@ public class Lq<T> extends Qe<T> {
         this.clz = clz;
         String tableName = getTableName(clz);
         this.mainTableName = tableName;
+        this.from = FROM.sql(mainTableName,mainTableName);
     }
     
     public interface Property<T, R> extends Function<T, R>, Serializable { }

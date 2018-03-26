@@ -1,6 +1,7 @@
 package com.artlongs.sys.dao;
 
 import act.util.Stateless;
+import com.artlongs.framework.utils.Lq;
 import com.artlongs.framework.utils.Qe;
 import com.artlongs.sys.model.SysPermission;
 import org.beetl.sql.core.SQLReady;
@@ -19,9 +20,13 @@ public class SysPermissionDao extends SysPermission.Dao<SysPermission> {
 
     public List<Long> getRoleIdsOfFuncId(Long funcid) {
 //        String sql = " select role_id from sys_permission where func_id = ?";
-        String sql = new Qe(SysPermission.class).select(roleId).where(new Qe().eq(funcId,funcid)).build();
+
+        String sql = new Lq<SysPermission>(SysPermission.class)
+                .select(SysPermission::getRoleId)
+                .where(new Lq<SysPermission>().eq(SysPermission::getFuncId,funcid))
+                .build();
+
         List<Long> roleIds = sqlm.execute(new SQLReady(sql), Long.class);
-        Query q = sqlm.query(SysPermission.class);
         return roleIds;
     }
     public boolean realDelByFuncId(Long func_id) {
@@ -41,7 +46,7 @@ public class SysPermissionDao extends SysPermission.Dao<SysPermission> {
     public SysPermission getPermissionOf(Integer funcid, Integer roleid) {
 //        String sql = " select * from sys_permission where func_id=? and role_id = ?";
 //        SysPermission sysPermission = getObj(sql, funcId, roleId);
-        String sql = new Qe(SysPermission.class).select().where(new Qe().eq(funcId,funcid).and(new Qe().eq(roleId,roleid))).build();
+        String sql = new Qe(SysPermission.class).where(new Qe().eq(funcId,funcid).and(new Qe().eq(roleId,roleid))).build();
         SysPermission sysPermission = getObj(sql);
         return sysPermission;
     }
