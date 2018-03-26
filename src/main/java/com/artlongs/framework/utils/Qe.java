@@ -1,12 +1,19 @@
 package com.artlongs.framework.utils;
 
+import com.artlongs.framework.page.Page;
 import com.artlongs.sys.model.SysDept;
 import com.artlongs.sys.model.SysUser;
+import org.beetl.sql.core.SQLManager;
+import org.beetl.sql.core.SQLReady;
 import org.beetl.sql.core.UnderlinedNameConversion;
+import org.beetl.sql.core.engine.PageQuery;
 import org.beetl.sql.core.kit.BeanKit;
+import org.osgl.util.C;
 import org.osgl.util.S;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static com.artlongs.framework.utils.Qe.Opt.*;
 
@@ -19,6 +26,7 @@ import static com.artlongs.framework.utils.Qe.Opt.*;
 public class Qe<T> {
 
     protected Integer id = 0;
+    protected SQLManager sqlManager;
     protected Class clz;
     protected String mainTableName = "";
     protected String select = " SELECT * ";
@@ -28,12 +36,22 @@ public class Qe<T> {
     protected StringBuffer sql = new StringBuffer();
     protected StringBuffer order = new StringBuffer();
 
+
+
     public Qe() {
     }
 
     public Qe(Class<T> mainTableClass) {
         this.clz = mainTableClass;
         this.mainTableName = getTableName(mainTableClass);
+        this.from = FROM.sql(mainTableName,mainTableName);
+    }
+
+    public Qe(Class<T> clz,SQLManager sqlManager) {
+        this.clz = clz;
+        this.sqlManager = sqlManager;
+        String tableName = getTableName(clz);
+        this.mainTableName = tableName;
         this.from = FROM.sql(mainTableName,mainTableName);
     }
 
@@ -206,6 +224,47 @@ public class Qe<T> {
     public String limit(Object val1, Object val2) {
         return LIMIT.between(build(), val1, val2);
     }
+
+    // ====== 集成查询方法 BEGIN ======
+    public T to() {
+        List<T> list = sqlManager.execute(new SQLReady(build()), this.clz);
+        return C.notEmpty(list)?list.get(0):null;
+
+    }
+    public <CLZ> CLZ to(Class<CLZ> tClass) {
+        List<CLZ> list = sqlManager.execute(new SQLReady(build()), tClass);
+        return C.notEmpty(list)?list.get(0):null;
+    }
+
+    public <CLZ> List<CLZ> toList() {
+        return toList(this.clz);
+    }
+
+
+    public <CLZ> List<CLZ> toList(Class<CLZ> tClass) {
+        List<CLZ> list = sqlManager.execute(new SQLReady(build()), tClass);
+        return C.notEmpty(list)?list:new ArrayList<>();
+    }
+
+    public <CLZ> Page<CLZ> toPage(Page page) {
+        return toPage(this.clz,page);
+    }
+
+    /**
+     * 返回 PAGE 查询结果集
+     * 注意不要传入 limit 语句
+     * @param clz  返回的class
+     * @param page
+     * @param <CLZ>
+     * @return
+     */
+    public <CLZ> Page<CLZ> toPage(Class<CLZ> clz, Page page) {
+        PageQuery<CLZ> pq = page.myPageToPageQuery(page,new PageQuery());
+        pq = sqlManager.execute(new SQLReady(build()), clz, pq);
+        return page.pageQueryToMyPage(pq,page);
+    }
+    // ====== 集成查询方法 END ======
+
 
 
     public enum Opt {

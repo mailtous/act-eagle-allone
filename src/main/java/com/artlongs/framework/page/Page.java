@@ -1,5 +1,8 @@
 package com.artlongs.framework.page;
 
+import org.beetl.sql.core.engine.PageQuery;
+import org.osgl.util.N;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -179,6 +182,36 @@ public class Page<T> implements Serializable {
         } else {
             return pageNumber;
         }
+    }
+
+    /**
+     * BeeltPage转为我们的Page
+     * @param pq
+     * @param page
+     * @return
+     */
+    public Page pageQueryToMyPage(PageQuery pq, Page page) {
+        page.setItems(pq.getList());
+        page.setPageSize(N.Num.valueOf(pq.getPageSize()).intValue());
+        page.setTotal(pq.getTotalRow());
+        page.setPageNumber(N.Num.valueOf(pq.getPageNumber()).intValue());
+        page.setOrderBy(pq.getOrderBy());
+        return page;
+    }
+
+    /**
+     * 我们的Page转为BeeltPage
+     * @param page
+     * @param pq
+     * @return
+     */
+    public PageQuery myPageToPageQuery(Page page,PageQuery pq) {
+        pq.setList(page.getItems());
+        pq.setPageNumber(page.getPageNumber());
+        pq.setTotalRow(page.getTotal());
+        pq.setPageSize(page.getPageSize());
+        pq.setOrderBy(page.getOrderBy());
+        return pq;
     }
 
     public String[] getGroupBy() {

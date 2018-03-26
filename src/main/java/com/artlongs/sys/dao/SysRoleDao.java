@@ -15,8 +15,9 @@ import java.util.List;
 public class SysRoleDao extends SysRole.Dao<SysRole>{
 
     public Page<SysRole> getAllOfPage(Page page){
-        String sql = new Qe(SysRole.class).build();
-        return getPage(page, sql, null);
+     /*   String sql = new Qe(SysRole.class).build();
+        return getPage(page, sql, null);*/
+        return this.lq().toPage(page);
     }
 
     public List<SysRole> getAllOfList() {

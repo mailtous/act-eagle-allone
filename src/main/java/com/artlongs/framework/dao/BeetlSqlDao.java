@@ -2,9 +2,10 @@ package com.artlongs.framework.dao;
 
 import act.Act;
 import act.db.beetlsql.BeetlSqlService;
-import act.util.Stateless;
 import com.artlongs.framework.page.Page;
 import com.artlongs.framework.utils.GenericsUtils;
+import com.artlongs.framework.utils.Lq;
+import com.artlongs.framework.utils.Qe;
 import org.beetl.sql.core.SQLManager;
 import org.beetl.sql.core.SQLReady;
 import org.beetl.sql.core.engine.PageQuery;
@@ -38,6 +39,19 @@ public class BeetlSqlDao<T> implements BaseDao<T> {
             this.persistentClass = GenericsUtils.getSuperClassGenricType(this.getClass());
         }
         return persistentClass;
+    }
+
+    /**
+     * Lambda 查询
+     * @param clz 实体类
+     * @return
+     */
+    public Lq<T> lq(Class clz,SQLManager sqlManager){
+        return new Lq<T>(clz,sqlManager);
+    }
+
+    public Lq<T> lq(){
+        return lq(this.persistentClass,sqlm);
     }
 
 
@@ -109,18 +123,18 @@ public class BeetlSqlDao<T> implements BaseDao<T> {
 
     @Override
     public Page<T> getPage( Page page,String frameSql, Object[] args) {
-        PageQuery<T> pq = myPageToPageQuery(page,new PageQuery());
+        PageQuery<T> pq = page.myPageToPageQuery(page,new PageQuery());
         SQLReady sqlReady = new SQLReady(frameSql, args);
         pq = sqlm.execute(sqlReady, this.persistentClass, pq);
-        return pageQueryToMyPage(pq,page);
+        return page.pageQueryToMyPage(pq,page);
     }
 
     @Override
     public Page<T> getPage(Class<T> clz, Page page,String frameSql, Object[] args) {
-        PageQuery<T> pq = myPageToPageQuery(page,new PageQuery());
+        PageQuery<T> pq = page.myPageToPageQuery(page,new PageQuery());
         SQLReady sqlReady = new SQLReady(frameSql, args);
         pq = sqlm.execute(sqlReady, clz, pq);
-        return pageQueryToMyPage(pq,page);
+        return page.pageQueryToMyPage(pq,page);
     }
 
     /**
@@ -131,35 +145,7 @@ public class BeetlSqlDao<T> implements BaseDao<T> {
         return S.underscore(this.persistentClass.getSimpleName());
     }
 
-    /**
-     * BeeltPage转为我们的Page
-     * @param pq
-     * @param page
-     * @return
-     */
-    public Page pageQueryToMyPage(PageQuery pq,Page page) {
-        page.setItems(pq.getList());
-        page.setPageSize(N.Num.valueOf(pq.getPageSize()).intValue());
-        page.setTotal(pq.getTotalRow());
-        page.setPageNumber(N.Num.valueOf(pq.getPageNumber()).intValue());
-        page.setOrderBy(pq.getOrderBy());
-        return page;
-    }
 
-    /**
-     * 我们的Page转为BeeltPage
-     * @param page
-     * @param pq
-     * @return
-     */
-    public PageQuery myPageToPageQuery(Page page,PageQuery pq) {
-        pq.setList(page.getItems());
-        pq.setPageNumber(page.getPageNumber());
-        pq.setTotalRow(page.getTotal());
-        pq.setPageSize(page.getPageSize());
-        pq.setOrderBy(page.getOrderBy());
-        return pq;
-    }
 
 
 }

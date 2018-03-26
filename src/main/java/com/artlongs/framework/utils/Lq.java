@@ -1,14 +1,21 @@
 package com.artlongs.framework.utils;
 
 
+import com.artlongs.framework.page.Page;
 import com.trigersoft.jaque.expression.Expression;
 import com.trigersoft.jaque.expression.InvocationExpression;
 import com.trigersoft.jaque.expression.LambdaExpression;
 import com.trigersoft.jaque.expression.MemberExpression;
+import org.beetl.sql.core.SQLManager;
+import org.beetl.sql.core.SQLReady;
 import org.beetl.sql.core.UnderlinedNameConversion;
+import org.beetl.sql.core.engine.PageQuery;
+import org.osgl.util.C;
 
 import java.io.Serializable;
 import java.lang.reflect.Member;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 import static com.artlongs.framework.utils.Qe.Opt.FROM;
@@ -23,10 +30,11 @@ public class Lq<T> extends Qe<T> {
 
     public Lq(){}
     public Lq(Class<T> clz) {
-        this.clz = clz;
-        String tableName = getTableName(clz);
-        this.mainTableName = tableName;
-        this.from = FROM.sql(mainTableName,mainTableName);
+       super(clz);
+    }
+
+    public Lq(Class<T> clz,SQLManager sqlManager) {
+        super(clz, sqlManager);
     }
     
     public interface Property<T, R> extends Function<T, R>, Serializable { }
@@ -169,6 +177,7 @@ public class Lq<T> extends Qe<T> {
     public String limit(Integer l, Integer r) {
         return super.limit(l, r);
     }
+
 
 
 }

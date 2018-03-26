@@ -21,12 +21,11 @@ public class SysPermissionDao extends SysPermission.Dao<SysPermission> {
     public List<Long> getRoleIdsOfFuncId(Long funcid) {
 //        String sql = " select role_id from sys_permission where func_id = ?";
 
-        String sql = new Lq<SysPermission>(SysPermission.class)
+        List<Long> roleIds = this.lq()
                 .select(SysPermission::getRoleId)
-                .where(new Lq<SysPermission>().eq(SysPermission::getFuncId,funcid))
-                .build();
+                .where(this.lq().eq(SysPermission::getFuncId, funcid))
+                .toList(Long.class);
 
-        List<Long> roleIds = sqlm.execute(new SQLReady(sql), Long.class);
         return roleIds;
     }
     public boolean realDelByFuncId(Long func_id) {
