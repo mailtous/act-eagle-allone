@@ -31,9 +31,10 @@ public class Qe<T> {
     protected String mainTableName = "";
     protected String select = " SELECT * ";
     protected String from = " FROM ";
+    protected StringBuffer group = new StringBuffer();
     protected StringBuffer having = new StringBuffer();
-    protected String sqlTemplate = " {select} {from} {where} {order} {having} ";
-    protected StringBuffer sql = new StringBuffer();
+    protected String sqlTemplate = " {select} {from} {where} {group} {having} {order}";
+    protected StringBuffer sql = new StringBuffer();  // 不包含 group having order 语句
     protected StringBuffer order = new StringBuffer();
 
 
@@ -88,19 +89,26 @@ public class Qe<T> {
         if(this.sql().indexOf("DELETE FROM")==-1){
             sql = sql.replace("{select}", this.select)
                     .replace("{from}", this.from)
-                    .replace("{where}", this.sql)
-                    .replace("{having}", this.having);
+                    .replace("{where}", this.sql);
 
-            if(0<this.order.length()){
+            if(0<this.group.length()){
+                sql = sql.replace("{group}", this.group);
+            }else {
+                sql = sql.replace("{group}", "");
+            }
+
+            if(0<this.having.length()){
+                sql = sql.replace("{having}", this.having);
+            }else {
+                sql = sql.replace("{having}", "");
+            }
+
+            if(0<this.order.length()){// ORDER 语句要排在最后
                 sql = sql.replace("{order}", ORDER.of(this.order));
             }else {
                 sql = sql.replace("{order}", "");
             }
-            if(0<this.having.length()){
-                sql = sql.replace("{having}", ORDER.of(this.having));
-            }else {
-                sql = sql.replace("{having}", "");
-            }
+
         }else {
             sql = this.sql.toString();
         }
@@ -210,14 +218,16 @@ public class Qe<T> {
     }
 
     public Qe group(Object... val) {
-        append(GROUP.of(val));
+        this.group.append(GROUP.of(val));
         return this;
     }
 
     public Qe having(String column,Opt opt,Object val) {
+        this.having.append(" HAVING (");
         this.having.append(column);
         this.having.append(opt.key());
         this.having.append(val);
+        this.having.append(")");
         return this;
     }
 
@@ -563,7 +573,9 @@ public class Qe<T> {
                 .where(new Qe().like(SysUser.Dao.deptId, 1))
                 .asc(SysUser.Dao.deptId)
                 .desc(SysUser.Dao.userName)
-                .group(SysUser.Dao.deptId).build();
+                .group(SysUser.Dao.deptId)
+                .having(SysUser.Dao.deptId, Opt.GT, 0)
+                .build();
 
         System.out.println("sql=" + sql);
 

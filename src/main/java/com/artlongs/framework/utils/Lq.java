@@ -1,24 +1,18 @@
 package com.artlongs.framework.utils;
 
 
-import com.artlongs.framework.page.Page;
 import com.trigersoft.jaque.expression.Expression;
 import com.trigersoft.jaque.expression.InvocationExpression;
 import com.trigersoft.jaque.expression.LambdaExpression;
 import com.trigersoft.jaque.expression.MemberExpression;
 import org.beetl.sql.core.SQLManager;
-import org.beetl.sql.core.SQLReady;
 import org.beetl.sql.core.UnderlinedNameConversion;
-import org.beetl.sql.core.engine.PageQuery;
-import org.osgl.util.C;
 
 import java.io.Serializable;
 import java.lang.reflect.Member;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Function;
 
-import static com.artlongs.framework.utils.Qe.Opt.FROM;
+import static com.artlongs.framework.utils.Qe.Opt.GROUP;
 
 /**
  * FUNC: Lambda 风格的 Query Expression.
@@ -150,12 +144,12 @@ public class Lq<T> extends Qe<T> {
         return this;
     }
 
-    public Lq asc(Property<T, ?>funs) {
-        super.asc(getFunctionName(funs));
+    public Lq asc(Property<T, ?>fun) {
+        super.asc(getFunctionName(fun));
         return this;
     }
-    public Lq desc(Property<T, ?>funs) {
-        super.desc(getFunctionName(funs));
+    public Lq desc(Property<T, ?>fun) {
+        super.desc(getFunctionName(fun));
         return this;
     }
 
@@ -163,6 +157,14 @@ public class Lq<T> extends Qe<T> {
         return super.limit(l, r);
     }
 
+    public Lq group(Property<T, ?>... funs) {
+        super.group(getFunctionName(funs));
+        return this;
+    }
 
+    public Qe having(Property<T, ?>fun,Opt opt,Object val) {
+        super.having(getFunctionName(fun), opt, val);
+        return this;
+    }
 
 }
