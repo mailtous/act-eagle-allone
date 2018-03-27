@@ -140,21 +140,6 @@ public class Lq<T> extends Qe<T> {
         return this;
     }
 
-    public Lq likestart(Property<T, ?>fun,Object v1 ) {
-        super.likestart(getFunctionName(fun),v1);
-        return this;
-    }
-
-    public Lq likeend(Property<T, ?>fun,Object v1 ) {
-        super.likeend(getFunctionName(fun),v1);
-        return this;
-    }
-
-    public Lq likeall(Property<T, ?>fun,Object v1 ) {
-        super.likeall(getFunctionName(fun),v1);
-        return this;
-    }
-
     public Lq and(Lq qe) {
         super.and(qe);
         return this;

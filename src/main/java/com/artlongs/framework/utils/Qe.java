@@ -31,7 +31,7 @@ public class Qe<T> {
     protected String mainTableName = "";
     protected String select = " SELECT * ";
     protected String from = " FROM ";
-    protected String having = "";
+    protected StringBuffer having = new StringBuffer();
     protected String sqlTemplate = " {select} {from} {where} {order} {having} ";
     protected StringBuffer sql = new StringBuffer();
     protected StringBuffer order = new StringBuffer();
@@ -180,7 +180,7 @@ public class Qe<T> {
     }
 
     public Qe notnull(String column) {
-        sql.append(NOTNULL.sql(column, ""));
+        append(NOTNULL.sql(column, ""));
         return this;
     }
 
@@ -188,24 +188,12 @@ public class Qe<T> {
         return append(LIKE.sql(column, val));
     }
 
-    public Qe likestart(String column, Object val) {
-        return append(LIKESTART.sql(column, val));
-    }
-
-    public Qe likeend(String column, Object val) {
-        return append(LIKEEND.sql(column, val));
-    }
-
-    public Qe likeall(String column, Object val) {
-        return append(LIKEAll.sql(column, val));
-    }
-
     public Qe and(Qe qe) {
         return append(AND.of(qe.sql));
     }
 
     public Qe or(Qe qe) {
-        sql.append(OR.of(qe.sql));
+        append(OR.of(qe.sql));
         return this;
     }
 
@@ -218,6 +206,18 @@ public class Qe<T> {
     public Qe desc(Object... val) {
         if (0<order.length()) order.append(" ,");
         order.append(DESC.of(val));
+        return this;
+    }
+
+    public Qe group(Object... val) {
+        append(GROUP.of(val));
+        return this;
+    }
+
+    public Qe having(String column,Opt opt,Object val) {
+        this.having.append(column);
+        this.having.append(opt.key());
+        this.having.append(val);
         return this;
     }
 
@@ -276,7 +276,7 @@ public class Qe<T> {
 
             @Override
             public String sql(Object k, Object val) {
-                String expr = " %s = '%s' ";
+                String expr = " (%s = '%s') ";
                 return String.format(expr, k, val);
             }
         },
@@ -289,7 +289,7 @@ public class Qe<T> {
 
             @Override
             public String sql(Object k, Object val) {
-                String expr = " %s != '%s' ";
+                String expr = " (%s != '%s') ";
                 return String.format(expr, k, val);
             }
         },
@@ -301,7 +301,7 @@ public class Qe<T> {
 
             @Override
             public String sql(Object k, Object val) {
-                String expr = " %s < '%s' ";
+                String expr = " (%s < '%s') ";
                 return String.format(expr, k, val);
             }
         },
@@ -313,7 +313,7 @@ public class Qe<T> {
 
             @Override
             public String sql(Object k, Object val) {
-                String expr = " %s > '%s' ";
+                String expr = " (%s > '%s') ";
                 return String.format(expr, k, val);
             }
         },
@@ -325,7 +325,7 @@ public class Qe<T> {
 
             @Override
             public String sql(Object k, Object val) {
-                String expr = " %s <= '%s' ";
+                String expr = " (%s <= '%s') ";
                 return String.format(expr, k, val);
             }
         },
@@ -337,7 +337,7 @@ public class Qe<T> {
 
             @Override
             public String sql(Object k, Object val) {
-                String expr = " %s >= '%s' ";
+                String expr = " (%s >= '%s') ";
                 return String.format(expr, k, val);
             }
         },
@@ -349,7 +349,7 @@ public class Qe<T> {
 
             @Override
             public String sql(Object k, Object val) {
-                String expr = " %s IN (%s) ";
+                String expr = " (%s IN (%s)) ";
                 return String.format(expr, k, val);
             }
         },
@@ -361,7 +361,7 @@ public class Qe<T> {
 
             @Override
             public String sql(Object k, Object val) {
-                String expr = " %s IS NULL ";
+                String expr = " (%s IS NULL) ";
                 return String.format(expr, k);
             }
         },
@@ -373,7 +373,7 @@ public class Qe<T> {
 
             @Override
             public String sql(Object k, Object val) {
-                String expr = " %s IS NOT NULL ";
+                String expr = " (%s IS NOT NULL) ";
                 return String.format(expr, k);
             }
         },
@@ -403,29 +403,8 @@ public class Qe<T> {
 
             @Override
             public String sql(Object k, Object val) {
-                String expr = "( %s like %s )";
-                return String.format(expr, k, val);
-            }
-        },
-        LIKESTART() {
-            @Override
-            public String sql(Object k, Object val) {
-                String expr = "( %s like %% %s )";
-                return String.format(expr, k, val);
-            }
-        },
-        LIKEEND() {
-            @Override
-            public String sql(Object k, Object val) {
-                String expr = "( %s like %s %% )";
-                return String.format(expr, k, val);
-            }
-        },
-        LIKEAll() {
-            @Override
-            public String sql(Object k, Object val) {
-                String expr = "( %s like %% %s %%)";
-                return String.format(expr, k, val);
+                String expr = " (LOCATE(%s,%s)) ";
+                return String.format(expr, val, k);
             }
         },
         SELECT() {
@@ -489,6 +468,20 @@ public class Qe<T> {
             public String of(Object... val) {
                 String expr = " ORDER BY %s ";
                 return String.format(expr, val);
+            }
+        },
+        GROUP() {
+            @Override
+            public String of(Object... val) {
+                String expr = " GROUP BY %s ";
+                return String.format(expr, val);
+            }
+        },
+        HAVING() {
+            @Override
+            public String between(Object k, Object opt, Object val) {
+                String expr = " (%s %s %s)";
+                return String.format(expr, k, opt, val);
             }
         },
         ASC() {
@@ -566,11 +559,11 @@ public class Qe<T> {
     public static void main(String[] args) throws Exception {
         String sql = new Qe(SysUser.class)
                 .select(SysUser.Dao.userName, SysUser.Dao.deptId, SysDept.Dao.deptName)
-                .leftJoin(SysDept.class,SysDept.Dao.id,SysUser.Dao.deptId)
-                .where(new Qe().eq(SysUser.Dao.deptId, 1))
+                .leftJoin(SysDept.class, SysDept.Dao.id, SysUser.Dao.deptId)
+                .where(new Qe().like(SysUser.Dao.deptId, 1))
                 .asc(SysUser.Dao.deptId)
                 .desc(SysUser.Dao.userName)
-                .limit(0, 1);
+                .group(SysUser.Dao.deptId).build();
 
         System.out.println("sql=" + sql);
 
