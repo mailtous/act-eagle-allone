@@ -11,9 +11,7 @@ import org.beetl.sql.core.kit.BeanKit;
 import org.osgl.util.C;
 import org.osgl.util.S;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static com.artlongs.framework.utils.Qe.Opt.*;
 
@@ -359,8 +357,27 @@ public class Qe<T> {
 
             @Override
             public String sql(Object k, Object val) {
+                if(null == val) return "";
+                Collection list = new ArrayList();
+                StringBuffer v = new StringBuffer();
+                if(val.getClass().isArray()){
+                    Object[] vv = (Object[]) val;
+                    for (int i=0;i<vv.length;i++) {
+                        v.append("'"+vv[i]+"'");
+                        v.append(",");
+                    }
+                }
+                if(val instanceof Collection){
+                    list = (Collection)val;
+                    for (Object o : list) {
+                        v.append("'"+o+"'");
+                        v.append(",");
+                    }
+                }
+
+                v.deleteCharAt(v.length() - 1);
                 String expr = " (%s IN (%s)) ";
-                return String.format(expr, k, val);
+                return String.format(expr, k, v);
             }
         },
         ISNULL() {
@@ -570,7 +587,9 @@ public class Qe<T> {
         String sql = new Qe(SysUser.class)
                 .select(SysUser.Dao.userName, SysUser.Dao.deptId, SysDept.Dao.deptName)
                 .leftJoin(SysDept.class, SysDept.Dao.id, SysUser.Dao.deptId)
-                .where(new Qe().like(SysUser.Dao.deptId, 1))
+                .where(new Qe().like(SysUser.Dao.deptId, 1)
+                        .and(new Qe().in("dept_id", new Integer[]{1,2,3}))
+                )
                 .asc(SysUser.Dao.deptId)
                 .desc(SysUser.Dao.userName)
                 .group(SysUser.Dao.deptId)
