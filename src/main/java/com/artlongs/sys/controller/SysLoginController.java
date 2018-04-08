@@ -3,6 +3,7 @@ package com.artlongs.sys.controller;
 import act.controller.annotation.TemplateContext;
 import act.controller.annotation.UrlContext;
 import act.view.RenderAny;
+import com.artlongs.framework.controller.BaseController;
 import com.artlongs.framework.vo.R;
 import com.artlongs.sys.model.SysUser;
 import com.artlongs.sys.service.SysUserService;
@@ -21,7 +22,7 @@ import javax.inject.Inject;
  */
 @UrlContext("/sys/login")
 @TemplateContext("/sys/login")
-public class SysLoginController extends SysBaseController {
+public class SysLoginController extends BaseController {
 
     @Inject
     private SysUserService sysUserService;

@@ -3,6 +3,7 @@ package com.artlongs.sys.controller;
 import act.controller.annotation.TemplateContext;
 import act.controller.annotation.UrlContext;
 import act.view.RenderAny;
+import com.artlongs.framework.controller.BaseController;
 import com.artlongs.sys.model.SysFunc;
 import com.artlongs.sys.model.SysUser;
 import com.artlongs.sys.service.SysMenuService;
@@ -29,13 +30,7 @@ public class SysHomeController extends SysBaseController {
     @GetAction({"home",""})
     public RenderAny home(H.Session session,H.Request req) {
         H.Cookie cookie = SysUser.getMyCookie(req);
-        if (null == cookie) {
-            to("/sys/login");
-        }
         SysUser sysUser = session.cached(cookie.value());
-        if (null == sysUser) {
-            to("/sys/login");
-        }
         ctx.renderArg("sysUser", sysUser);
         ctx.renderArg("menuDataUrl", "/sys/home/my/menu.json?userId="+sysUser.getId());
 
