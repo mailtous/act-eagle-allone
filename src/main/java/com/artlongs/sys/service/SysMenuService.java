@@ -114,7 +114,7 @@ public class SysMenuService {
         SysFunc menu = myMenu.get(sysUserId);
         if (null == menu) {
             menu = SysFunc.blankTopMenu();
-            List<SysFunc> myActionFuncs = getMyActionFunc(sysUserId);
+            List<SysFunc> myActionFuncs = getMyActionMenu(sysUserId);
             List<SysFunc> myTopMenus = getTopMenu(myActionFuncs);
             menu.setChilds(myTopMenus);
             buildTreeFunc(menu, myActionFuncs);

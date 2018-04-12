@@ -8,6 +8,7 @@ import com.artlongs.sys.model.RoleAssignVo;
 import com.artlongs.sys.model.SysFunc;
 import com.artlongs.sys.model.SysRole;
 import com.artlongs.sys.service.SysFuncService;
+import com.artlongs.sys.service.SysMenuService;
 import com.artlongs.sys.service.SysPermissionService;
 import com.artlongs.sys.service.SysRoleService;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -38,8 +39,9 @@ public class SysFuncController extends SysBaseController {
     @Inject
     private SysRoleService sysRoleService;
     @Inject
-    
     private SysPermissionService sysPermissionService;
+    @Inject
+    private SysMenuService sysMenuService;
 
     @GetAction("list")
     public RenderAny list() {
@@ -132,13 +134,30 @@ public class SysFuncController extends SysBaseController {
         return json(onOff(funcId,SysFunc.OFF));
     }
 
+    @PostAction("ismenu/{funcId}")
+    public RenderJSON isMenu(Long funcId,int onOff) {
+        return json(setOfMenu(funcId,onOff));
+    }
+
+
     private R onOff(Long funcId, int onOff) {
         SysFunc sysFunc = sysFuncService.get(funcId);
         if (null != sysFunc) {
             sysFunc.setAction(onOff);
             sysFuncService.update(sysFunc);
-            sysFuncService.clearMap();
-            return new R<>().setSuccess("功能项的状态已变更!");
+            clearMenu();
+            return new R<>().setSuccess("已设置为："+(onOff==1?"开启":"关闭"));
+        }
+        return new R<>().setFail("找不到对应的功能或菜单!");
+    }
+
+    private R setOfMenu(Long funcId, int onOff) {
+        SysFunc sysFunc = sysFuncService.get(funcId);
+        if (null != sysFunc) {
+            sysFunc.setIsMenu(onOff);
+            sysFuncService.update(sysFunc);
+            clearMenu();
+            return new R<>().setSuccess("已设置为："+(onOff==1?"菜单":"功能"));
         }
         return new R<>().setFail("找不到对应的功能或菜单!");
     }
@@ -175,6 +194,14 @@ public class SysFuncController extends SysBaseController {
         R r = sysPermissionService.savePermissionOfAssign(roleAssignVoList);
 
         return json(r);
+    }
+
+    /**
+     * 清理菜单相关缓存
+     */
+    private void clearMenu(){
+        sysMenuService.clear();
+        sysFuncService.clearMap();
     }
 
 }

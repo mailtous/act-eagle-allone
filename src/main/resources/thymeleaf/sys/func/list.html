@@ -18,10 +18,10 @@
             <thead>
             <tr>
                 <th width="6%">节点ID</th>
-                <th width="5%">类别</a></th>
                 <th>名称</th>
                 <th width="40%">功能URL</a></th>
-                <th width="10%">开|闭</th>
+                <th width="10%">开|关</th>
+                <th width="10%">菜单(显示)</th>
                 <th width="10%">排序</a></th>
                 <th width="15%">操作</a></th>
             </tr>
@@ -29,14 +29,18 @@
             <tbody>
             <tr th:each="func:${funcList}" data-th-id="${func.id }" data-th-pid="${func.parentId}">
                 <td width="6%" th:text="${func.id}">节点ID</td>
-                <td width="5%" th:text="${func.isMenu?'菜单':'功能'}">类别</td>
                 <td><i th:if=${func.hasChilds} class="layui-icon layui-tree-spread"></i>
                     <a class="show_childs" href="#" data-th-data-haschilds="${func.hasChilds}" data-th-data-url="'/sys/func/childs/'+${func.id}" th:text="${func.funcName}"></a>
                 </td>
                 <td width="40%" th:text="${func.funcUrl}">&nbsp;功能URL</td>
                 <td width="10%"  >
                     <div class="layui-form">
-                    <input type="checkbox" lay-filter="onoff" lay-skin="switch" lay-text="ON|OFF" data-th-data-id="${func.id}" data-th-checked="${func.action eq 1?true:false}" >
+                    <input type="checkbox" lay-filter="action" lay-skin="switch" lay-text="ON|OFF" data-th-data-id="${func.id}" data-th-checked="${func.action eq 1}" >
+                    </div>
+                </td>
+                <td width="10%"  >
+                    <div class="layui-form">
+                        <input type="checkbox" lay-filter="menu" lay-skin="switch" lay-text="ON|OFF" data-th-data-id="${func.id}" data-th-checked="${func.isMenu eq 1}" >
                     </div>
                 </td>
                 <td width="10%" th:text="${func.sequence}">排序</td>
@@ -59,13 +63,23 @@
         layform = layui.form;
         layform.render("checkbox"); // 重新渲染 checkbox
 
-        layform.on('switch(onoff)', function(obj){ // switch 点击事件
+        layform.on('switch(action)', function(obj){ // switch 点击事件
             // 获取当前控件
             var id = $(obj.elem).data('id');
             if(obj.elem.checked == true) {//是主键
                 mySubmit("/sys/func/on/" + id);
             }else {
                 mySubmit("/sys/func/off/" + id);
+            }
+        });
+
+        layform.on('switch(menu)', function(obj){ // switch 点击事件
+            // 获取当前控件
+            var id = $(obj.elem).data('id');
+            if(obj.elem.checked == true) {//是主键
+                mySubmit("/sys/func/ismenu/" + id+"?onOff=1");
+            }else {
+                mySubmit("/sys/func/ismenu/" + id+"?onOff=0");
             }
         });
 
