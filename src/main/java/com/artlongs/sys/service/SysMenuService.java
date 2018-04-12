@@ -81,7 +81,9 @@ public class SysMenuService {
                         for (SysPermission sysPermission : permissionList) {
                             SysFunc func = sysFuncService.get(sysPermission.getFuncId());
                             if (null != func) {
-                                funcList.add(func);
+                                if(!isExistInFuncList(funcList,func)){
+                                    funcList.add(func);
+                                }
                             }
                         }
                     }
@@ -94,6 +96,13 @@ public class SysMenuService {
         }
 
         return funcMap;
+    }
+
+    private boolean isExistInFuncList(List<SysFunc> funcList, SysFunc func) {
+        for (SysFunc sysFunc : funcList) {
+            if(sysFunc.getId().equals(func.getId())) return true;
+        }
+        return false;
     }
 
     /**
@@ -242,10 +251,10 @@ public class SysMenuService {
         String currentUrl = req.url().trim();
         for (String url : actionUrlList) {
             String regx = url.trim().replace(".json", "");
-            if (regx.endsWith("**")) {
+            if (regx.endsWith("**")) {//匹配所有子级目录及文件
                 regx = "^"+regx +"(.*?)";
             }
-            if (regx.endsWith("*")) {
+            if (regx.endsWith("*")) { //只匹配当前目录下的文件
                 regx = "^"+regx +"(\\w)*";
             }
             Pattern p = Pattern.compile(regx);

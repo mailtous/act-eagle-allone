@@ -6,6 +6,7 @@ import act.view.RenderAny;
 import com.artlongs.framework.controller.BaseController;
 import com.artlongs.framework.vo.R;
 import com.artlongs.sys.model.SysUser;
+import com.artlongs.sys.service.SysMenuService;
 import com.artlongs.sys.service.SysUserService;
 import org.osgl.http.H;
 import org.osgl.mvc.annotation.GetAction;
@@ -26,6 +27,8 @@ public class SysLoginController extends BaseController {
 
     @Inject
     private SysUserService sysUserService;
+    @Inject
+    private SysMenuService sysMenuService;
 
     @GetAction("")
     public RenderAny login() {
@@ -51,6 +54,7 @@ public class SysLoginController extends BaseController {
     @GetAction("out")
     public void out() {
         ctx.logout();
+        sysMenuService.clear();
         to("/sys/login");
     }
 

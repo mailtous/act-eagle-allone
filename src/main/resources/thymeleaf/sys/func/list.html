@@ -77,7 +77,7 @@
         pageTo(url);
     }) ;
     $(".show_childs").click(function (e) {
-        var url = $(this).data('url');
+        var url = $(this).data('url')+"?&t="+new Date().getTime();
         var hasChilds = $(this).data('haschilds');
         console.log(url);
         if(hasChilds){
