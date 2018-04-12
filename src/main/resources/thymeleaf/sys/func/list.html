@@ -105,19 +105,19 @@
     }
 
     $(".func_edit").click(function (e) {
-        var url = $(this).data('edit');
+        var url = $(this).data('edit')+"?&t="+new Date().getTime();;
         console.log(url);
         editer(url,'新增或编辑功能菜单');
     }) ;
 
     $(".prem_edit").click(function (e) {
-        var url = $(this).data('edit');
+        var url = $(this).data('edit')+"?&t="+new Date().getTime();;
         console.log(url);
         editer(url,'分配权限给角色');
     }) ;
 
     $(".func_del").click(function (e) {
-        var url = $(this).data('edit');
+        var url = $(this).data('edit')+"?&t="+new Date().getTime();;
         console.log(url);
         toDel(url);
     }) ;
