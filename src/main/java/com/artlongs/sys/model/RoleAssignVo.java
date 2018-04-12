@@ -9,23 +9,23 @@ package com.artlongs.sys.model;
 public class RoleAssignVo {
     public static final Integer off = 0;
     public static final Integer on = 1;
-    private Integer roleId;
-    private Integer funcId;
+    private Long roleId;
+    private Long funcId;
     private Integer onoff;
 
-    public Integer getRoleId() {
+    public Long getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(Integer roleId) {
+    public void setRoleId(Long roleId) {
         this.roleId = roleId;
     }
 
-    public Integer getFuncId() {
+    public Long getFuncId() {
         return funcId;
     }
 
-    public void setFuncId(Integer funcId) {
+    public void setFuncId(Long funcId) {
         this.funcId = funcId;
     }
 

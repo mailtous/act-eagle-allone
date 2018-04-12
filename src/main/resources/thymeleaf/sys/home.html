@@ -38,7 +38,8 @@
         var tag = this;
         var treeDataUrl = [[${menuDataUrl}]];  // 取得菜单的URL
         var treeCache = {}; //菜单的缓存
-        var userName = [[${sysUser.userName}]];
+        var userName = [[${currentUser.userName}]];
+        var currentUserId = [[${currentUser.id}]];
 
         //路由
         var r = route.create();

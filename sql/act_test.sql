@@ -11,28 +11,11 @@
  Target Server Version : 50621
  File Encoding         : utf-8
 
- Date: 02/05/2018 11:20:18 AM
+ Date: 04/12/2018 15:33:18 PM
 */
 
 SET NAMES utf8;
 SET FOREIGN_KEY_CHECKS = 0;
-
--- ----------------------------
---  Table structure for `item`
--- ----------------------------
-DROP TABLE IF EXISTS `item`;
-CREATE TABLE `item` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `desc` varchar(256) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-
--- ----------------------------
---  Records of `item`
--- ----------------------------
-BEGIN;
-INSERT INTO `item` VALUES ('1', 'dfdff');
-COMMIT;
 
 -- ----------------------------
 --  Table structure for `sys_dept`
@@ -69,13 +52,13 @@ CREATE TABLE `sys_func` (
   `create_date` datetime DEFAULT NULL,
   `modify_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COMMENT='功能点及菜单列表';
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COMMENT='功能点及菜单列表';
 
 -- ----------------------------
 --  Records of `sys_func`
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_func` VALUES ('1', '0', '用户管理', null, '0', '1', '1', '1', '2017-12-04 16:41:24', '2017-12-04 16:41:27'), ('2', '1', '用户列表', '/sys/user/list', '1', '1', '1', '2', '2017-12-04 10:48:18', '2017-12-04 10:48:22'), ('3', '1', '增加用户', '/sys/user/add', '1', '0', '1', '3', '2018-01-25 16:49:42', '2018-01-25 16:49:42'), ('4', '1', '编辑用户资料', '/sys/user/edit/*', '1', '0', '1', '4', '2018-01-25 16:00:56', '2018-01-25 16:00:56'), ('5', '0', '系统管理', null, '0', '1', '1', '2', '2018-01-15 17:38:18', '2018-01-15 17:38:20'), ('6', '5', '菜单及功能管理', '/sys/func/list', '1', '1', '1', '1', '2018-02-01 23:32:29', '2018-02-01 23:32:29'), ('7', '5', '角色管理', '/sys/role/list', null, '0', '1', '1', '2018-02-01 23:59:15', '2018-02-01 23:59:15');
+INSERT INTO `sys_func` VALUES ('1', '0', '用户管理', null, '0', '1', '1', '1', '2017-12-04 16:41:24', '2017-12-04 16:41:27'), ('2', '1', '用户列表', '/sys/user/list', '1', '1', '1', '2', '2017-12-04 10:48:18', '2017-12-04 10:48:22'), ('3', '1', '增加用户', '/sys/user/add', '1', '0', '1', '3', '2018-02-07 17:08:03', '2018-02-07 17:08:03'), ('4', '1', '编辑用户资料', '/sys/user/edit/*', '1', '0', '1', '4', '2018-02-05 13:19:12', '2018-02-05 13:19:12'), ('5', '0', '系统管理', null, '0', '1', '1', '2', '2018-01-15 17:38:18', '2018-01-15 17:38:20'), ('6', '5', '菜单及功能管理', '/sys/func/list', '1', '1', '1', '10', '2018-02-05 15:31:47', '2018-02-05 15:31:47'), ('7', '5', '角色管理', '/sys/role/list', '1', '1', '1', '1', '2018-02-05 15:18:01', '2018-02-05 15:18:01'), ('9', '0', '首页', '/sys/home', '0', '1', '1', '1', '2018-04-10 14:04:59', '2018-04-10 14:04:59');
 COMMIT;
 
 -- ----------------------------
@@ -89,13 +72,13 @@ CREATE TABLE `sys_permission` (
   `create_date` datetime DEFAULT NULL,
   `modify_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='权限表';
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COMMENT='权限表';
 
 -- ----------------------------
 --  Records of `sys_permission`
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_permission` VALUES ('1', '1', '1', '2017-12-04 11:24:17', '2017-12-04 11:24:19'), ('2', '1', '2', '2017-12-04 11:25:03', '2017-12-04 11:25:04'), ('3', '1', '3', '2017-12-04 11:25:16', '2017-12-04 11:25:18'), ('4', '1', '4', '2017-12-04 17:15:25', '2017-12-04 17:15:26'), ('5', '1', '5', '2018-01-15 17:47:39', '2018-01-15 17:47:41'), ('6', '1', '6', '2018-01-15 17:47:49', '2018-01-15 17:47:51');
+INSERT INTO `sys_permission` VALUES ('1', '1', '1', '2017-12-04 11:24:17', '2017-12-04 11:24:19'), ('2', '1', '2', '2017-12-04 11:25:03', '2017-12-04 11:25:04'), ('3', '1', '3', '2017-12-04 11:25:16', '2017-12-04 11:25:18'), ('4', '1', '4', '2017-12-04 17:15:25', '2017-12-04 17:15:26'), ('6', '1', '6', '2018-01-15 17:47:49', '2018-01-15 17:47:51'), ('7', '1', '7', '2018-02-05 15:55:17', '2018-02-05 15:55:15'), ('8', '2', '6', '2018-02-07 15:07:33', '2018-02-07 15:07:33'), ('10', '1', '5', '2018-02-07 16:59:40', '2018-02-07 16:59:40'), ('11', '2', '1', '2018-02-07 18:01:56', '2018-02-07 18:01:56'), ('13', '2', '2', '2018-03-12 15:28:37', '2018-03-12 15:28:37');
 COMMIT;
 
 -- ----------------------------
@@ -108,13 +91,13 @@ CREATE TABLE `sys_role` (
   `create_date` datetime DEFAULT NULL,
   `modify_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='角色表';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='角色表';
 
 -- ----------------------------
 --  Records of `sys_role`
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_role` VALUES ('1', '后台管理员', '2017-12-04 11:23:36', '2017-12-04 11:23:37');
+INSERT INTO `sys_role` VALUES ('1', '后台管理员', '2018-02-06 10:33:00', '2018-02-06 10:33:00'), ('2', '后台开发人员', '2018-02-06 15:25:40', '2018-02-06 15:25:40');
 COMMIT;
 
 -- ----------------------------
@@ -127,7 +110,9 @@ CREATE TABLE `sys_user` (
   `pwd` varchar(100) DEFAULT NULL,
   `role_ids` varchar(1000) DEFAULT NULL,
   `dept_id` int(11) DEFAULT NULL,
-  `del_status` tinyint(2) DEFAULT '0' COMMENT 'DELETED: -1 , DEFAULT:0',
+  `del_status` tinyint(2) DEFAULT '0' COMMENT 'DELETED: 1 , DEFAULT:0',
+  `grade` int(2) DEFAULT '0' COMMENT '未分配权限',
+  `action` int(1) DEFAULT '1' COMMENT '启用',
   `modify_date` datetime DEFAULT NULL,
   `create_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -137,16 +122,8 @@ CREATE TABLE `sys_user` (
 --  Records of `sys_user`
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_user` VALUES ('1', 'alice', '$2a$10$R4NjM9cl5MhnGG79xsLD0O0kv2sJdS.yAurMqlMEcIhVTpzYz2pIq', '[1]', '1', '0', '2017-12-27 14:52:54', '2017-12-27 14:52:54'), ('2', 'feng', '$2a$10$sWBIWVDAPt6Lt5ZTJOxfYeLW0xRK4TU48XxUuXmO4nsNo.rou9qxK', null, null, '-1', '2018-01-25 16:50:28', '2018-01-24 11:01:30');
+INSERT INTO `sys_user` VALUES ('1', 'alice', '$2a$10$sWBIWVDAPt6Lt5ZTJOxfYeLW0xRK4TU48XxUuXmO4nsNo.rou9qxK', '[1,2]', '2', '0', '1', '1', '2018-04-12 14:39:23', '2018-04-12 14:39:23'), ('2', 'feng', '$2a$10$sWBIWVDAPt6Lt5ZTJOxfYeLW0xRK4TU48XxUuXmO4nsNo.rou9qxK', '[2]', '2', '0', '2', '1', '2018-04-12 14:49:17', '2018-04-12 14:49:17');
 COMMIT;
-
--- ----------------------------
---  Table structure for `temp1`
--- ----------------------------
-DROP TABLE IF EXISTS `temp1`;
-CREATE TABLE `temp1` (
-  `id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `user`

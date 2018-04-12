@@ -11,6 +11,8 @@ import com.artlongs.sys.model.SysRole;
 import com.artlongs.sys.model.SysUser;
 import com.artlongs.sys.service.SysRoleService;
 import com.artlongs.sys.service.SysUserService;
+import org.osgl.Osgl;
+import org.osgl.http.H;
 import org.osgl.mvc.annotation.GetAction;
 import org.osgl.mvc.annotation.Param;
 import org.osgl.mvc.annotation.PostAction;
@@ -54,24 +56,26 @@ public class SysUserController extends SysBaseController {
     }
 
     @GetAction("edit_box/{id}")
-    public RenderAny edit(@Param(defIntVal = 0) Integer id ) {
+    public RenderAny edit(@Param(defIntVal = 0) Integer id ,H.Request request) {
+        SysUser currentUser = sysUserService.getCurrentLoginUser(ctx.session(), request);
         SysUser sysUser = new SysUser();
         if (id > 0) {
              sysUser = sysUserService.get(new Long(id));
         }
-        return render("edit_box.html",sysUser);
+        SysUser.GradeStatus[] gradeStatusList = SysUser.GradeStatus.values();
+        return render("edit_box.html",sysUser,gradeStatusList,currentUser);
     }
 
     @PostAction("edit/{id}")
     public RenderJSON editSave(SysUser sysUser) {
-        sysUserService.update(sysUser);
-        return json(R.success("用户资料编辑成功!"));
+        R r = sysUserService.updateOf(sysUser);
+        return json(r);
     }
 
     @PostAction("add")
     public RenderJSON add(SysUser sysUser) {
-        R b = sysUserService.createNewUser(sysUser);
-        return json(b);
+        R r = sysUserService.createNewUser(sysUser);
+        return json(r);
     }
 
     @PostAction("del/{id}")

@@ -1,4 +1,5 @@
 <div class="layui-form layui-form-pane" style="margin:10px 5px">
+    <input type="hidden" name="sysUser.id" data-th-value="${sysUser.id}"/>
     <div class="layui-form-item">
         <label class="layui-form-label">用户名</label>
         <div class="layui-input-inline">
@@ -12,6 +13,27 @@
         </div>
     </div>
     <div class="layui-form-item">
+        <label class="layui-form-label">激活:</label>
+        <div class="layui-input-inline">
+            <input type="checkbox" name="sysUser.action" lay-filter="action" value="1" data-th-roleid="${sysUser.action}" lay-skin="switch" data-th-checked="${1 eq sysUser.action}" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">删除:</label>
+        <div class="layui-input-inline">
+            <input type="checkbox" name="sysUser.delStatus" lay-filter="delStatus" value="1" data-th-roleid="${sysUser.delStatus}" lay-skin="switch" data-th-checked="${1 eq sysUser.delStatus}" />
+        </div>
+    </div>
+
+    <div class="layui-form-item" th:remove="${currentUser.grade neq 1}?'all'">
+        <label class="layui-form-label">全局权限:</label>
+        <div class="layui-input-inline ">
+            <select name="sysUser.grade" lay-filter="grade" >
+                <option th:each="grade:${gradeStatusList}" th:value="${grade.key}" th:text="${grade.cname}" th:selected="${sysUser.grade==grade.key}" />
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
         <div class="layui-input-block">
             <button class="layui-btn" lay-submit lay-filter="userEdit">提交</button>
         </div>
@@ -21,6 +43,22 @@
 <script th:inline="javascript">
     layui.use('form', function () {
         var form = layui.form;
+         layform.render("checkbox"); // 重新渲染 checkbox
+         layform.render("select"); // 重新渲染 select
+
+        //switch 点击事件
+        layform.on('switch(action)', function(obj){
+            // 获取当前控件
+            obj.elem.value=obj.elem.checked?1:0;
+            console.log("action= ", obj.elem.value);
+        });
+           layform.on('switch(delStatus)', function(obj){
+            // 获取当前控件
+            obj.elem.value=obj.elem.checked?1:0;
+            console.log("delStatus= ", obj.elem.value);
+        });
+
+
         //监听提交
         form.on('submit(userEdit)', function (params) {
             console.log(params.field);

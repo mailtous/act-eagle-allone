@@ -8,6 +8,7 @@ import com.artlongs.sys.dao.SysUserDao;
 import com.artlongs.sys.model.RoleAssignVo;
 import com.artlongs.sys.model.SysPermission;
 import com.artlongs.sys.model.SysUser;
+import org.osgl.http.H;
 import org.osgl.util.C;
 
 import javax.inject.Inject;
@@ -46,6 +47,18 @@ public class SysUserService extends BaseServiceImpl<SysUser> {
         return null != sysUser ? r.setSuccess("登录成功。") : r.setFail("用户名或密码错误!");
     }
 
+    /**
+     * 取得当前已经登录的用户信息
+     * @param session
+     * @param request
+     * @return
+     */
+    public SysUser getCurrentLoginUser(H.Session session, H.Request request){
+        H.Cookie cookie = request.cookie(SysUser.cookies_name);
+        SysUser sysUser = session.cached(cookie.value());
+        return sysUser;
+    }
+
     public Page<SysUser> getPage(Page page) {
         String sql = " select * from sys_user";
         page = sysUserDao.getPage(page, sql ,null);
@@ -79,6 +92,18 @@ public class SysUserService extends BaseServiceImpl<SysUser> {
         return sysUser;
     }
 
+    public R updateOf(SysUser sysUser) {
+        R vo = new R<>().setFail("更新用户信息失败。");
+        SysUser dbUser = get(sysUser.getId());
+        if (null != dbUser) {
+            int rows = update(sysUser.copyTo(dbUser));
+            vo.setSuccess("更新用户信息成功。");
+        }else {
+            vo.setFail("用户不存在。");
+        }
+        return vo;
+    }
+
     public int update(SysUser sysUser) {
         sysUser.setModifyDate(new Date());
         int rows = sysUserDao.update(sysUser);
@@ -102,8 +127,8 @@ public class SysUserService extends BaseServiceImpl<SysUser> {
       return sysPermissionService.getPermissionList(roleId);
     }
 
-    public List<Integer> getMyRoleList(Integer sysUserId){
-        List<Integer> roleIdList = C.newList();
+    public List<Long> getMyRoleList(Long sysUserId){
+        List<Long> roleIdList = C.newList();
         SysUser sysUser = sysUserDao.get(new Long(sysUserId));
         if (null != sysUser) {
             roleIdList = sysUser.roleIdList();
@@ -114,7 +139,7 @@ public class SysUserService extends BaseServiceImpl<SysUser> {
 
     public R assignRole(List<RoleAssignVo> roleAssignVoList,SysUser sysUser){
         if (C.notEmpty(roleAssignVoList)) {
-            Set<Integer> roleIds = C.newSet(sysUser.roleIdList());
+            Set<Long> roleIds = C.newSet(sysUser.roleIdList());
             for (RoleAssignVo roleAssignVo : roleAssignVoList) {
                 if (RoleAssignVo.on == roleAssignVo.getOnoff()) {
                     roleIds.add(roleAssignVo.getRoleId());

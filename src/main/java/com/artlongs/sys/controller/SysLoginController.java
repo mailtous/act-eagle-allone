@@ -48,6 +48,13 @@ public class SysLoginController extends BaseController {
        return render("login.html");
     }
 
+    @GetAction("out")
+    public void out() {
+        ctx.logout();
+        to("/sys/login");
+    }
+
+
     private R loginCheck(String userName , String pwd, H.Session session, H.Response response){
         R<SysUser> r = sysUserService.checkLogin(userName, pwd);
         if (r.isSucc()) { //用户登录检查成功,保存到session

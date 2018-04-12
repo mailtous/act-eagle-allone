@@ -35,7 +35,7 @@ public class SysPermissionService extends BaseServiceImpl<SysPermission> {
         return permissionList;
     }
 
-    public SysPermission getPermissionOf(Integer funcId, Integer roleId) {
+    public SysPermission getPermissionOf(Long funcId, Long roleId) {
         return sysPermissionDao.getPermissionOf(funcId, roleId);
     }
     public List<Long> getRoleIdsOfFuncId(Long funcId) {

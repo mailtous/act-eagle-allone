@@ -41,7 +41,7 @@
 <script th:inline="javascript">
 
     $(".user_edit").click(function (e) {
-        var url = $(this).data('url');
+        var url = $(this).data('url')+"?&t="+new Date().getTime();
         console.log(url);
         editer(url,"新增或编辑用户信息");
     }) ;

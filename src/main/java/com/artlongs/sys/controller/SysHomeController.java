@@ -29,10 +29,9 @@ public class SysHomeController extends SysBaseController {
 
     @GetAction({"home",""})
     public RenderAny home(H.Session session,H.Request req) {
-        H.Cookie cookie = SysUser.getMyCookie(req);
-        SysUser sysUser = session.cached(cookie.value());
-        ctx.renderArg("sysUser", sysUser);
-        ctx.renderArg("menuDataUrl", "/sys/home/my/menu.json?userId="+sysUser.getId());
+        SysUser currentUser = SysUser.getCurrentLoginUser(session, req);
+        ctx.renderArg("currentUser", currentUser);
+        ctx.renderArg("menuDataUrl", "/sys/home/my/menu.json?userId="+currentUser.getId());
 
         return render("home.html");
     }
@@ -51,7 +50,7 @@ public class SysHomeController extends SysBaseController {
     }
 
     @GetAction("home/my/menu.json")
-    public RenderJSON myMenu(Integer userId) {
+    public RenderJSON myMenu(Long userId) {
         SysFunc sysFunc = sysMenuService.getMyMenu(userId);
 
         return json(sysFunc);

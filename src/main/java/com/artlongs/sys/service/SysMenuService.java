@@ -3,11 +3,15 @@ package com.artlongs.sys.service;
 import act.util.Stateless;
 import com.artlongs.sys.model.SysFunc;
 import com.artlongs.sys.model.SysPermission;
+import com.artlongs.sys.model.SysUser;
+import org.osgl.http.H;
 import org.osgl.util.C;
 
 import javax.inject.Inject;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -27,9 +31,9 @@ public class SysMenuService {
     private SysPermissionService sysPermissionService;
 
     /** 简单的缓存菜单及权限列表 **/
-    public static Map<Integer, List<SysPermission>> permissionMap = new ConcurrentHashMap<>();
-    public static Map<Integer, List<SysFunc>> funcMap = new ConcurrentHashMap<>();
-    public static Map<Integer, SysFunc> myMenu = new ConcurrentHashMap<>();
+    public static Map<Long, List<SysPermission>> permissionMap = new ConcurrentHashMap<>();
+    public static Map<Long, List<SysFunc>> funcMap = new ConcurrentHashMap<>();
+    public static Map<Long, SysFunc> myMenu = new ConcurrentHashMap<>();
 
     public void clear(){
         try{
@@ -46,9 +50,9 @@ public class SysMenuService {
      * @param roleIds
      * @return
      */
-    public Map<Integer, List<SysPermission>> getPermissionMap(List<Integer> roleIds) {
+    public Map<Long, List<SysPermission>> getPermissionMap(List<Long> roleIds) {
         if (C.isEmpty(roleIds)) return permissionMap;
-        for (Integer roleId : roleIds) {
+        for (Long roleId : roleIds) {
             if (null == permissionMap.get(roleId)) {
                 List<SysPermission> permissionList = sysPermissionService.getPermissionList(new Long(roleId));
                 if (C.notEmpty(permissionList)) {
@@ -66,10 +70,10 @@ public class SysMenuService {
      * @param roleIds
      * @return
      */
-    private Map<Integer, List<SysFunc>> getMyAllFuncMap(Integer sysUserId) {
-        if(null == funcMap.get(sysUserId)){
+    private Map<Long, List<SysFunc>> getMyAllFuncMap(Long sysUserId) {
+        if(C.isEmpty(funcMap.get(sysUserId))){
             List<SysFunc> funcList = C.newList();
-            List<Integer> roleIds = sysUserService.getMyRoleList(sysUserId);
+            List<Long> roleIds = sysUserService.getMyRoleList(sysUserId);
             if (C.notEmpty(roleIds)) {
                 permissionMap = getPermissionMap(roleIds);
                 if (C.notEmpty(permissionMap)) {
@@ -97,14 +101,14 @@ public class SysMenuService {
      * @param sysUserId
      * @return
      */
-    public SysFunc getMyMenu(Integer sysUserId){
+    public SysFunc getMyMenu(Long sysUserId){
         SysFunc menu = myMenu.get(sysUserId);
         if (null == menu) {
             menu = SysFunc.blankTopMenu();
             List<SysFunc> myActionFuncs = getMyActionFunc(sysUserId);
             List<SysFunc> myTopMenus = getTopMenu(myActionFuncs);
             menu.setChilds(myTopMenus);
-            getChildMenu(menu, myActionFuncs);
+            buildTreeFunc(menu, myActionFuncs);
             myMenu.putIfAbsent(sysUserId, menu);
         }
         return menu;
@@ -116,14 +120,13 @@ public class SysMenuService {
      * @param myActionFuncs
      * @return
      */
-    private SysFunc getChildMenu(SysFunc sysFunc,List<SysFunc> myActionFuncs){
+    private void buildTreeFunc(SysFunc sysFunc, List<SysFunc> myActionFuncs){
         for (SysFunc func : sysFunc.getChilds()) {
             List<SysFunc> childs = getChildsByParentId(myActionFuncs, func.getId());
             if(C.isEmpty(childs)) break;
             func.setChilds(childs);
-            getChildMenu(func, myActionFuncs);
+            buildTreeFunc(func, myActionFuncs);
         }
-        return sysFunc;
     }
 
 
@@ -134,14 +137,16 @@ public class SysMenuService {
      * @param roleIds
      * @return
      */
-    public Set<String> getMyActionUrls(Integer sysUserID) {
+    public Set<String> getMyActionUrls(Long sysUserId) {
         List<SysFunc> funcList = C.newList();
         Set<String> urls = C.newSet();
-        getMyAllFuncMap(sysUserID);
-        funcList = funcMap.get(sysUserID);
+        if(C.isEmpty(funcMap.get(sysUserId))){
+            getMyAllFuncMap(sysUserId);
+        }
+        funcList = funcMap.get(sysUserId);
         if (C.notEmpty(funcList)) {
             urls = funcList.stream()
-                    .filter(f -> (SysFunc.ON == f.getAction()))
+                    .filter(f -> (SysFunc.ON == f.getAction()) && (null != f.getFuncUrl()))
                     .map(SysFunc::getFuncUrl)
                     .collect(Collectors.toSet());
         }
@@ -154,10 +159,12 @@ public class SysMenuService {
      * @param roleIds
      * @return
      */
-    public List<SysFunc> getMyActionMenu(Integer sysUserID) {
+    public List<SysFunc> getMyActionMenu(Long sysUserId) {
         List<SysFunc> funcList = C.newList();
-        getMyAllFuncMap(sysUserID);
-        funcList = funcMap.get(sysUserID);
+        if(C.isEmpty(funcMap.get(sysUserId))){
+            getMyAllFuncMap(sysUserId);
+        }
+        funcList = funcMap.get(sysUserId);
         if (C.notEmpty(funcList)) {
             funcList.removeIf(f -> (0 == f.getIsMenu() || SysFunc.OFF == f.getAction()));
         }
@@ -170,10 +177,12 @@ public class SysMenuService {
      * @param roleIds
      * @return
      */
-    public List<SysFunc> getMyActionFunc(Integer sysUserID) {
+    public List<SysFunc> getMyActionFunc(Long sysUserId) {
         List<SysFunc> funcSet = C.newList();
-        getMyAllFuncMap(sysUserID);
-        funcSet = funcMap.get(sysUserID);
+        if(C.isEmpty(funcMap.get(sysUserId))){
+            getMyAllFuncMap(sysUserId);
+        }
+        funcSet = funcMap.get(sysUserId);
         if (C.notEmpty(funcSet)) {
             funcSet.removeIf(f -> (SysFunc.OFF==f.getAction()));
         }else {
@@ -215,5 +224,35 @@ public class SysMenuService {
             }
         }
         return funcList;
+    }
+
+    /**
+     * 检查用户是否有当前路径的访问权限
+     * @param sysUser
+     * @param req
+     */
+    public boolean canAccessUrl(SysUser sysUser, H.Request req) {
+        if(null == sysUser) return false;
+        //超级管理员拥有所有权限
+        if(sysUser.isSuperAdmin())  return true;
+
+        Set<String> actionUrlList = getMyActionUrls(sysUser.getId());
+        if(C.isEmpty(actionUrlList)) return false;
+
+        String currentUrl = req.url().trim();
+        for (String url : actionUrlList) {
+            String regx = url.trim().replace(".json", "");
+            if (regx.endsWith("**")) {
+                regx = "^"+regx +"(.*?)";
+            }
+            if (regx.endsWith("*")) {
+                regx = "^"+regx +"(\\w)*";
+            }
+            Pattern p = Pattern.compile(regx);
+            Matcher m = p.matcher(currentUrl);
+            if(m.find()) return true;
+        }
+
+        return false;
     }
 }

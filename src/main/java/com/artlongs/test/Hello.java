@@ -22,11 +22,11 @@ public class Hello extends BaseController {
     UserService userService;
 
 
-    @GetAction("foo")
+/*    @GetAction("foo")
     public RenderAny foo(Foo foo) throws SQLException {
         String msg = " hello to leeton.";
         return render("hello.html",foo);
-    }
+    }*/
 
 
 

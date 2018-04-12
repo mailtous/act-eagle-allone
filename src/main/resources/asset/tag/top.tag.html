@@ -10,9 +10,8 @@
         <li class="layui-nav-item" lay-unselect="">
             <a href="javascript:;"><img src="/asset/ui/layui/images/face/1.gif" class="layui-nav-img">{userName}</a>
             <dl class="layui-nav-child">
-                <dd><a href="javascript:;">修改信息</a></dd>
-                <dd><a href="javascript:;">安全管理</a></dd>
-                <dd><a href="javascript:;">退了</a></dd>
+                <dd><a class="user_edit" data-url="{'/sys/user/edit_box/'+currentUserId}" href="javascript:;">修改信息</a></dd>
+                <dd><a class="user_logout" href="/sys/login/out">退了</a></dd>
             </dl>
         </li>
     </ul>
@@ -34,5 +33,13 @@
                 layer.msg(elem.text());
             });
         });
+
+
+    $(".user_edit").click(function (e) {
+        var url = $(this).data('url')+"?&t="+new Date().getTime();
+        console.log(url);
+        editer(url,"新增或编辑用户信息");
+    }) ;
+
     </script>
 </top>

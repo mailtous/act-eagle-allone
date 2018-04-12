@@ -20,8 +20,6 @@ import java.util.List;
  */
 public class SysFunc extends BaseEntity {
 
-    public static final int ON =1;
-    public static final int OFF =0;
     public static final int TOP_NODE =0;  //顶层节点
 
     private Long parentId;

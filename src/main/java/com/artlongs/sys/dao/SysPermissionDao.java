@@ -42,7 +42,7 @@ public class SysPermissionDao extends SysPermission.Dao<SysPermission> {
         return permissionList;
     }
 
-    public SysPermission getPermissionOf(Integer funcid, Integer roleid) {
+    public SysPermission getPermissionOf(Long funcid, Long roleid) {
 //        String sql = " select * from sys_permission where func_id=? and role_id = ?";
 //        SysPermission sysPermission = getObj(sql, funcId, roleId);
         String sql = new Qe(SysPermission.class).where(new Qe().eq(funcId,funcid).and(new Qe().eq(roleId,roleid))).build();

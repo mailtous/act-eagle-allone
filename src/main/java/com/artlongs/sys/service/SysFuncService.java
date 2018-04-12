@@ -34,7 +34,17 @@ public class SysFuncService extends BaseServiceImpl<SysFunc> {
     @Inject
     private SysPermissionService sysPermissionService;
 
-
+    public int saveOrUpdate(SysFunc func) {
+        func.setParentId(null == func.getParentId()?SysFunc.TOP_NODE:func.getParentId());
+        func.setNode(null == func.getNode()?SysFunc.TOP_NODE:func.getNode());
+        func.setFuncUrl(func.getFuncUrl().trim());
+        func.setFuncName(func.getFuncName().trim());
+        if(null == func.getId() || func.getId() <=0) {
+            return add(func);
+        }else {
+            return updateAndTime(func);
+        }
+    }
 
 
     /**
@@ -130,9 +140,10 @@ public class SysFuncService extends BaseServiceImpl<SysFunc> {
         Map<Long, List<SysFunc>> map = new HashMap<Long, List<SysFunc>>();
         if (C.notEmpty(sysFuncList)) {
             for (SysFunc func : sysFuncList) {
-                List<SysFunc> list = map.containsKey(func.getParentId()) ? map.get(func.getParentId()) : new ArrayList<SysFunc>();
+                Long parentId = null == func.getParentId()?0:func.getParentId();
+                List<SysFunc> list = map.containsKey(parentId) ? map.get(parentId) : new ArrayList<SysFunc>();
                 list.add(func);
-                map.put(func.getParentId(), list);
+                map.put(parentId, list);
             }
         }
         markHasChild(map); //标记父节点

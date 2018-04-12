@@ -14,8 +14,10 @@ public class BaseEntity implements Serializable {
     private Date createDate;
     private Date modifyDate;
 
-    public final static Integer DELETED = -1;
-    public final static Integer UN_DEL = 0;
+    public final static Integer DELETED = 1;  //已删除
+    public final static Integer UN_DEL = 0;    //正常，未删除
+    public static final int ON =1;
+    public static final int OFF =0;
 
 
     public BaseEntity() {

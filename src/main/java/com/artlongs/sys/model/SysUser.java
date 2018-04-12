@@ -25,7 +25,6 @@ import java.util.Map;
  * @Autor: leeton
  * @Date : 11/21/17
  */
-@AutoConfig
 public class SysUser extends BaseEntity {
 
     @Configuration("sysuser.cookies.name")
@@ -36,6 +35,8 @@ public class SysUser extends BaseEntity {
     private String roleIds;
     private Long deptId;
     private Integer delStatus;
+    private Integer grade; 			//系统用户权限等级 GradeStatus
+    private Integer action; 		//激活状态
 
     @Stateless
     public static abstract class Dao<T> extends BeetlSqlDao<SysUser>{
@@ -55,10 +56,10 @@ public class SysUser extends BaseEntity {
     }
 
 
-    public List<Integer> roleIdList() {
-        List<Integer> roleIdList = C.newList();
+    public List<Long> roleIdList() {
+        List<Long> roleIdList = C.newList();
         if (S.noBlank(roleIds)) {
-            roleIdList = JSON.parseArray(roleIds, Integer.class);
+            roleIdList = JSON.parseArray(roleIds, Long.class);
         }
         return roleIdList;
     }
@@ -69,11 +70,11 @@ public class SysUser extends BaseEntity {
      */
     public List<SysRole> roleList() {
         List<SysRole> sysRoleList = C.newList();
-        List<Integer> roleIdList = roleIdList();
+        List<Long> roleIdList = roleIdList();
         if (C.notEmpty(roleIdList)) {
-            for (Integer roleId : roleIdList) {
+            for (Long roleId : roleIdList) {
                 SysRole role = new SysRole();
-                role.setId(new Long(roleId));
+                role.setId(roleId);
                 role.setRoleName(SysRoleService.allRoleMap.get(roleId));
                 sysRoleList.add(role);
             }
@@ -83,10 +84,10 @@ public class SysUser extends BaseEntity {
 
     @Transient
     public Map<Long, Boolean> hasRoleMap() {
-        List<Integer> roleIdList = roleIdList();
+        List<Long> roleIdList = roleIdList();
         Map<Long, Boolean> roleMap = C.newMap();
-        for (Integer roleId : roleIdList) {
-            roleMap.put(new Long(roleId), true);
+        for (Long roleId : roleIdList) {
+            roleMap.put(roleId, true);
         }
         return roleMap;
     }
@@ -133,6 +134,118 @@ public class SysUser extends BaseEntity {
         return cookie;
     }
 
+    public static SysUser getCurrentLoginUser(H.Session session, H.Request request){
+        H.Cookie cookie = request.cookie(cookies_name);
+        SysUser sysUser = session.cached(cookie.value());
+        return sysUser;
+    }
+
+    public static boolean logout(H.Session session, H.Request request){
+        H.Cookie cookie = request.cookie(cookies_name);
+        session.remove(cookie.value());
+        return true;
+    }
+
+    @Transient
+    public boolean isSuperAdmin() {
+        if (action()) {
+            return GradeStatus.SUPERADMIN.getKey() == this.grade;
+        }
+        return false;
+    }
+    @Transient
+    public boolean action() {
+        if(null == this.action) return false;
+        return  (ON == this.action && DELETED != this.delStatus);
+    }
+
+    /**
+     * 系统用户权限等级
+     */
+    public enum GradeStatus{
+        DEFAULT(0, "未分配等级"),
+        SUPERADMIN(1, "超级管理员"),
+        ADMIN(2, "普通管理员"),
+        MAJORDOMO(3, "总监"),
+        MANAGER(4, "经理"),
+        OFFICER(5, "主管"),
+        ASSISTANT(6, "专员"),
+        SALES(7, "销售员"),
+        OTHER(8, "一般人员");
+
+        private Integer key;
+        private String cname;
+
+        GradeStatus(Integer key, String cname) {
+            this.key = key;
+            this.cname = cname;
+        }
+
+        public Integer getKey() {
+            return key;
+        }
+
+        public void setKey(Integer key) {
+            this.key = key;
+        }
+
+        public String getCname() {
+            return cname;
+        }
+
+        public void setCname(String cname) {
+            this.cname = cname;
+        }
+
+        public static String getCnameByKey(int key) {
+            for (GradeStatus type : GradeStatus.values()) {
+                if (type.getKey() == key) return type.getCname();
+            }
+            return "";
+        }
+        public static GradeStatus getStatusByKey(int key) {
+            for (GradeStatus type : GradeStatus.values()) {
+                if (type.getKey() == key) return type;
+            }
+            return DEFAULT;
+        }
+    }
+
+    public SysUser copyTo(SysUser sysUser) {
+        //TODO : 先手动copy ,等osgl工具copy功能
+        if(null != getId()){
+            sysUser.setId(getId());
+        }
+        if(null != getUserName()){
+            sysUser.setUserName(getUserName());
+        }
+        if(null != getPwd()){
+            sysUser.setPwd(getPwd());
+        }
+        if(null != getDeptId()){
+            sysUser.setDeptId(getDeptId());
+        }
+        if(null != getRoleIds()){
+            sysUser.setRoleIds(getRoleIds());
+        }
+        if(null != getAction()){
+            sysUser.setAction(getAction());
+        }
+        if(null != getGrade()){
+            sysUser.setGrade(getGrade());
+        }
+        if(null != getDelStatus()){
+            sysUser.setDelStatus(getDelStatus());
+        }
+        if(null != getModifyDate()){
+            sysUser.setModifyDate(getModifyDate());
+        }
+        if(null != getCreateDate()){
+            sysUser.setCreateDate(getCreateDate());
+        }
+        return sysUser;
+    }
+
     //=============== geter && setter ================================================
 
     public String getUserName() {
@@ -175,4 +288,27 @@ public class SysUser extends BaseEntity {
         this.delStatus = delStatus;
     }
 
+    public Integer getGrade() {
+        return grade;
+    }
+
+    public void setGrade(Integer grade) {
+        this.grade = grade;
+    }
+
+    public static int getON() {
+        return ON;
+    }
+
+    public static int getOFF() {
+        return OFF;
+    }
+
+    public Integer getAction() {
+        return action;
+    }
+
+    public void setAction(Integer action) {
+        this.action = action;
+    }
 }

@@ -56,10 +56,12 @@
     });
     var currentNodeId = [[${sysFunc.id}]];
     var parentId = [[${sysFunc.parentId}]];
+     currentNodeId = currentNodeId == null?0:currentNodeId;
+     parentId = parentId == null?0:parentId;
 //    console.log("NodeId:" + NodeId);
     layui.use('form', function () { //编辑框提交保存
         var form = layui.form;
-        var editUrl = (currentNodeId == -1) ? "/sys/func/add": "/sys/func/edit/" + currentNodeId ;
+        var editUrl = (currentNodeId <=0) ? "/sys/func/add": "/sys/func/edit/" + currentNodeId ;
         console.log('editUrl:'+editUrl);
         //监听提交
         form.on('submit(edit_submit)', function (params) {

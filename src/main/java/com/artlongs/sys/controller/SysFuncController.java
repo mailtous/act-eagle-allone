@@ -10,10 +10,13 @@ import com.artlongs.sys.model.SysRole;
 import com.artlongs.sys.service.SysFuncService;
 import com.artlongs.sys.service.SysPermissionService;
 import com.artlongs.sys.service.SysRoleService;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.osgl.Osgl;
 import org.osgl.mvc.annotation.GetAction;
 import org.osgl.mvc.annotation.Param;
 import org.osgl.mvc.annotation.PostAction;
 import org.osgl.mvc.result.RenderJSON;
+import org.osgl.util.N;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -35,6 +38,7 @@ public class SysFuncController extends SysBaseController {
     @Inject
     private SysRoleService sysRoleService;
     @Inject
+    
     private SysPermissionService sysPermissionService;
 
     @GetAction("list")
@@ -46,7 +50,7 @@ public class SysFuncController extends SysBaseController {
     }
 
     @GetAction("childs/{parentId}")
-    public RenderAny childs(Long parentId) {
+    public RenderAny childs(@Param(defLongVal = 0) Long parentId) {
         Map<Long, List<SysFunc>> funcTreeMap = sysFuncService.getModuleTreeMap();
         List<SysFunc> funcList = funcTreeMap.get(parentId); //子菜单
         Stack<SysFunc> parentStack = sysFuncService.getParentStackOfNodeId(parentId);//父菜单导航条
@@ -81,17 +85,28 @@ public class SysFuncController extends SysBaseController {
         return render("edit_box.html");
     }
 
+    /**
+     * 编辑功能信息
+     * @param sysFunc
+     * @return
+     */
     @PostAction("edit/{id}")
     public RenderJSON editSave(SysFunc sysFunc) {
-        if(sysFuncService.updateAndTime(sysFunc)>0){
-            sysFuncService.clearMap();
+        if (null != sysFunc.getId() && null != sysFuncService.get(sysFunc.getId())) {
+            sysFunc.setFuncUrl(sysFunc.getFuncUrl().trim());
+            sysFunc.setFuncName(sysFunc.getFuncName().trim());
+            if(sysFuncService.saveOrUpdate(sysFunc)>0){
+                sysFuncService.clearMap();
+                return json(new R<>().setSuccess("系统功能编辑成功!"));
+            }
         }
-        return json(new R<>().setSuccess("系统功能编辑成功!"));
+
+        return json(new R<>().setFail("系统功能编辑失败!"));
     }
 
     @PostAction("add")
     public RenderJSON add(SysFunc sysFunc) {
-        if(sysFuncService.add(sysFunc)>0){
+        if(sysFuncService.saveOrUpdate(sysFunc)>0){
             sysFuncService.clearMap();
         }
         return json(new R<>().setSuccess("系统功能添加成功!"));
@@ -143,7 +158,6 @@ public class SysFuncController extends SysBaseController {
         ctx.renderArg("sysRoleList", sysRoleList);
         ctx.renderArg("sysFunc", sysFunc);
         ctx.renderArg("roleMap", roleMap);
-
         return render("perm_box.html");
     }
 
