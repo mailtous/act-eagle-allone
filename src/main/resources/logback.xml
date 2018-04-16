@@ -7,7 +7,7 @@
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <!-- By default, encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
     <encoder>
-      <pattern>%d{HH:mm:ss.SSS}[%thread] %highlight(%-5level) %cyan(%logger{5}) - %highlight(%msg) %n</pattern>
+      <pattern>%d{HH:mm:ss.SSS}[%thread] %highlight(%-5level) %cyan(%logger{10}).%M : %highlight(%msg) %n</pattern>
     </encoder>
   </appender>
 
@@ -15,7 +15,7 @@
   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <file>act.log</file>
     <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-      <Pattern>%d{yyyy-MM-dd_HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+      <pattern>%d{yyyyMMdd HH:mm:ss.SSS}[%level][%thread] - %logger{10}.%M : %msg%n</pattern>
     </encoder>
 
     <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
@@ -32,7 +32,7 @@
   <appender name="METRIC_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <file>act.metric.log</file>
     <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-      <Pattern>%d{yyyy-MM-dd_HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+      <Pattern>%d{yyyy-MM-dd_HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg %n</Pattern>
     </encoder>
 
     <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">

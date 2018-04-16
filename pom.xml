@@ -16,8 +16,8 @@
                 <profile.site>xxx.com</profile.site>
                 <profile.js.compress>true</profile.js.compress>
                 <profile.jdk.version>1.8</profile.jdk.version>
-                <profiles.logger.path>${project.basedir}\logs</profiles.logger.path>
-                <profiles.logger.level>error</profiles.logger.level>
+                <profiles.logger.path>${project.basedir}/logs</profiles.logger.path>
+                <profiles.logger.level>info</profiles.logger.level>
             </properties>
         </profile>
         <profile>
@@ -27,8 +27,8 @@
                 <profile.site>xxx.dev</profile.site>
                 <profile.js.compress>false</profile.js.compress>
                 <profile.jdk.version>1.8</profile.jdk.version>
-                <profiles.logger.path>${project.basedir}\logs</profiles.logger.path>
-                <profiles.logger.level>error</profiles.logger.level>
+                <profiles.logger.path>${project.basedir}/logs</profiles.logger.path>
+                <profiles.logger.level>info</profiles.logger.level>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
