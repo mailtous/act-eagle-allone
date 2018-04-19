@@ -56,7 +56,7 @@
     });
 
     $(".role_edit").click(function (e) {
-        var url = $(this).data('edit');
+        var url = $(this).data('edit')+"?&t="+new Date().getTime();
         console.log(url);
         editer(url,'给用户分配角色(权限)');
     }) ;

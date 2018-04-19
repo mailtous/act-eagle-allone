@@ -19,13 +19,6 @@ public class BaseEntity implements Serializable {
     public static final int ON =1;
     public static final int OFF =0;
 
-
-    public BaseEntity() {
-        createDate = new Date();
-        modifyDate = new Date();
-    }
-
-
     public Long getId() {
         return id;
     }

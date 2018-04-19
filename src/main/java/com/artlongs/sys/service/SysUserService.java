@@ -1,5 +1,7 @@
 package com.artlongs.sys.service;
 
+import act.db.sql.tx.Transactional;
+import act.util.Stateless;
 import com.alibaba.fastjson.JSON;
 import com.artlongs.framework.page.Page;
 import com.artlongs.framework.service.BaseServiceImpl;
@@ -22,6 +24,8 @@ import java.util.Set;
  * @Autor: leeton
  * @Date : 11/21/17
  */
+@Stateless
+@Transactional
 public class SysUserService extends BaseServiceImpl<SysUser> {
 
     public SysUserService(){}

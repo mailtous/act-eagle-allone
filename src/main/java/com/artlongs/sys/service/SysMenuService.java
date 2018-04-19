@@ -1,5 +1,6 @@
 package com.artlongs.sys.service;
 
+import act.db.sql.tx.Transactional;
 import act.util.Stateless;
 import com.artlongs.sys.model.SysFunc;
 import com.artlongs.sys.model.SysPermission;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
  * @Date : 11/30/17
  */
 @Stateless
+@Transactional
 public class SysMenuService {
 
     @Inject

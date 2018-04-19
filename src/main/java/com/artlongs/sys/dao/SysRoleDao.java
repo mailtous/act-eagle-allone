@@ -1,5 +1,6 @@
 package com.artlongs.sys.dao;
 
+import act.util.Stateless;
 import com.artlongs.framework.page.Page;
 import com.artlongs.framework.utils.Qe;
 import com.artlongs.sys.model.SysRole;
@@ -12,6 +13,7 @@ import java.util.List;
  * @Autor: leeton
  * @Date : 11/21/17
  */
+@Stateless
 public class SysRoleDao extends SysRole.Dao<SysRole>{
 
     public Page<SysRole> getAllOfPage(Page page){

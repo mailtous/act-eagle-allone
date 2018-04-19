@@ -1,5 +1,6 @@
 package com.artlongs.sys.service;
 
+import act.db.sql.tx.Transactional;
 import act.util.Stateless;
 import com.artlongs.framework.service.BaseServiceImpl;
 import com.artlongs.framework.vo.R;
@@ -20,6 +21,7 @@ import java.util.Map;
  * @Date : 11/29/17
  */
 @Stateless
+@Transactional
 public class SysPermissionService extends BaseServiceImpl<SysPermission> {
 
     private SysPermissionDao sysPermissionDao;

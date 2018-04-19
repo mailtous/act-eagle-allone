@@ -1,6 +1,7 @@
 package com.artlongs.sys.service;
 
 import act.data.MapUtil;
+import act.db.sql.tx.Transactional;
 import act.util.Stateless;
 import com.artlongs.framework.page.Page;
 import com.artlongs.framework.service.BaseServiceImpl;

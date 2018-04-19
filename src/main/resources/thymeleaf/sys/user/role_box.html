@@ -55,7 +55,8 @@
         console.log('editUrl:'+editUrl);
         layform.on('submit(edit_submit)', function (submit) { //编辑框提交保存
             var assignList = mapValueToArr(assignMap);
-            mySubmit(editUrl, {"roleAssignVoList":assignList},null,null);
+            var reloadUrl = "/sys/user/list";
+            mySubmit(editUrl, {"roleAssignVoList":assignList},null,reloadUrl);
         });
 
         //单项选择
