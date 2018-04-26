@@ -5,12 +5,10 @@ import act.db.beetlsql.BeetlSqlService;
 import com.artlongs.framework.page.Page;
 import com.artlongs.framework.utils.GenericsUtils;
 import com.artlongs.framework.utils.Lq;
-import com.artlongs.framework.utils.Qe;
 import org.beetl.sql.core.SQLManager;
 import org.beetl.sql.core.SQLReady;
 import org.beetl.sql.core.engine.PageQuery;
 import org.osgl.util.C;
-import org.osgl.util.N;
 import org.osgl.util.S;
 
 import javax.inject.Singleton;
@@ -81,7 +79,6 @@ public class BeetlSqlDao<T> implements BaseDao<T> {
     }
 
     public T getObj(String sql,Object... args){
-        List<T> resultList = sqlm.execute(new SQLReady(sql,args), this.persistentClass);
         return getObj(this.persistentClass,sql,args);
     }
 
@@ -98,20 +95,17 @@ public class BeetlSqlDao<T> implements BaseDao<T> {
     }
 
     public List<T> getList(String sql) {
-        List<T> resultList = sqlm.execute(new SQLReady(sql), this.persistentClass);
         return getList(this.persistentClass, sql);
     }
 
 
     @Override
     public List<T> getList(Class<T> clz, String sql) {
-        List<T> resultList = sqlm.execute(new SQLReady(sql), clz);
-        return C.isEmpty(resultList) ? new ArrayList<T>() : resultList;
+        return  getList(clz, sql, null);
     }
 
     @Override
     public List<T> getList(String frameSql, Object... args) {
-        List<T> resultList = sqlm.execute(new SQLReady(frameSql, args), this.persistentClass);
         return getList(this.persistentClass, frameSql, args);
     }
 
@@ -122,11 +116,8 @@ public class BeetlSqlDao<T> implements BaseDao<T> {
     }
 
     @Override
-    public Page<T> getPage( Page page,String frameSql, Object[] args) {
-        PageQuery<T> pq = page.myPageToPageQuery(page,new PageQuery());
-        SQLReady sqlReady = new SQLReady(frameSql, args);
-        pq = sqlm.execute(sqlReady, this.persistentClass, pq);
-        return page.pageQueryToMyPage(pq,page);
+    public Page<T> getPage(Page page,String frameSql, Object[] args) {
+        return getPage(this.persistentClass, page, frameSql, args);
     }
 
     @Override
