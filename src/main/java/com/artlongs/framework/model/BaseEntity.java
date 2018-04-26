@@ -10,14 +10,20 @@ import java.util.Date;
  */
 public class BaseEntity implements Serializable {
     @AutoID
-    private Long id;
-    private Date createDate;
-    private Date modifyDate;
+    protected Long id;
+    protected Date createDate;
+    protected Date modifyDate;
 
     public final static Integer DELETED = 1;  //已删除
     public final static Integer UN_DEL = 0;    //正常，未删除
     public static final int ON =1;
     public static final int OFF =0;
+
+
+    protected void addTime() {
+        this.createDate = new Date();
+        this.modifyDate = new Date();
+    }
 
     public Long getId() {
         return id;

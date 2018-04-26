@@ -6,8 +6,6 @@ import com.artlongs.framework.dao.BeetlSqlDao;
 import com.artlongs.framework.model.BaseEntity;
 import org.osgl.util.C;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
@@ -170,4 +168,20 @@ public class SysFunc extends BaseEntity {
         this.childs = childs;
     }
 
+    @Override
+    public String toString() {
+        return "SysFunc{" +
+                "id=" + id +
+                ", parentId=" + parentId +
+                ", funcName='" + funcName + '\'' +
+                ", node=" + node +
+                ", funcUrl='" + funcUrl + '\'' +
+                ", isMenu=" + isMenu +
+                ", action=" + action +
+                ", sequence=" + sequence +
+                ", hasChilds=" + hasChilds +
+                ", createDate=" + createDate +
+                ", modifyDate=" + modifyDate +
+                '}';
+    }
 }

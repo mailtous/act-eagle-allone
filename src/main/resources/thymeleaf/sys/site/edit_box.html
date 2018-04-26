@@ -1,0 +1,69 @@
+<span class="">站点基本信息:</span>
+<div class="layui-form layui-form-pane layui-table" style="margin:10px 5px; padding:10px 2px">
+    <input type="hidden" name="site.id" data-th-value="${site.id}"/>
+    <div class="layui-form-item">
+        <label class="layui-form-label">站点名称:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="site.siteName" th:value="${site.siteName}" required lay-verify="required" placeholder="请输入名称"  class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">站点URL:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="site.siteUrl" th:value="${site.siteUrl}" required lay-verify="required" placeholder="请输入名称"  class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">站点IP:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="site.siteIp" th:value="${site.siteIp}" required lay-verify="required" placeholder="请输入名称"  class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">公司名称:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="site.comName" th:value="${site.comName}" required lay-verify="required" placeholder="请输入名称"  class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">Email:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="site.email" th:value="${site.email}" required lay-verify="required" placeholder="请输入名称"  class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">地址:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="site.addr" th:value="${site.addr}" required lay-verify="required" placeholder="请输入名称"  class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="edit_submit">提交</button>
+        </div>
+    </div>
+
+</div>
+<script th:inline="javascript">
+    var layform;
+    layui.use(['form'], function () { // 加载 layui的功能模块
+        layform = layui.form;
+    });
+    var id = [[${site.id}]];
+     id = id == null?0:id;
+    layui.use('form', function () { //编辑框提交保存
+        var form = layui.form;
+        var editUrl = (id <=0) ? "/sys/site/setting/add": "/sys/site/setting/edit/" + id ;
+        console.log('editUrl:'+editUrl);
+        //监听提交
+        form.on('submit(edit_submit)', function (params) {
+            console.log(params.field);
+            var reloadUrl = "/sys/site/setting/edit_box?id="+id;
+            mySubmit(editUrl, params.field,null,reloadUrl);
+        });
+
+    });
+
+
+
+</script>

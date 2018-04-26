@@ -3,14 +3,7 @@ package com.artlongs.framework.utils;
 
 import com.artlongs.sys.model.SysDept;
 import com.artlongs.sys.model.SysUser;
-import com.trigersoft.jaque.expression.Expression;
-import com.trigersoft.jaque.expression.InvocationExpression;
-import com.trigersoft.jaque.expression.LambdaExpression;
-import com.trigersoft.jaque.expression.MemberExpression;
 import org.beetl.sql.core.SQLManager;
-import org.beetl.sql.core.UnderlinedNameConversion;
-
-import java.lang.reflect.Member;
 
 /**
  * FUNC: Lambda 风格的 Query Expression.
@@ -29,27 +22,27 @@ public class Lq<T> extends Qe<T> {
         super(clz, sqlManager);
     }
     
-    private String getFunctionName(Method.Property<T, ?> fun) {
-        return new Method<>(fun).getColumn();
+    private String getFunctionName(Attr.Property<T, ?> fun) {
+        return new Attr<>(fun).getColumn();
     }
 
-    private String[] getFunctionName(Method.Property<T, ?>... funs) {
+    private String[] getFunctionName(Attr.Property<T, ?>... funs) {
         String[] cols = new String[funs.length];
         int i = 0;
-        for (Method.Property<T, ?> fun : funs) {
+        for (Attr.Property<T, ?> fun : funs) {
             cols[i++] = this.getFunctionName(fun);
         }
         return cols;
 
     }
 
-    public Lq<T> select(Method.Property<T, ?>... fun) {
+    public Lq<T> select(Attr.Property<T, ?>... fun) {
         super.select(getFunctionName(fun));
         return this;
     }
 
-    public Lq<T> select(Method... methods) {
-        super.select(Method.getColumns(methods));
+    public Lq<T> select(Attr... methods) {
+        super.select(Attr.getColumns(methods));
         return this;
     }
 
@@ -65,67 +58,67 @@ public class Lq<T> extends Qe<T> {
         return this;
     }
 
-    public Lq<T> leftJoin(Class joinTableClass,Method.Property<T, ?>joinKey,Method.Property<T, ?> mainKey) {
+    public Lq<T> leftJoin(Class joinTableClass, Attr.Property<T, ?>joinKey, Attr.Property<T, ?> mainKey) {
 
         return  (Lq<T>) super.leftJoin(joinTableClass, getFunctionName(joinKey),getFunctionName(mainKey));
     }
 
-    public Lq<T> leftJoin(Class joinTableClass,Method joinKey,Method mainKey) {
+    public Lq<T> leftJoin(Class joinTableClass, Attr joinKey, Attr mainKey) {
 
         return (Lq<T>)super.leftJoin(joinTableClass, joinKey.getColumn(),mainKey.getColumn());
     }
 
-    public Lq<T> eq(Method.Property<T, ?>fun,Object val) {
+    public Lq<T> eq(Attr.Property<T, ?>fun, Object val) {
         super.eq(getFunctionName(fun),val);
         return this;
     }
 
-    public Lq<T> ne(Method.Property<T, ?>fun,Object val) {
+    public Lq<T> ne(Attr.Property<T, ?>fun, Object val) {
         super.ne(getFunctionName(fun),val);
         return this;
     }
 
-    public Lq<T> lt(Method.Property<T, ?>fun,Object val) {
+    public Lq<T> lt(Attr.Property<T, ?>fun, Object val) {
         super.lt(getFunctionName(fun),val);
         return this;
     }
 
-    public Lq<T> gt(Method.Property<T, ?>fun,Object val) {
+    public Lq<T> gt(Attr.Property<T, ?>fun, Object val) {
         super.gt(getFunctionName(fun),val);
         return this;
     }
 
-    public Lq<T> le(Method.Property<T, ?>fun,Object val) {
+    public Lq<T> le(Attr.Property<T, ?>fun, Object val) {
         super.le(getFunctionName(fun),val);
         return this;
     }
 
-    public Lq<T> ge(Method.Property<T, ?>fun,Object val) {
+    public Lq<T> ge(Attr.Property<T, ?>fun, Object val) {
         super.ge(getFunctionName(fun),val);
         return this;
     }
 
-    public Lq<T> in(Method.Property<T, ?>fun,Object val) {
+    public Lq<T> in(Attr.Property<T, ?>fun, Object val) {
         super.in(getFunctionName(fun),val);
         return this;
     }
 
-    public Lq<T> between(Method.Property<T, ?>fun, Object left ,Object right) {
+    public Lq<T> between(Attr.Property<T, ?>fun, Object left , Object right) {
         super.between(getFunctionName(fun),left,right);
         return this;
     }
 
-    public Lq<T> isnull(Method.Property<T, ?>fun) {
+    public Lq<T> isnull(Attr.Property<T, ?>fun) {
         super.isnull(getFunctionName(fun));
         return this;
     }
 
-    public Lq<T> notnull(Method.Property<T, ?>fun) {
+    public Lq<T> notnull(Attr.Property<T, ?>fun) {
         super.notnull(getFunctionName(fun));
         return this;
     }
 
-    public Lq<T> like(Method.Property<T, ?>fun,Object v1 ) {
+    public Lq<T> like(Attr.Property<T, ?>fun, Object v1 ) {
         super.like(getFunctionName(fun),v1);
         return this;
     }
@@ -140,11 +133,11 @@ public class Lq<T> extends Qe<T> {
         return this;
     }
 
-    public Lq<T> asc(Method.Property<T, ?>fun) {
+    public Lq<T> asc(Attr.Property<T, ?>fun) {
         super.asc(getFunctionName(fun));
         return this;
     }
-    public Lq<T> desc(Method.Property<T, ?>fun) {
+    public Lq<T> desc(Attr.Property<T, ?>fun) {
         super.desc(getFunctionName(fun));
         return this;
     }
@@ -153,12 +146,12 @@ public class Lq<T> extends Qe<T> {
         return super.limit(l, r);
     }
 
-    public Lq<T> group(Method.Property<T, ?>... funs) {
+    public Lq<T> group(Attr.Property<T, ?>... funs) {
         super.group(getFunctionName(funs));
         return this;
     }
 
-    public Lq<T> having(Method.Property<T, ?>fun,Opt opt,Object val) {
+    public Lq<T> having(Attr.Property<T, ?>fun, Opt opt, Object val) {
         super.having(getFunctionName(fun), opt, val);
         return this;
     }
@@ -166,8 +159,8 @@ public class Lq<T> extends Qe<T> {
 
 
     public static void main(String[] args) throws Exception {
-        Method<SysDept> dept = new Method<SysDept>();
-        Method<SysUser> user = new Method<SysUser>();
+        Attr<SysDept> dept = new Attr<SysDept>();
+        Attr<SysUser> user = new Attr<SysUser>();
         String sql = new Lq<SysUser>(SysUser.class)
                 .select(SysUser::getDeptId)
                 .leftJoin(SysDept.class, dept.parse(SysDept::getId),user.parse(SysUser::getDeptId))

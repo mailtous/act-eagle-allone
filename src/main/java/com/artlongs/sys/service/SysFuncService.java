@@ -1,6 +1,5 @@
 package com.artlongs.sys.service;
 
-import act.data.MapUtil;
 import act.db.sql.tx.Transactional;
 import act.util.Stateless;
 import com.artlongs.framework.page.Page;
@@ -8,12 +7,10 @@ import com.artlongs.framework.service.BaseServiceImpl;
 import com.artlongs.sys.dao.SysFuncDao;
 import com.artlongs.sys.model.SysFunc;
 import com.beust.jcommander.internal.Lists;
-import com.beust.jcommander.internal.Maps;
 import org.osgl.util.C;
 
 import javax.inject.Inject;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -23,6 +20,7 @@ import java.util.stream.Collectors;
  * @Date : 11/29/17
  */
 @Stateless
+@Transactional
 public class SysFuncService extends BaseServiceImpl<SysFunc> {
 
     private SysFuncDao sysFuncDao;

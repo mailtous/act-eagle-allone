@@ -2,11 +2,11 @@ package com.artlongs.sys.model;
 
 
 import act.Act;
-import act.app.conf.AutoConfig;
 import act.util.Stateless;
 import com.alibaba.fastjson.JSON;
 import com.artlongs.framework.dao.BeetlSqlDao;
 import com.artlongs.framework.model.BaseEntity;
+import com.artlongs.framework.utils.BeanUtils;
 import com.artlongs.sys.service.SysRoleService;
 import org.osgl.http.H;
 import org.osgl.inject.annotation.Configuration;
@@ -55,7 +55,7 @@ public class SysUser extends BaseEntity {
 
     }
 
-
+    @Transient
     public List<Long> roleIdList() {
         List<Long> roleIdList = C.newList();
         if (S.noBlank(roleIds)) {
@@ -68,6 +68,7 @@ public class SysUser extends BaseEntity {
      * 返回用户拥有的所有权限
      * @return
      */
+    @Transient
     public List<SysRole> roleList() {
         List<SysRole> sysRoleList = C.newList();
         List<Long> roleIdList = roleIdList();
@@ -212,38 +213,7 @@ public class SysUser extends BaseEntity {
     }
 
     public SysUser copyTo(SysUser sysUser) {
-        //TODO : 先手动copy ,等osgl工具copy功能
-        if(null != getId()){
-            sysUser.setId(getId());
-        }
-        if(null != getUserName()){
-            sysUser.setUserName(getUserName());
-        }
-        if(null != getPwd()){
-            sysUser.setPwd(getPwd());
-        }
-        if(null != getDeptId()){
-            sysUser.setDeptId(getDeptId());
-        }
-        if(null != getRoleIds()){
-            sysUser.setRoleIds(getRoleIds());
-        }
-        if(null != getAction()){
-            sysUser.setAction(getAction());
-        }
-        if(null != getGrade()){
-            sysUser.setGrade(getGrade());
-        }
-        if(null != getDelStatus()){
-            sysUser.setDelStatus(getDelStatus());
-        }
-        if(null != getModifyDate()){
-            sysUser.setModifyDate(getModifyDate());
-        }
-        if(null != getCreateDate()){
-            sysUser.setCreateDate(getCreateDate());
-        }
-        return sysUser;
+        return BeanUtils.copyTo(this, sysUser );
     }
 
     //=============== geter && setter ================================================

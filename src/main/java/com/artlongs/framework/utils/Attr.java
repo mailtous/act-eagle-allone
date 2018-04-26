@@ -13,10 +13,10 @@ import java.util.function.Function;
  * @Autor: leeton
  * @Date : 2018-03-27 6:36 PM
  */
-public class Method<T> {
+public class Attr<T> {
 
     private Class clz;     // 方法所属的类
-    private String attr;   // 属性名
+    private String name;   // 属性名
     private String column; // 对应的字段名称
     private Member member;  
 
@@ -24,10 +24,10 @@ public class Method<T> {
     // jdk.internal.lambda.dumpProxyClasses system property. See below.
     public interface Property<T, R> extends Function<T, R>, Serializable { }
 
-    public Method() {
+    public Attr() {
     }
 
-    public Method(Property<T, ?> propertyRef) {
+    public Attr(Property<T, ?> propertyRef) {
         parse(propertyRef);
     }
 
@@ -37,13 +37,13 @@ public class Method<T> {
      * @param propertyRef
      * @return
      */
-    public Method<T> parse(Property<T, ?> propertyRef){
+    public Attr<T> parse(Property<T, ?> propertyRef){
         LambdaExpression expression = getExpression(propertyRef);
         List<ParameterExpression> params = expression.getParameters();
         this.member = getMember(expression);
         this.clz = params.get(0).getResultType();
-        this.attr = attrName(member);
-        this.column = getUnderLineName(this.clz,  this.attr);
+        this.name = attrName(member);
+        this.column = getUnderLineName(this.clz,  this.name);
         return this;
     }
 
@@ -99,10 +99,10 @@ public class Method<T> {
     }
 
 
-    public static String[] getColumns(Method... methods) {
+    public static String[] getColumns(Attr... methods) {
         String[] cols = new String[methods.length];
         int i = 0;
-        for (Method method : methods) {
+        for (Attr method : methods) {
             cols[i++] = method.getColumn();
         }
         return cols;
@@ -117,12 +117,12 @@ public class Method<T> {
         this.clz = clz;
     }
 
-    public String getAttr() {
-        return attr;
+    public String getName() {
+        return name;
     }
 
-    public void setAttr(String attr) {
-        this.attr = attr;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getColumn() {
