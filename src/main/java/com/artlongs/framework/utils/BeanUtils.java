@@ -34,7 +34,6 @@ public class BeanUtils {
      *
      * @param source  原类
      * @param target  目标类
-     * @param cache   是否要启用缓存
      * @param ignList 忽略列表
      */
     public static void copy(Object source, Object target, String... ignList) {

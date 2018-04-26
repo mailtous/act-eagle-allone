@@ -11,7 +11,10 @@ import org.beetl.sql.core.kit.BeanKit;
 import org.osgl.util.C;
 import org.osgl.util.S;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 import static com.artlongs.framework.utils.Qe.Opt.*;
 
@@ -49,13 +52,13 @@ public class Qe<T> {
     public Qe(Class<T> clz,SQLManager sqlManager) {
         this.clz = clz;
         this.sqlManager = sqlManager;
-        String tableName = getTableName(clz);
-        this.mainTableName = tableName;
+        this.mainTableName = getTableName(clz);;
         this.from = FROM.sql(mainTableName,mainTableName);
     }
 
     public Qe(String mainTableName) {
         this.mainTableName = mainTableName;
+        this.from = FROM.sql(mainTableName,mainTableName);
     }
 
     public Lq<T> lambda() {
