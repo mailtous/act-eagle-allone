@@ -22,7 +22,6 @@ public class SysConfig extends BaseEntity {
     private String logourl;
 
     @Singleton
-    @AutoBind
     public static abstract class Dao<T extends SysConfig> extends BeetlSqlDao<SysConfig> {
     }
 
