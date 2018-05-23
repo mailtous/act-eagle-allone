@@ -5,7 +5,6 @@ import com.artlongs.framework.dao.BeetlSqlDao;
 import com.artlongs.framework.model.BaseEntity;
 
 import javax.inject.Singleton;
-import java.util.Date;
 
 /**
  * @Func : 站点基础信息
@@ -23,20 +22,8 @@ public class SiteBaseInfo  extends BaseEntity{
     @Singleton
     @AutoBind
     public static abstract class Dao<T extends SiteBaseInfo> extends BeetlSqlDao<SiteBaseInfo> {
-
-        public SiteBaseInfo add(SiteBaseInfo siteBaseInfo) {
-            siteBaseInfo.addTime();
-            super.save(siteBaseInfo);
-            return siteBaseInfo;
-        }
-
-        public int update(SiteBaseInfo siteBaseInfo) {
-            siteBaseInfo.setModifyDate(new Date());
-            int rows = super.update(siteBaseInfo);
-            return rows;
-        }
-
     }
+    // ============================ girl && beast ============================
 
 
     public String getSiteName() {

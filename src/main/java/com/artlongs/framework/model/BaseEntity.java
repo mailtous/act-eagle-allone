@@ -20,7 +20,7 @@ public class BaseEntity implements Serializable {
     public static final int OFF =0;
 
 
-    protected void addTime() {
+    public void addTime() {
         this.createDate = new Date();
         this.modifyDate = new Date();
     }

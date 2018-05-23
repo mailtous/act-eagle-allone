@@ -13,6 +13,8 @@ public class RoleAssignVo {
     private Long funcId;
     private Integer onoff;
 
+    // ============================ girl && beast ============================
+
     public Long getRoleId() {
         return roleId;
     }

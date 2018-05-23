@@ -2,7 +2,7 @@ package com.artlongs.sys.model;
 
 
 import act.Act;
-import act.util.Stateless;
+import act.inject.AutoBind;
 import com.alibaba.fastjson.JSON;
 import com.artlongs.framework.dao.BeetlSqlDao;
 import com.artlongs.framework.model.BaseEntity;
@@ -14,6 +14,7 @@ import org.osgl.util.C;
 import org.osgl.util.S;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.persistence.Transient;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +39,9 @@ public class SysUser extends BaseEntity {
     private Integer grade; 			//系统用户权限等级 GradeStatus
     private Integer action; 		//激活状态
 
-    @Stateless
-    public static abstract class Dao<T> extends BeetlSqlDao<SysUser>{
+    @Singleton
+    @AutoBind
+    public static abstract class Dao<T extends SysUser> extends BeetlSqlDao<SysUser>{
         @Inject
         public static SysRole.Dao<SysRole> sysRoleDao;
 

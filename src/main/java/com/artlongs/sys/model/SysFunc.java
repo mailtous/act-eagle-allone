@@ -1,11 +1,13 @@
 package com.artlongs.sys.model;
 
+import act.inject.AutoBind;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.NameFilter;
 import com.artlongs.framework.dao.BeetlSqlDao;
 import com.artlongs.framework.model.BaseEntity;
 import org.osgl.util.C;
 
+import javax.inject.Singleton;
 import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +35,9 @@ public class SysFunc extends BaseEntity {
     @Transient
     private List<SysFunc> childs; //子菜单
 
-    public static abstract class Dao<SysFunc> extends BeetlSqlDao<SysFunc> {
+    @Singleton
+    @AutoBind
+    public static abstract class Dao<T extends SysFunc> extends BeetlSqlDao<SysFunc> {
         public static String table = "sys_func";
         public static String id = "id";
         public static String createDate="create_date";
@@ -110,7 +114,7 @@ public class SysFunc extends BaseEntity {
         return null==action?0:action;
     }
 
-    //=================
+    // ============================ girl && beast ============================
 
     public Long getParentId() {
         return parentId;

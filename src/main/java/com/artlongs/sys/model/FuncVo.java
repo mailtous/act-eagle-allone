@@ -12,6 +12,8 @@ public class FuncVo{
     private String funcName;
     private String funcUrl;
 
+    // ============================ girl && beast ============================
+
     public Long getId() {
         return id;
     }

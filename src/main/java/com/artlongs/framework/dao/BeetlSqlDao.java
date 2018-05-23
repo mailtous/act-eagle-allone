@@ -2,6 +2,7 @@ package com.artlongs.framework.dao;
 
 import act.Act;
 import act.db.beetlsql.BeetlSqlService;
+import com.artlongs.framework.model.BaseEntity;
 import com.artlongs.framework.page.Page;
 import com.artlongs.framework.utils.GenericsUtils;
 import com.artlongs.framework.utils.Lq;
@@ -13,6 +14,7 @@ import org.osgl.util.S;
 
 import javax.inject.Singleton;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,7 +22,7 @@ import java.util.List;
  * Created by leeton on 9/30/17.
  */
 @Singleton
-public class BeetlSqlDao<T> implements BaseDao<T> {
+public class BeetlSqlDao<T extends BaseEntity> implements BaseDao<T> {
 
     protected SQLManager sqlm;             // Beelsql 的实际操作类
     private BeetlSqlService dbService;   //取得数据源的连接
@@ -39,6 +41,9 @@ public class BeetlSqlDao<T> implements BaseDao<T> {
         return persistentClass;
     }
 
+
+
+
     /**
      * Lambda 查询
      * @param clz 实体类
@@ -56,6 +61,16 @@ public class BeetlSqlDao<T> implements BaseDao<T> {
     @Override
     public T get(Long id) {
         return sqlm.single(this.persistentClass, id);
+    }
+
+    public int add(T entity) {
+        entity.addTime();
+        return save(entity);
+    }
+
+    public int updateTime(T t) {
+        t.setModifyDate(new Date());
+        return update(t);
     }
 
     @Override

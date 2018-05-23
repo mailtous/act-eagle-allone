@@ -1,7 +1,10 @@
 package com.artlongs.sys.model;
 
+import act.inject.AutoBind;
 import com.artlongs.framework.dao.BeetlSqlDao;
 import com.artlongs.framework.model.BaseEntity;
+
+import javax.inject.Singleton;
 
 /**
  * Function:
@@ -14,7 +17,9 @@ public class SysPermission extends BaseEntity {
     private Long roleId;
     private Long funcId;
 
-    public static abstract class Dao<SysPermission> extends BeetlSqlDao<SysPermission> {
+    @Singleton
+    @AutoBind
+    public static abstract class Dao<T extends SysPermission> extends BeetlSqlDao<SysPermission> {
         public static String table = "sys_permission";
         public static String id = "id";
         public static String createDate="create_date";
@@ -23,6 +28,7 @@ public class SysPermission extends BaseEntity {
         public static String funcId="func_id";
 
     }
+    // ============================ girl && beast ============================
 
     public Long getRoleId() {
         return roleId;
