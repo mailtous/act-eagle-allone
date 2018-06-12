@@ -9,7 +9,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -50,22 +52,29 @@ public class BeanUtils {
         }
         if (C.notEmpty(sourceMethodList)) {
             for (Method sMethod : sourceMethodList) {
-                try {
-                    Object value = sMethod.invoke(source);
-                    if (null != value) {
-                        Method writeMethod = getMethodByName(targetMethodList, sMethod.getName());
-                        if (null != writeMethod) {
-                            writeMethod.invoke(target, value);
+                if (!isFilterAttr(ignList, sMethod.getName())) {
+                    try {
+                        Object value = sMethod.invoke(source);
+                        if (null != value) {
+                            Method writeMethod = getMethodByName(targetMethodList, sMethod.getName());
+                            if (null != writeMethod) {
+                                writeMethod.invoke(target, value);
+                            }
                         }
-                    }
 
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
+    }
+
+    private static boolean isFilterAttr(String[] filterArr, String currentAttr) {
+        List<String> filterList = Arrays.asList(filterArr);
+        return filterList.contains(currentAttr);
     }
 
     private static Set<Method> getMethodsInFields(Class clz, Set<Field> fields, RW rw) {
@@ -208,7 +217,7 @@ public class BeanUtils {
 
     public static void main(String[] args) {
 
-        class Foo{
+        class Foo {
             private Integer id;
             private String name;
 
@@ -241,7 +250,7 @@ public class BeanUtils {
 
         foo.setId(111);
         foo.setName("alice");
-        BeanUtils.copy(foo, foo2);
+        BeanUtils.copy(foo, foo2,"id");
         System.err.println("foo2= " + foo2.toString());
 
 
