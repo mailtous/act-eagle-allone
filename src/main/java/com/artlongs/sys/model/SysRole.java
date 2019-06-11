@@ -16,12 +16,6 @@ import java.util.List;
 public class SysRole extends BaseEntity {
     private String roleName;
 
-    @Singleton
-    @AutoBind
-    public static abstract class Dao<T extends SysRole> extends BeetlSqlDao<SysRole>{
-        public abstract List<SysRole> getAllOfList();
-    }
-
     // ============================ girl && beast ============================
 
     public String getRoleName() {

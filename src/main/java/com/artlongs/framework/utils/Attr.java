@@ -2,10 +2,13 @@ package com.artlongs.framework.utils;
 
 import com.trigersoft.jaque.expression.*;
 import org.beetl.sql.core.UnderlinedNameConversion;
+import org.beetl.sql.core.kit.StringKit;
 
 import java.io.Serializable;
 import java.lang.reflect.Member;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -18,7 +21,8 @@ public class Attr<T> {
     private Class clz;     // 方法所属的类
     private String name;   // 属性名
     private String column; // 对应的字段名称
-    private Member member;  
+    private Member member;
+    private String tableName;
 
     // this interface is required to make the lambda Serializable, which removes a need for
     // jdk.internal.lambda.dumpProxyClasses system property. See below.
@@ -44,6 +48,7 @@ public class Attr<T> {
         this.clz = params.get(0).getResultType();
         this.name = attrName(member);
         this.column = getUnderLineName(this.clz,  this.name);
+        this.tableName = StringKit.enCodeUnderlined(params.getClass().getSimpleName());
         return this;
     }
 
@@ -107,6 +112,14 @@ public class Attr<T> {
         }
         return cols;
 
+    }
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
     }
 
     public Class getClz() {

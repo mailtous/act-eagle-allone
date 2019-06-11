@@ -35,24 +35,6 @@ public class SysFunc extends BaseEntity {
     @Transient
     private List<SysFunc> childs; //子菜单
 
-    @Singleton
-    @AutoBind
-    public static abstract class Dao<T extends SysFunc> extends BeetlSqlDao<SysFunc> {
-        public static String table = "sys_func";
-        public static String id = "id";
-        public static String createDate="create_date";
-        public static String modifyDate="modify_date";
-        public static String parentId="parent_id";
-        public static String funcName ="func_name";
-        public static String node="node";
-        public static String funcUrl="func_url";
-        public static String isMenu="is_menu";
-        public static String action="action";
-        public static String sequence="sequence";
-
-    }
-
-
     /** 顶层菜单 **/
     @Transient
     public static SysFunc blankTopMenu(){

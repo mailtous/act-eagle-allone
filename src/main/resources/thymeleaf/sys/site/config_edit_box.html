@@ -1,0 +1,111 @@
+<span class="">站点基本信息:</span>
+<div class="layui-form layui-form-pane layui-table" style="margin:10px 5px; padding:10px 2px">
+    <input type="hidden" name="site.id" data-th-value="${site.id}"/>
+    <div class="layui-form-item">
+        <label class="layui-form-label">站点名称:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="site.siteName" th:value="${site.siteName}" required lay-verify="required" placeholder="请输入名称"  class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">站点url:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="site.domain" th:value="${site.domain}" required lay-verify="required" placeholder="站点url"  class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">公司全称:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="site.comfullname" th:value="${site.comfullname}" required lay-verify="required" placeholder="公司全称"  class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">公司简称:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="site.comshotname" th:value="${site.comshotname}" required lay-verify="required" placeholder="公司简称"  class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">Email:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="site.email" th:value="${site.email}" required lay-verify="required" placeholder="请输入Email"  class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">QQ:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="site.qq" th:value="${site.qq}" required lay-verify="required" placeholder="请输入QQ"  class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">地址:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="site.addr" th:value="${site.addr}" required lay-verify="required" placeholder="请输入地址"  class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">copyright:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="site.copyright" th:value="${site.copyright}" required lay-verify="required" placeholder="copyright"  class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">title:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="site.title" th:value="${site.title}" required lay-verify="required" placeholder="title"  class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">SEO描述:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="site.metadesc" th:value="${site.metadesc}" required lay-verify="required" placeholder="请输入SEO描述"  class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">SEO关键字:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="site.keywords" th:value="${site.keywords}" required lay-verify="required" placeholder="请输入SEO关键字"  class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">LOGO URL:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="site.logourl" th:value="${site.logourl}" required lay-verify="required" placeholder="请输入 LOGO URL"  class="layui-input">
+        </div>
+    </div>
+
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="edit_submit">提交</button>
+        </div>
+    </div>
+
+</div>
+<script th:inline="javascript">
+    var layform;
+    layui.use(['form'], function () { // 加载 layui的功能模块
+        layform = layui.form;
+    });
+    var id = [[${site.id}]];
+     id = id == null?0:id;
+    layui.use('form', function () { //编辑框提交保存
+        var form = layui.form;
+        var editUrl = (id <=0) ? "/sys/site/config/add": "/sys/site/config/edit/" + id ;
+        console.log('editUrl:'+editUrl);
+        //监听提交
+        form.on('submit(edit_submit)', function (params) {
+            console.log(params.field);
+            var reloadUrl = "/sys/site/config/edit_box?id="+id;
+            mySubmit(editUrl, params.field,null,reloadUrl);
+        });
+
+    });
+
+
+
+</script>

@@ -11,9 +11,9 @@ package com.artlongs.framework.vo;
  */
 public class R<T> {
 
-    private Rcode retcode = Rcode.SUCCESS;
+    private Integer code = Rcode.SUCCESS.getCode();
     private String ref= "";  //页面跳转地址
-    private String msg= "";  //返回提示信息
+    private String msg= Rcode.SUCCESS.getMsg();;  //返回提示信息
     private T item;//返回对象(单个或列表)
 
     public R() {
@@ -37,7 +37,6 @@ public class R<T> {
     }
 
     public R(Rcode retcode, String msg, String ref, T item) {
-        this.retcode = retcode;
         this.ref = ref;
         this.item = item;
         if (msg != null && msg.trim().length() > 0) {
@@ -46,11 +45,11 @@ public class R<T> {
     }
 
     public R setTF(boolean tf) {
-       return tf ? setRetcode(Rcode.SUCCESS):setRetcode(Rcode.FAIL);
+       return tf ? setCode(Rcode.SUCCESS.getCode()):setCode(Rcode.FAIL.getCode());
     }
 
     public R setTF(int number) {
-        return number>0 ? setRetcode(Rcode.SUCCESS):setRetcode(Rcode.FAIL);
+        return number>0 ? setCode(Rcode.SUCCESS.getCode()):setCode(Rcode.FAIL.getCode());
     }
 
     public static R tf(boolean tf) {
@@ -68,7 +67,7 @@ public class R<T> {
     public static R fail(String msg) {
         R vo = new R();
         vo.setMsg(msg);
-        vo.setRetcode(Rcode.FAIL);
+        vo.setCode(Rcode.FAIL.getCode());
         return vo;
     }
 
@@ -79,38 +78,38 @@ public class R<T> {
      */
     public static R success(String msg) {
         R vo = new R();
-        vo.setRetcode(Rcode.SUCCESS);
+        vo.setCode(Rcode.SUCCESS.getCode());
         vo.setMsg(msg);
         return vo;
     }
 
     public R setFail(String msg) {
-        this.setRetcode(Rcode.FAIL);
+        this.setCode(Rcode.FAIL.getCode());
         this.setMsg(msg);
         return this;
     }
 
     public R setSuccess(String msg) {
-        this.setRetcode(Rcode.SUCCESS);
+        this.setCode(Rcode.SUCCESS.getCode());
         this.setMsg(msg);
         return this;
     }
 
     public boolean isSucc(){
-        return Rcode.SUCCESS == retcode;
+        return Rcode.SUCCESS.getCode() == code;
     }
 
-    public Rcode getRetcode() {
-        return retcode;
+    public Integer getCode() {
+        return code;
     }
 
-    public R setRetcode(Rcode retcode) {
-        this.retcode = retcode;
+    public R setCode(Integer code) {
+        this.code = code;
         return this;
     }
 
     public String getMsg() {
-        return (null==this.msg || msg.trim().length() == 0)? retcode.getMsg():this.msg;
+        return this.msg;
     }
 
     public R setMsg(String msg) {
@@ -138,11 +137,12 @@ public class R<T> {
 
     @Override
     public String toString() {
-        return "R{" +
-                "retcode=" + retcode +
-                ", ref='" + ref + '\'' +
-                ", msg='" + msg + '\'' +
-                ", item=" + item +
-                '}';
+        final StringBuffer sb = new StringBuffer("R{");
+        sb.append("code=").append(code);
+        sb.append(", ref='").append(ref).append('\'');
+        sb.append(", msg='").append(msg).append('\'');
+        sb.append(", item=").append(item);
+        sb.append('}');
+        return sb.toString();
     }
 }

@@ -3,18 +3,18 @@ package com.artlongs.framework.utils;
 import com.artlongs.framework.page.Page;
 import com.artlongs.sys.model.SysDept;
 import com.artlongs.sys.model.SysUser;
+import com.sun.org.apache.regexp.internal.RE;
 import org.beetl.sql.core.SQLManager;
 import org.beetl.sql.core.SQLReady;
 import org.beetl.sql.core.UnderlinedNameConversion;
 import org.beetl.sql.core.engine.PageQuery;
-import org.beetl.sql.core.kit.BeanKit;
+import org.osgl.logging.L;
+import org.osgl.logging.Logger;
 import org.osgl.util.C;
 import org.osgl.util.S;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import static com.artlongs.framework.utils.Qe.Opt.*;
 
@@ -25,226 +25,368 @@ import static com.artlongs.framework.utils.Qe.Opt.*;
  * @Date : 2/27/18
  */
 public class Qe<T> {
-
+    private Logger logger = L.get(this.getClass());
     protected Integer id = 0;
     protected SQLManager sqlManager;
     protected Class clz;
     protected String mainTableName = "";
-    protected String select = " SELECT * ";
-    protected String from = " FROM ";
-    protected StringBuffer group = new StringBuffer();
-    protected StringBuffer having = new StringBuffer();
-    protected String sqlTemplate = " {select} {from} {where} {group} {having} {order}";
-    protected StringBuffer sql = new StringBuffer();  // 不包含 group having order 语句
-    protected StringBuffer order = new StringBuffer();
-
-
+    protected String template = "{del}{select}{sum}{max}{min}{casethen}{sumcasethen}{count}{from}{where}{subselect}{group}{having}{order}";
+    protected StringBuffer del = new StringBuffer(32);
+    protected StringBuffer count = new StringBuffer(32);
+    protected StringBuffer sum = new StringBuffer(32);
+    protected StringBuffer max = new StringBuffer(32);
+    protected StringBuffer min = new StringBuffer(32);
+    protected StringBuffer casethen = new StringBuffer(32);
+    protected StringBuffer sumcasethen = new StringBuffer(32);
+    protected StringBuffer select = new StringBuffer(32);
+    protected StringBuffer subselect = new StringBuffer(128);
+    protected StringBuffer from = new StringBuffer(32);
+    protected StringBuffer where = new StringBuffer(196);
+    protected StringBuffer group = new StringBuffer(32);
+    protected StringBuffer having = new StringBuffer(64);
+    protected StringBuffer order = new StringBuffer(32);
+    protected StringBuffer limit = new StringBuffer(32);
+    protected String symbolsql = "";  // 还没有设值的 sql
+    protected Map<String, Object> params = new HashMap<>(7);
+    protected boolean checkSqlHack = true;
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public Qe() {
     }
 
-    public Qe(Class<T> mainTableClass) {
-        this.clz = mainTableClass;
-        this.mainTableName = getTableName(mainTableClass);
-        this.from = FROM.sql(mainTableName,mainTableName);
-    }
-
-    public Qe(Class<T> clz,SQLManager sqlManager) {
-        this.clz = clz;
-        this.sqlManager = sqlManager;
-        this.mainTableName = getTableName(clz);;
-        this.from = FROM.sql(mainTableName,mainTableName);
+    public Qe(Class<T> clz) {
+        init(clz, getTableName(clz), null);
     }
 
     public Qe(String mainTableName) {
-        this.mainTableName = mainTableName;
-        this.from = FROM.sql(mainTableName,mainTableName);
+        init(null, mainTableName, null);
     }
 
-    public Lq<T> lambda() {
-        if (BeanKit.queryLambdasSupport) {
-            Lq<T> lq = new Lq<T>();
-            if (this.sql != null) {
-                throw new UnsupportedOperationException("LamdbaQuery必须在调用其他AP前获取");
-            }
-            return lq;
-        } else {
-            throw new UnsupportedOperationException("需要使用Java8以上，并且依赖com.trigersoft:jaque,请查阅官网文档");
-        }
+    public Qe(Class<T> clz, SQLManager sqlManager) {
+        init(clz, getTableName(clz), sqlManager);
+    }
 
+    protected Qe<T> init(Class<T> clz, String mainTableName, SQLManager sqlManager) {
+        this.id = hashCode();
+        this.clz = clz;
+        this.mainTableName = mainTableName;
+        this.sqlManager = sqlManager;
+        this.from.append(FROM.symbol).append(mainTableName).append(" AS ").append(mainTableName).append(" ");
+        return this;
     }
 
     public static String getTableName(Class clz) {
         return new UnderlinedNameConversion().getTableName(clz);
     }
 
-    public String count(){
-        if(this.sql.indexOf("SELECT") ==-1 && this.sql.indexOf("select") ==-1){
-            this.sql.insert(0," SELECT count(*) ");
-        }
-        return sql();
+    public String count() {
+        this.count.append("SELECT COUNT(1)");
+        return build();
     }
 
-    public String build(){
-        String sql = this.sqlTemplate.toString();
-        if(this.sql().indexOf("DELETE FROM")==-1){
-            sql = sql.replace("{select}", this.select)
-                    .replace("{from}", this.from)
-                    .replace("{where}", this.sql);
-
-            if(0<this.group.length()){
-                sql = sql.replace("{group}", this.group);
-            }else {
-                sql = sql.replace("{group}", "");
+    public Qe<T> select(String... vals) {
+        if (vals.length > 0) {
+            if (this.select.length() == 0) {
+                this.select.append(SELECT.symbol);
             }
-
-            if(0<this.having.length()){
-                sql = sql.replace("{having}", this.having);
-            }else {
-                sql = sql.replace("{having}", "");
+            for (String v : vals) {
+                this.select.append(mainTableName).append(".").append(v).append(",");
             }
-
-            if(0<this.order.length()){// ORDER 语句要排在最后
-                sql = sql.replace("{order}", ORDER.of(this.order));
-            }else {
-                sql = sql.replace("{order}", "");
-            }
-
-        }else {
-            sql = this.sql.toString();
-        }
-
-        return sql;
-    }
-    public String sql() {
-        return this.sql.toString();
-    }
-
-    private Qe<T> append(String sql) {
-        this.sql.append(sql);
-        return this;
-    }
-
-    public Qe select(String... val) {
-        if (val.length > 0) {
-            this.select = SELECT.of(val);
         }
         return this;
     }
 
-    public static Qe del(String table) {
-        Qe qe = new Qe();
-        qe.sql.append(DEL.of(table));
-        return qe;
+    public Qe<T> select(Class otherClz, String... vals) {
+        if (vals.length > 0) {
+            if (this.select.length() == 0) {
+                this.select.append(SELECT.symbol);
+            }
+
+            for (String v : vals) {
+                this.select.append(getTableName(otherClz)).append(".").append(v).append(",");
+            }
+        }
+        return this;
     }
 
-    public Qe where(Qe qe) {
-        return append(WHERE.of(qe.sql()));
+    public static class SubSelect<T> extends Qe {
+        private Class clz;
+        private String mainTableName = "";
+
+        public SubSelect(Class clz) {
+            this.clz = clz;
+            this.mainTableName = getTableName(clz);
+            super.init(clz, mainTableName, null);
+        }
     }
 
-    public Qe leftJoin(String joinTableName, String joinTableKey, String mainTableKey) {
+    public Qe<T> sum(String column, Class... otherClz) {
+        if (this.select.length() == 0) {
+            this.sum.append("SELECT ");
+        }
+        if (this.sum.length() == 0) {
+            if (this.select.length() > 0) {
+                this.sum.append(",");
+            }
+            this.sum.append(" SUM(");
+        }
+        this.sum.append(getTablePrev(otherClz)).append(".").append(column).append(")").append(",");
+        return this;
+    }
+
+    public Qe<T> sumAs(String column, String as, Class... otherClz) {
+        if (this.select.length() == 0) {
+            this.sum.append("SELECT ");
+        }
+        if (this.sum.length() == 0) {
+            if (this.select.length() > 0) {
+                this.sum.append(",");
+            }
+            this.sum.append(" SUM(");
+        }
+        this.sum.append(getTablePrev(otherClz)).append(".").append(column).append(") AS ").append(as).append(",");
+        return this;
+    }
+
+    public Qe<T> sumCase(String caseField, Object eqVal, String sumField, String asFiled, Class... otherClz) {
+        if (select.length() == 0) {
+            sumcasethen.append("SELECT ");
+        }
+        if (sumcasethen.length() == 0) {
+            if (this.select.length() > 0) {
+                sumcasethen.append(",");
+            }
+            sumcasethen.append(" SUM(IFNULL(");
+        }
+        String table = getTablePrev(otherClz);
+        sumcasethen.append("CASE ")
+                .append(table).append(".").append(caseField)
+                .append(" WHEN ").append(eqVal)
+                .append(" THEN ")
+                .append(table).append(".").append(sumField)
+                .append(" END, 0)) AS ").append(asFiled)
+                .append(",");
+        return this;
+    }
+
+    public Qe<T> caseAs(String caseField, Object eqVal, String targetField, String asFiled, Class... otherClz) {
+        if (select.length() == 0) {
+            casethen.append("SELECT ");
+        }
+        if (casethen.length() == 0) {
+            if (this.select.length() > 0) {
+                casethen.append(",");
+            }
+            casethen.append(" (CASE ");
+        }
+        String table = getTablePrev(otherClz);
+        casethen.append(table).append(".").append(caseField)
+                .append(" WHEN ").append(eqVal)
+                .append(" THEN ")
+                .append(table).append(".").append(targetField)
+                .append(" END) AS ").append(asFiled)
+                .append(",");
+        return this;
+    }
+
+    private Qe del() {
+        this.del.append(DEL.symbol).append(FROM.symbol).append(mainTableName);
+        return this;
+    }
+
+    public Qe<T> leftJoin(String joinTableName, String joinTableKey, String mainTableKey) {
         if (S.blank(this.mainTableName)) throw new RuntimeException("主表不能为空。");
-        this.sql.append(LEFTJOIN.of(joinTableName));
-        return append(ON.on(this.mainTableName, mainTableKey, joinTableName, joinTableKey));
+        this.from
+                .append(LEFTJOIN.symbol)
+                .append(joinTableName)
+                .append(ON.symbol)
+                .append(this.mainTableName)
+                .append(".")
+                .append(mainTableKey)
+                .append(" = ")
+                .append(joinTableName)
+                .append(".")
+                .append(joinTableKey);
+        return this;
     }
 
-    public Qe leftJoin(Class<T> clz, String joinTableKey, String mainTableKey) {
+    public Qe<T> leftJoin(Class<T> clz, String joinTableKey, String mainTableKey) {
         return leftJoin(getTableName(clz), joinTableKey, mainTableKey);
     }
 
-    public Qe eq(String column, Object val) {
-        return append(EQ.sql(column, val));
+    public Qe<T> leftJoin(Class<T> clz,String mainTableKey) {
+        return leftJoin(getTableName(clz), "id", mainTableKey);
     }
 
-    public Qe ne(String column, Object val) {
-        return append(NE.sql(column, val));
-    }
-
-    public Qe lt(String column, Object val) {
-        return append(LT.sql(column, val));
-    }
-
-    public Qe gt(String column, Object val) {
-        return append(GT.sql(column, val));
-    }
-
-    public Qe le(String column, Object val) {
-        return append(LE.sql(column, val));
-    }
-
-    public Qe ge(String column, Object val) {
-        return append(GE.sql(column, val));
-    }
-
-    public Qe in(String column, Object val) {
-        return append(IN.sql(column, val));
-    }
-
-    public Qe between(String column, Object val1, Object val2) {
-        return append(BETWEEN.between(column, val1, val2));
-    }
-
-    public Qe isnull(String column) {
-        return append(ISNULL.sql(column, ""));
-    }
-
-    public Qe notnull(String column) {
-        append(NOTNULL.sql(column, ""));
+    // =============== and ==============================
+    public Qe<T> andEq(String column, Object val, Class... otherClz) {
+        addWhereSql(Opt.EQ, column, val, AND.name(), otherClz);
         return this;
     }
 
-    public Qe like(String column, Object val) {
-        return append(LIKE.sql(column, val));
-    }
-
-    public Qe and(Qe qe) {
-        return append(AND.of(qe.sql));
-    }
-
-    public Qe or(Qe qe) {
-        append(OR.of(qe.sql));
+    public Qe<T> andNe(String column, Object val, Class... otherClz) {
+        addWhereSql(Opt.NE, column, val, AND.name(), otherClz);
         return this;
     }
 
-    public Qe asc(Object... val) {
-        if (0<order.length()) order.append(" ,");
-        order.append(ASC.of(val));
+    public Qe<T> andLt(String column, Object val, Class... otherClz) {
+        addWhereSql(Opt.LT, column, val, AND.name(), otherClz);
         return this;
     }
 
-    public Qe desc(Object... val) {
-        if (0<order.length()) order.append(" ,");
-        order.append(DESC.of(val));
+    public Qe<T> andGt(String column, Object val, Class... otherClz) {
+        addWhereSql(Opt.GT, column, val, AND.name(), otherClz);
         return this;
     }
 
-    public Qe group(Object... val) {
-        this.group.append(GROUP.of(val));
+    public Qe<T> andLe(String column, Object val, Class... otherClz) {
+        addWhereSql(Opt.LE, column, val, AND.name(), otherClz);
         return this;
     }
 
-    public Qe having(String column,Opt opt,Object val) {
-        this.having.append(" HAVING (");
-        this.having.append(column);
-        this.having.append(opt.key());
-        this.having.append(val);
-        this.having.append(")");
+    public Qe<T> andGe(String column, Object val, Class... otherClz) {
+        addWhereSql(Opt.GE, column, val, AND.name(), otherClz);
         return this;
     }
 
-    public String limit(Object val1, Object val2) {
-        return LIMIT.between(build(), val1, val2);
+    public Qe<T> andIn(String column, Object val, Class... otherClz) {
+        addWhereSql(Opt.IN, column, val, AND.name(), otherClz);
+        return this;
+    }
+
+    public Qe<T> andBetween(String column, Object v1, Object v2, Class... otherClz) {
+        addBetween(column, v1, v2, AND.name(), otherClz);
+        return this;
+    }
+
+    public Qe<T> andLike(String column, Object val, Class... otherClz) {
+        addLike(column, val, AND.name(), otherClz);
+        return this;
+    }
+
+    public Qe<T> andIsnull(String column, Class... otherClz) {
+        this.where.append(AND.symbol).append(column).append(ISNULL.symbol);
+        return this;
+    }
+
+    public Qe<T> andNotnull(String column, Class... otherClz) {
+        this.where.append(AND.symbol).append(column).append(NOTNULL.symbol);
+        return this;
+    }
+
+    // =============== OR CONDITION ==============================
+    public Qe<T> orEq(String column, Object val, Class... otherClz) {
+        addWhereSql(Opt.EQ, column, val, OR.name(), otherClz);
+        return this;
+    }
+
+    public Qe<T> orNe(String column, Object val, Class... otherClz) {
+        addWhereSql(Opt.NE, column, val, OR.name(), otherClz);
+        return this;
+    }
+
+    public Qe<T> orLt(String column, Object val, Class... otherClz) {
+        addWhereSql(Opt.LT, column, val, OR.name(), otherClz);
+        return this;
+    }
+
+    public Qe<T> orGt(String column, Object val, Class... otherClz) {
+        addWhereSql(Opt.GT, column, val, OR.name(), otherClz);
+        return this;
+    }
+
+    public Qe<T> orLe(String column, Object val, Class... otherClz) {
+        addWhereSql(Opt.LE, column, val, OR.name());
+        return this;
+    }
+
+    public Qe<T> orGe(String column, Object val, Class... otherClz) {
+        addWhereSql(Opt.GE, column, val, OR.name(), otherClz);
+        return this;
+    }
+
+    public Qe<T> orIn(String column, Object val, Class... otherClz) {
+        addWhereSql(Opt.IN, column, val, OR.name(), otherClz);
+        return this;
+    }
+
+    public Qe<T> orBetween(String column, Object v1, Object v2, Class... otherClz) {
+        addBetween(column, v1, v2, OR.name(), otherClz);
+        return this;
+    }
+
+    public Qe<T> orLike(String column, Object val, Class... otherClz) {
+        addLike(column, val, OR.symbol, otherClz);
+        return this;
+    }
+
+    public Qe<T> orIsnull(String column, Class... otherClz) {
+        String table = getTablePrev(otherClz);
+        this.where.append(OR.symbol).append(table).append(".").append(column).append(ISNULL.symbol);
+        return this;
+    }
+
+    public Qe<T> orNotnull(String column, Class... otherClz) {
+        String table = getTablePrev(otherClz);
+        this.where.append(OR.symbol).append(table).append(".").append(column).append(NOTNULL.symbol);
+        return this;
+    }
+
+    public Qe<T> asc(Object... val) {
+        addOrderBy(ASC.symbol, val);
+        return this;
+    }
+
+    public Qe<T> desc(Object... val) {
+        addOrderBy(DESC.symbol, val);
+        return this;
+    }
+
+    private void addOrderBy(String opt, Object... val) {
+        if (order.length() == 0) {
+            order.append(ORDER.symbol);
+        }
+        for (Object v : val) {
+            order.append(v).append(opt).append(",");
+        }
+    }
+
+    public Qe<T> group(Object... val) {
+        this.group.append(GROUP.symbol);
+        for (Object v : val) {
+            group.append(v).append(",");
+        }
+        group.deleteCharAt(group.length() - 1);
+        return this;
+    }
+
+    public Qe<T> having(String column, Opt opt, Object val) {
+        if (this.group.length() > 0) {
+            this.having.append(HAVING.symbol)
+                    .append("(")
+                    .append(column)
+                    .append(opt.symbol)
+                    .append(val)
+                    .append(")");
+        }
+        return this;
+    }
+
+    public String limit(int val1, int val2) {
+        this.limit.append(LIMIT).append(val1).append(",").append(val2);
+        return build();
     }
 
     // ====== 集成查询方法 BEGIN ======
     public T to() {
         List<T> list = sqlManager.execute(new SQLReady(build()), this.clz);
-        return C.notEmpty(list)?list.get(0):null;
+        return C.notEmpty(list) ? list.get(0) : null;
 
     }
+
     public <CLZ> CLZ to(Class<CLZ> tClass) {
         List<CLZ> list = sqlManager.execute(new SQLReady(build()), tClass);
-        return C.notEmpty(list)?list.get(0):null;
+        return C.notEmpty(list) ? list.get(0) : null;
     }
 
     public <CLZ> List<CLZ> toList() {
@@ -254,367 +396,311 @@ public class Qe<T> {
 
     public <CLZ> List<CLZ> toList(Class<CLZ> tClass) {
         List<CLZ> list = sqlManager.execute(new SQLReady(build()), tClass);
-        return C.notEmpty(list)?list:new ArrayList<>();
+        return C.notEmpty(list) ? list : new ArrayList<>();
     }
 
     public <CLZ> Page<CLZ> toPage(Page page) {
-        return toPage(this.clz,page);
+        return toPage(this.clz, page);
+    }
+
+    public boolean toDel() {
+       return sqlManager.executeUpdate(new SQLReady(del().build()))>0;
     }
 
     /**
      * 返回 PAGE 查询结果集
      * 注意不要传入 limit 语句
-     * @param clz  返回的class
+     *
+     * @param clz   返回的class
      * @param page
      * @param <CLZ>
      * @return
      */
     public <CLZ> Page<CLZ> toPage(Class<CLZ> clz, Page page) {
-        PageQuery<CLZ> pq = page.myPageToPageQuery(page,new PageQuery());
+        PageQuery<CLZ> pq = page.myPageToPageQuery(page, new PageQuery());
         pq = sqlManager.execute(new SQLReady(build()), clz, pq);
-        return page.pageQueryToMyPage(pq,page);
+        return page.pageQueryToMyPage(pq, page);
     }
     // ====== 集成查询方法 END ======
 
+    private void addWhereSql(Opt opt, String k, Object val, String link, Class... otherClz) {
+        if (null == val || "".equals(val)) return;
+        if (this.where.length() > 0) {
+            this.where.append(link);
+        }
+        StringBuffer key = new StringBuffer().append(":").append(link).append(opt.name()).append("_").append(k);
+        String table = getTablePrev(otherClz);
+        this.where.append("(")
+                .append(table)
+                .append(".")
+                .append(k)
+                .append(opt.symbol)
+                .append(key)
+                .append(") ");
+        //
+        val = buildSubSelect(val);
+        //
+        addParams(key.toString(), val);
+    }
 
+    private Object buildSubSelect(Object val) {
+        if (val instanceof SubSelect) {
+            this.checkSqlHack = false;
+            return "(" + ((SubSelect) val).build() + ")";
+        }
+        return val;
+    }
+
+    private String getTablePrev(Class[] otherClz) {
+        String table = mainTableName;
+        if (null != otherClz && otherClz.length > 0) {
+            table = getTableName(otherClz[0]);
+        }
+        return table;
+    }
+
+    private void addParams(String key, Object v1) {
+        this.params.put(key, v1);
+    }
+
+    private void addBetween(String column, Object v1, Object v2, String link, Class... otherClz) {
+        if (null == v1 || "".equals(v1)) return;
+        if (null == v2 || "".equals(v2)) return;
+        StringBuffer key1 = new StringBuffer().append(":").append(link).append("_between_").append(column).append("_v1");
+        StringBuffer key2 = new StringBuffer().append(":").append(link).append("_between_").append(column).append("_v2");
+        String table = getTablePrev(otherClz);
+        if (this.where.length() > 0) {
+            this.where.append(link);
+        }
+        this.where.append("(")
+                .append(table).append(".").append(column)
+                .append(BETWEEN.symbol)
+                .append(key1).append(" AND ").append(key2);
+        this.where.append(")");
+        addParams(key1.toString(), v1);
+        addParams(key2.toString(), v2);
+        key1 = null;
+        key2 = null;
+    }
+
+    private void addLike(String column, Object val, String link, Class... otherClz) {
+        if (null == val || "".equals(val)) return;
+        if (this.where.length() > 0) {
+            this.where.append(link);
+        }
+        String table = getTablePrev(otherClz);
+        StringBuffer key = new StringBuffer().append(":").append(link).append("_like_").append(column);
+        this.where.append("(")
+                .append(LIKE.symbol).append("(")
+                .append(table).append(".").append(column)
+                .append(",")
+                .append(key)
+                .append(")>0) ");
+        addParams(key.toString(), val);
+        key = null;
+    }
 
     public enum Opt {
-        EQ() {
-            @Override
-            public String key() {
-                return "=";
-            }
+        EQ("="),
+        NE("!="),
+        LT("<"),
+        GT(">"),
+        LE("<="),
+        GE(">="),
+        IN(" IN "),
+        ISNULL(" IS NULL"),
+        NOTNULL(" IS NOT NULL"),
+        BETWEEN(" BETWEEN "),
+        LIKE("LOCATE "),
+        SELECT("SELECT "),
+        FROM(" FROM "),
+        LEFTJOIN(" LEFT JOIN "),
+        ON(" ON "),
+        WHERE(" WHERE "),
+        DEL("DELETE "),
+        AS(" AS "),
+        ORDER(" ORDER BY "),
+        GROUP(" GROUP BY "),
+        HAVING(" HAVING "),
+        ASC(" ASC"),
+        DESC(" DESC"),
+        LIMIT(" LIMIT "),
+        AND(" AND "),
+        OR(" OR ");
 
-            @Override
-            public String sql(Object k, Object val) {
-                String expr = " (%s = '%s') ";
-                return String.format(expr, k, val);
-            }
-        },
+        public String symbol;
 
-        NE() {
-            @Override
-            public String key() {
-                return "!=";
-            }
+        Opt(String symbol) {
+            this.symbol = symbol;
+        }
+    }
 
-            @Override
-            public String sql(Object k, Object val) {
-                String expr = " (%s != '%s') ";
-                return String.format(expr, k, val);
+    private String changeOfType(Object val) {
+        if (null == val) return "";
+        Collection list = new ArrayList();
+        StringBuffer v = new StringBuffer();
+        if (val.getClass().isArray()) {
+            Object[] vv = (Object[]) val;
+            v.append("(");
+            for (Object o : vv) {
+                v.append("'").append(o).append("'");
+                v.append(",");
             }
-        },
-        LT() {
-            @Override
-            public String key() {
-                return "<";
+            v.deleteCharAt(v.length() - 1);
+            v.append(")");
+        }
+        if (val instanceof Collection) {
+            list = (Collection) val;
+            v.append("(");
+            for (Object o : list) {
+                v.append("'").append(o).append("'");
+                v.append(",");
             }
-
-            @Override
-            public String sql(Object k, Object val) {
-                String expr = " (%s < '%s') ";
-                return String.format(expr, k, val);
-            }
-        },
-        GT() {
-            @Override
-            public String key() {
-                return ">";
-            }
-
-            @Override
-            public String sql(Object k, Object val) {
-                String expr = " (%s > '%s') ";
-                return String.format(expr, k, val);
-            }
-        },
-        LE() {
-            @Override
-            public String key() {
-                return "<=";
-            }
-
-            @Override
-            public String sql(Object k, Object val) {
-                String expr = " (%s <= '%s') ";
-                return String.format(expr, k, val);
-            }
-        },
-        GE() {
-            @Override
-            public String key() {
-                return ">=";
-            }
-
-            @Override
-            public String sql(Object k, Object val) {
-                String expr = " (%s >= '%s') ";
-                return String.format(expr, k, val);
-            }
-        },
-        IN() {
-            @Override
-            public String key() {
-                return "IN";
-            }
-
-            @Override
-            public String sql(Object k, Object val) {
-                if(null == val) return "";
-                Collection list = new ArrayList();
-                StringBuffer v = new StringBuffer();
-                if(val.getClass().isArray()){
-                    Object[] vv = (Object[]) val;
-                    for (int i=0;i<vv.length;i++) {
-                        v.append("'"+vv[i]+"'");
-                        v.append(",");
-                    }
-                }
-                if(val instanceof Collection){
-                    list = (Collection)val;
-                    for (Object o : list) {
-                        v.append("'"+o+"'");
-                        v.append(",");
-                    }
-                }
-
-                v.deleteCharAt(v.length() - 1);
-                String expr = " (%s IN (%s)) ";
-                return String.format(expr, k, v);
-            }
-        },
-        ISNULL() {
-            @Override
-            public String key() {
-                return "IS NULL";
-            }
-
-            @Override
-            public String sql(Object k, Object val) {
-                String expr = " (%s IS NULL) ";
-                return String.format(expr, k);
-            }
-        },
-        NOTNULL() {
-            @Override
-            public String key() {
-                return "IS NOT NULL";
-            }
-
-            @Override
-            public String sql(Object k, Object val) {
-                String expr = " (%s IS NOT NULL) ";
-                return String.format(expr, k);
-            }
-        },
-        BETWEEN() {
-            @Override
-            public String key() {
-                return "BETWEEN";
-            }
-
-            @Override
-            public String between(Object k, Object val1, Object val2) {
-                if (val1 instanceof Date) {
-                    val1 = ((Date) val1).getTime();
-                }
-                if (val2 instanceof Date) {
-                    val2 = ((Date) val2).getTime();
-                }
-                String expr = " (%s between '%s' and '%s') ";
-                return String.format(expr, k, val1, val2);
-            }
-        },
-        LIKE() {
-            @Override
-            public String key() {
-                return "LIKE";
-            }
-
-            @Override
-            public String sql(Object k, Object val) {
-                String expr = " (LOCATE(%s,%s)) ";
-                return String.format(expr, val, k);
-            }
-        },
-        SELECT() {
-            @Override
-            public String of(Object... val) {
-                StringBuffer framSql = new StringBuffer( " SELECT ");
-                int i = 0;
-                while (i < val.length) {
-                    framSql.append(val[i]);
-                    framSql.append(",");
-                    i++;
-                }
-                return framSql.deleteCharAt(framSql.length() - 1).toString();
-            }
-        },
-        DEL() {
-            @Override
-            public String of(Object... val) {
-                String expr = " DELETE FROM %s ";
-                return String.format(expr, val);
-            }
-        },
-
-        FROM() {
-            @Override
-            public String sql(Object val1, Object val2) {
-                String expr = " FROM %s AS %s ";
-                return String.format(expr, val1, val2);
-            }
-        },
-        AS() {
-            @Override
-            public String sql(Object val1, Object val2) {
-                String expr = " %s AS %s ";
-                return String.format(expr, val1, val2);
-            }
-        },
-        WHERE() {
-            @Override
-            public String of(Object... val1) {
-                String expr = " WHERE (%s)";
-                return String.format(expr, val1);
-            }
-        },
-        LEFTJOIN() {
-            @Override
-            public String of(Object... val1) {
-                String expr = " LEFT JOIN %s ";
-                return String.format(expr, val1);
-            }
-        },
-        ON() {
-            @Override
-            public String on(String table1, Object val1,String table2, Object val2) {
-                String expr = " ON(%s.%s = %s.%s)";
-                return String.format(expr, table1, val1, table2, val2);
-            }
-        },
-        ORDER() {
-            @Override
-            public String of(Object... val) {
-                String expr = " ORDER BY %s ";
-                return String.format(expr, val);
-            }
-        },
-        GROUP() {
-            @Override
-            public String of(Object... val) {
-                String expr = " GROUP BY %s ";
-                return String.format(expr, val);
-            }
-        },
-        HAVING() {
-            @Override
-            public String between(Object k, Object opt, Object val) {
-                String expr = " (%s %s %s)";
-                return String.format(expr, k, opt, val);
-            }
-        },
-        ASC() {
-            @Override
-            public String of(Object... val) {
-                StringBuffer framg = new StringBuffer();
-                int i = 0;
-                while (i < val.length) {
-                    framg.append(" %s ASC");
-                    if (i < val.length - 1) framg.append(", ");
-                    i++;
-                }
-                return String.format(framg.toString(), val);
-            }
-        },
-        DESC() {
-            @Override
-            public String of(Object... val) {
-                StringBuffer framg = new StringBuffer();
-                int i = 0;
-                while (i < val.length) {
-                    framg.append(" %s DESC");
-                    if (i < val.length - 1) framg.append(", ");
-                    i++;
-                }
-                return String.format(framg.toString(), val);
-            }
-        },
-        LIMIT() {
-            @Override
-            public String between(Object k, Object val1, Object val2) {
-                String expr = " %s LIMIT %s, %s";
-                return String.format(expr, k, val1, val2);
-            }
-        },
-        AND() {
-            @Override
-            public String of(Object... val) {
-                String expr = "  AND (%s) ";
-                return String.format(expr, val);
-            }
-        },
-        OR() {
-            @Override
-            public String of(Object... val) {
-                String expr = " OR (%s) ";
-                return String.format(expr, val);
-            }
-        };
-
-        public String key() {
-            return "";
+            v.deleteCharAt(v.length() - 1);
+            v.append(")");
         }
 
-        public String of(Object... k) {
-            return "";
+        if (val instanceof Date) {
+            v.append("'").append(sdf.format(val)).append("'");
         }
 
-        public String sql(Object k, Object val) {
-            return "";
+        if (v.length() == 0) {
+            v.append(val);
         }
+        return v.toString();
+    }
 
-        public String between(Object k, Object val1, Object val2) {
-            return "";
+    private boolean isSQLHack(String v) {
+        if (checkSqlHack) {
+            if (v.toLowerCase().contains("select")) return true;
+            if (v.toLowerCase().contains("from")) return true;
+            if (v.toLowerCase().contains("where")) return true;
         }
+        return false;
+    }
 
-        public String on(String table1, Object val1, String table2, Object val2) {
-            String expr = " ON(%1.%2 = %4.%5) ";
-            return String.format(expr, table1, val1, table2, val2);
+    private StringBuffer buildWhereSql() {
+        if (where.length() > 0) {
+            where.insert(0, "(");
+            where.insert(0, WHERE.symbol);
+            where.append(")");
         }
+        return where;
+    }
 
+    public String build() {
+        String sql = this.template;
+        sql = replaceTag(sql, "{del}", del);
+        sql = replaceTag(sql, "{count}", count);
+        sql = replaceTag(sql, "{select}", buildSelect());
+        sql = replaceTag(sql, "{from}", from);
+        sql = replaceTag(sql, "{where}", buildWhereSql());
+        sql = replaceTag(sql, "{subselect}", subselect);
+        sql = replaceTag(sql, "{sum}", sum);
+        sql = replaceTag(sql, "{max}", max);
+        sql = replaceTag(sql, "{min}", min);
+        sql = replaceTag(sql, "{casethen}", casethen);
+        sql = replaceTag(sql, "{sumcasethen}", sumcasethen);
+        sql = replaceTag(sql, "{group}", group);
+        sql = replaceTag(sql, "{having}", having);
+        sql = replaceTag(sql, "{order}", order);
+        sql = replaceTag(sql, "{limit}", limit);
+
+        this.symbolsql = sql;
+        sql = settingParams(sql);
+        clear();
+        return sql;
+    }
+
+    private StringBuffer buildSelect(){
+        if (this.select.length() == 0) {
+            this.select.append(" SELECT * ");
+        }
+        return this.select;
+    }
+
+    private String replaceTag(String sql, String tag, StringBuffer content) {
+        if (content.length() > 0) {
+            if (String.valueOf(content.charAt(content.length() - 1)).equals(",")) {
+                content.deleteCharAt(content.length() - 1);
+            }
+            sql = sql.replace(tag, content);
+        } else {
+            sql = sql.replace(tag, "");
+        }
+        return sql;
+    }
+
+    private String settingParams(String symbolsql) {
+        for (String key : params.keySet()) {
+            String v = changeOfType(params.get(key));
+            if (isSQLHack(v)) {
+                logger.error("Warn find SQL HACK :" + v);
+                continue;
+            }
+            symbolsql = symbolsql.replace(key, v);
+        }
+        return symbolsql;
+    }
+
+    private void clear() {
+        del = null;
+        count = null;
+        sum = null;
+        max = null;
+        min = null;
+        casethen = null;
+        sumcasethen = null;
+        select = null;
+        from = null;
+        where = null;
+        group = null;
+        having = null;
+        order = null;
+        limit = null;
+        params = null;
+        symbolsql = null;
+        subselect = null;
     }
 
 
     public static void main(String[] args) throws Exception {
         String sql = new Qe(SysUser.class)
-                .select(SysUser.Dao.userName, SysUser.Dao.deptId, SysDept.Dao.deptName)
-                .leftJoin(SysDept.class, SysDept.Dao.id, SysUser.Dao.deptId)
-                .where(new Qe().like(SysUser.Dao.deptId, 1)
-                        .and(new Qe().in("dept_id", new Integer[]{1,2,3}))
-                )
-                .asc(SysUser.Dao.deptId)
-                .desc(SysUser.Dao.userName)
-                .group(SysUser.Dao.deptId)
-                .having(SysUser.Dao.deptId, Opt.GT, 0)
+                .select("user_uame")
+                .andIn("dept_id", new SubSelect(SysDept.class).select("id").andGt("id", 0))
+                .sum("id", SysDept.class)
+//                .sumCase(SysDept.Dao.id, 1, SysDept.Dao.id, "did")
+//                .caseAs(SysDept.Dao.id, 1, SysDept.Dao.id, "depid")
+                .leftJoin(SysDept.class,"dept_id")
+//                .andLike(SysUser.Dao.deptId, 1)
+//                .andIn(SysUser.Dao.deptId, new Integer[]{1, 2, 3})
+//                .andBetween(SysUser.Dao.createDate, new Date(), new Date())
+                .group("dept_id")
+                .having("dept_id", Opt.GT, 0)
+                .asc("dept_id")
+                .desc("user_uame")
                 .build();
 
         System.out.println("sql=" + sql);
 
-        String and_sql = new Qe().eq(SysUser.Dao.userName, "linton").and(new Qe().eq(SysUser.Dao.userName, "alice")).sql();
+     /*   String and_sql = new Qe().eq(SysUser.Dao.userName, "linton").and(new Qe<SysUser>().eq(SysUser.Dao.userName, "alice")).sql();
         System.out.println("and_sql=" + and_sql);
 
 
         String or = new Qe().eq(SysUser.Dao.deptId, 1).or(new Qe().eq(SysUser.Dao.deptId, 2)).sql();
         System.out.println("or=" + or);
+*/
 
-
-        String between = new Qe().between(SysUser.Dao.createDate, new Date(), new Date()).build();
+/*
+        String between = new Qe().andBetween(SysUser.Dao.createDate, new Date(), new Date()).build();
         System.out.println("between=" + between);
+*/
 
-        String del = Qe.del(SysUser.Dao.table).where(new Qe().eq(SysUser.Dao.deptId, 1)).build();
-
+        String del = new Qe(SysUser.class).del().andEq("dept_id", 1).build();
         System.out.println("del= " + del);
+
+        String count = new Qe(SysUser.class).andEq("dept_id", 1).count();
+        System.out.println("count= " + count);
 
     }
 

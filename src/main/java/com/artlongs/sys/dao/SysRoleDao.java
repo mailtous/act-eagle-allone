@@ -1,6 +1,7 @@
 package com.artlongs.sys.dao;
 
 import act.util.Stateless;
+import com.artlongs.framework.dao.BeetlSqlDao;
 import com.artlongs.framework.page.Page;
 import com.artlongs.framework.utils.Qe;
 import com.artlongs.sys.model.SysRole;
@@ -14,7 +15,7 @@ import java.util.List;
  * @Date : 11/21/17
  */
 @Stateless
-public class SysRoleDao extends SysRole.Dao<SysRole>{
+public class SysRoleDao extends BeetlSqlDao<SysRole> {
 
     public Page<SysRole> getAllOfPage(Page page){
      /*   String sql = new Qe(SysRole.class).build();

@@ -1,9 +1,12 @@
 package com.artlongs.framework.service;
 
+import act.db.beetlsql.BeetlSqlTransactional;
+import act.db.sql.tx.Transactional;
 import com.artlongs.framework.dao.BaseDao;
 import com.artlongs.framework.model.BaseEntity;
 import com.artlongs.framework.page.Page;
 import org.beetl.sql.core.DSTransactionManager;
+import org.osgl.mvc.annotation.With;
 
 import javax.inject.Singleton;
 import java.util.Date;
@@ -15,21 +18,18 @@ import java.util.List;
  */
 @Singleton
 public abstract class BaseServiceImpl<T> implements BaseService<T> {
+    public BaseServiceImpl() {
+    }
 
     protected BaseDao<T> baseDao;
 
     public BaseServiceImpl(BaseDao baseDao) {
         this.baseDao = baseDao;
     }
-
     /**
      * Beelsql的事务管理类
      */
     public DSTransactionManager tx = new DSTransactionManager();
-
-
-    public BaseServiceImpl() {
-    }
 
     @Override
     public T get(Long id) {
@@ -37,11 +37,14 @@ public abstract class BaseServiceImpl<T> implements BaseService<T> {
     }
 
     @Override
+    @Transactional
     public int save(T t) {
-        return baseDao.save(t);
+        int pk = baseDao.save(t);
+        return pk;
     }
 
     @Override
+    @Transactional
     public int add(BaseEntity t) {
         t.setCreateDate(new Date());
         t.setModifyDate(new Date());
@@ -49,22 +52,26 @@ public abstract class BaseServiceImpl<T> implements BaseService<T> {
     }
 
     @Override
+    @Transactional
     public int update(T t) {
         return baseDao.update(t);
     }
 
     @Override
+    @Transactional
     public int updateAndTime(BaseEntity t) {
         t.setModifyDate(new Date());
         return update((T)t);
     }
 
     @Override
+    @Transactional
     public int delete(T t) {
         return baseDao.delete(t);
     }
 
     @Override
+    @Transactional
     public int delete(Long id) {
         return baseDao.delete(id);
     }

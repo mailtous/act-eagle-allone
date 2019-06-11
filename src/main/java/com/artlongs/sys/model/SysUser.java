@@ -39,24 +39,6 @@ public class SysUser extends BaseEntity {
     private Integer grade; 			//系统用户权限等级 GradeStatus
     private Integer action; 		//激活状态
 
-    @Singleton
-    @AutoBind
-    public static abstract class Dao<T extends SysUser> extends BeetlSqlDao<SysUser>{
-        @Inject
-        public static SysRole.Dao<SysRole> sysRoleDao;
-
-        public static String table = "sys_user";
-        public static String id = "id";
-        public static String createDate="create_date";
-        public static String modifyDate="modify_date";
-        public static String userName = "user_name";
-        public static String pwd="pwd";
-        public static String roleIds = "role_ids";
-        public static String deptId="dept_id";
-        public static String delStatus="del_status";
-
-    }
-
     @Transient
     public List<Long> roleIdList() {
         List<Long> roleIdList = C.newList();

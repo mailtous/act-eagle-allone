@@ -3,6 +3,7 @@ package com.artlongs.sys.dao;
 import act.util.Stateless;
 import com.artlongs.framework.dao.BeetlSqlDao;
 import com.artlongs.framework.page.Page;
+import com.artlongs.framework.utils.Lq;
 import com.artlongs.sys.model.SysFunc;
 
 import java.util.List;
@@ -14,16 +15,16 @@ import java.util.List;
  * @Date : 11/21/17
  */
 @Stateless
-public class SysFuncDao extends SysFunc.Dao<SysFunc> {
+public class SysFuncDao extends BeetlSqlDao<SysFunc> {
 
 
     public Page<SysFunc> getAllOfPage(Page page){
-        String sql = " select * from " + SysFunc.Dao.table;
+        String sql = this.lq().build();
         return getPage(page, sql, null);
     }
 
     public List<SysFunc> getAll(){
-        String sql = " select * from " + SysFunc.Dao.table;
+        String sql = this.lq().build();
         return getList(sql);
     }
 
@@ -33,7 +34,7 @@ public class SysFuncDao extends SysFunc.Dao<SysFunc> {
     }
 
     public SysFunc getParent(Long parentId){
-        String sql = " select * from "+SysFunc.Dao.table+" where parent_id =?";
+        String sql = this.lq().andEq(SysFunc::getParentId,parentId).build();
         return getObj(sql, parentId);
     }
 }

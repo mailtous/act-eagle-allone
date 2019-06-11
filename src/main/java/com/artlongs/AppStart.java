@@ -10,6 +10,6 @@ import act.Act;
  */
 public class AppStart {
     public static void main(String[] args) throws Exception {
-        Act.start("act-eagle");
+        Act.start("act-eagle","com.artlongs");
     }
 }
