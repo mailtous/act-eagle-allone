@@ -3,7 +3,6 @@ package com.artlongs.framework.utils;
 import com.artlongs.framework.page.Page;
 import com.artlongs.sys.model.SysDept;
 import com.artlongs.sys.model.SysUser;
-import com.sun.org.apache.regexp.internal.RE;
 import org.beetl.sql.core.SQLManager;
 import org.beetl.sql.core.SQLReady;
 import org.beetl.sql.core.UnderlinedNameConversion;
@@ -47,9 +46,10 @@ public class Qe<T> {
     protected StringBuffer order = new StringBuffer(32);
     protected StringBuffer limit = new StringBuffer(32);
     protected String symbolsql = "";  // 还没有设值的 sql
-    protected Map<String, Object> params = new HashMap<>(7);
+    protected Map<String, Object> params = new HashMap<>(9);
     protected boolean checkSqlHack = true;
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private String link;
 
     public Qe() {
     }
@@ -86,11 +86,8 @@ public class Qe<T> {
 
     public Qe<T> select(String... vals) {
         if (vals.length > 0) {
-            if (this.select.length() == 0) {
-                this.select.append(SELECT.symbol);
-            }
             for (String v : vals) {
-                this.select.append(mainTableName).append(".").append(v).append(",");
+                selectAs(mainTableName, v, null);
             }
         }
         return this;
@@ -98,14 +95,31 @@ public class Qe<T> {
 
     public Qe<T> select(Class otherClz, String... vals) {
         if (vals.length > 0) {
-            if (this.select.length() == 0) {
-                this.select.append(SELECT.symbol);
-            }
-
             for (String v : vals) {
-                this.select.append(getTableName(otherClz)).append(".").append(v).append(",");
+                selectAs(getTableName(otherClz), v, null);
             }
         }
+        return this;
+    }
+
+    public Qe<T> selectAs(Class otherClz, String v, String as) {
+        selectAs(getTableName(otherClz), v, as);
+        return this;
+    }
+
+    public Qe<T> selectAs(String column, String as) {
+        return selectAs(mainTableName, column, as);
+    }
+
+    private Qe<T> selectAs(String table, String column, String as) {
+        if (this.select.length() == 0) {
+            this.select.append(SELECT.symbol);
+        }
+        this.select.append(table).append(".").append(column);
+        if (null != as && "" != as) {
+            this.select.append(AS.symbol).append(as);
+        }
+        this.select.append(",");
         return this;
     }
 
@@ -121,43 +135,37 @@ public class Qe<T> {
     }
 
     public Qe<T> sum(String column, Class... otherClz) {
-        if (this.select.length() == 0) {
+        if (this.select.length() == 0 && this.sum.length() == 0) {
             this.sum.append("SELECT ");
         }
-        if (this.sum.length() == 0) {
-            if (this.select.length() > 0) {
-                this.sum.append(",");
-            }
-            this.sum.append(" SUM(");
+        if(select.length()>0 && sum.length() ==0){
+            sum.append(" ,");
         }
+        this.sum.append(" SUM(");
         this.sum.append(getTablePrev(otherClz)).append(".").append(column).append(")").append(",");
         return this;
     }
 
     public Qe<T> sumAs(String column, String as, Class... otherClz) {
-        if (this.select.length() == 0) {
+        if (this.select.length() == 0 && this.sum.length() ==0) {
             this.sum.append("SELECT ");
         }
-        if (this.sum.length() == 0) {
-            if (this.select.length() > 0) {
-                this.sum.append(",");
-            }
-            this.sum.append(" SUM(");
+        if(select.length()>0 && sum.length() ==0){
+            sum.append(" ,");
         }
+        this.sum.append(" SUM(");
         this.sum.append(getTablePrev(otherClz)).append(".").append(column).append(") AS ").append(as).append(",");
         return this;
     }
 
     public Qe<T> sumCase(String caseField, Object eqVal, String sumField, String asFiled, Class... otherClz) {
-        if (select.length() == 0) {
+        if (select.length() == 0 && sumcasethen.length() == 0) {
             sumcasethen.append("SELECT ");
         }
-        if (sumcasethen.length() == 0) {
-            if (this.select.length() > 0) {
-                sumcasethen.append(",");
-            }
-            sumcasethen.append(" SUM(IFNULL(");
+        if(select.length()>0 && sumcasethen.length() ==0){
+            sumcasethen.append(" ,");
         }
+        sumcasethen.append(" SUM(IFNULL(");
         String table = getTablePrev(otherClz);
         sumcasethen.append("CASE ")
                 .append(table).append(".").append(caseField)
@@ -170,15 +178,13 @@ public class Qe<T> {
     }
 
     public Qe<T> caseAs(String caseField, Object eqVal, String targetField, String asFiled, Class... otherClz) {
-        if (select.length() == 0) {
+        if (select.length() == 0 && casethen.length() == 0) {
             casethen.append("SELECT ");
         }
-        if (casethen.length() == 0) {
-            if (this.select.length() > 0) {
-                casethen.append(",");
-            }
-            casethen.append(" (CASE ");
+        if(select.length()>0 && casethen.length() ==0){
+            casethen.append(" ,");
         }
+        casethen.append(" (CASE ");
         String table = getTablePrev(otherClz);
         casethen.append(table).append(".").append(caseField)
                 .append(" WHEN ").append(eqVal)
@@ -218,7 +224,16 @@ public class Qe<T> {
         return leftJoin(getTableName(clz), "id", mainTableKey);
     }
 
-    // =============== and ==============================
+    public Qe<T> and(Qe<T>... manyQe){
+        addManyCondition(Opt.AND.symbol,manyQe);
+        return this;
+    }
+
+    public Qe<T> or(Qe<T>... manyQe){
+        addManyCondition(Opt.OR.symbol,manyQe);
+        return this;
+    }
+    // =============== AND CONDITION==============================
     public Qe<T> andEq(String column, Object val, Class... otherClz) {
         addWhereSql(Opt.EQ, column, val, AND.name(), otherClz);
         return this;
@@ -424,6 +439,7 @@ public class Qe<T> {
     // ====== 集成查询方法 END ======
 
     private void addWhereSql(Opt opt, String k, Object val, String link, Class... otherClz) {
+        this.link = link;
         if (null == val || "".equals(val)) return;
         if (this.where.length() > 0) {
             this.where.append(link);
@@ -441,6 +457,37 @@ public class Qe<T> {
         val = buildSubSelect(val);
         //
         addParams(key.toString(), val);
+    }
+
+    private void addManyCondition(String link,Qe... manyQe ) {
+        this.where.append(link).append("(");
+        if (manyQe.length > 0) {
+            for (int i = 0; i < manyQe.length; i++) {
+                Qe qe = manyQe[i];
+                String sql = settingParams(qe.where.toString(), qe.params);
+                if (i == 0) {
+                    sql = sql.replace("AND(", "(").replace("OR(", "(");
+                }
+                if (i > 0) {
+                    if (sql.indexOf("AND(") == -1 && sql.indexOf("OR(") == -1) {
+                        this.where.append(qe.link).append(sql);
+                        continue;
+                    }
+                }
+                this.where.append(sql);
+            }
+        }
+        this.where.append(") ");
+    }
+
+    public Qe<T> condition(){
+        Qe q = new Qe(this.clz);
+        q.clear();
+        q.where = new StringBuffer(" ");
+        return q;
+    }
+    public Qe<T> c(){
+        return condition();
     }
 
     private Object buildSubSelect(Object val) {
@@ -464,6 +511,7 @@ public class Qe<T> {
     }
 
     private void addBetween(String column, Object v1, Object v2, String link, Class... otherClz) {
+        this.link = link;
         if (null == v1 || "".equals(v1)) return;
         if (null == v2 || "".equals(v2)) return;
         StringBuffer key1 = new StringBuffer().append(":").append(link).append("_between_").append(column).append("_v1");
@@ -484,6 +532,7 @@ public class Qe<T> {
     }
 
     private void addLike(String column, Object val, String link, Class... otherClz) {
+        this.link = link;
         if (null == val || "".equals(val)) return;
         if (this.where.length() > 0) {
             this.where.append(link);
@@ -535,7 +584,7 @@ public class Qe<T> {
         }
     }
 
-    private String changeOfType(Object val) {
+    private String changeValOfType(Object val) {
         if (null == val) return "";
         Collection list = new ArrayList();
         StringBuffer v = new StringBuffer();
@@ -632,8 +681,12 @@ public class Qe<T> {
     }
 
     private String settingParams(String symbolsql) {
+       return settingParams(symbolsql, this.params);
+    }
+
+    private String settingParams(String symbolsql,Map<String,Object> params) {
         for (String key : params.keySet()) {
-            String v = changeOfType(params.get(key));
+            String v = changeValOfType(params.get(key));
             if (isSQLHack(v)) {
                 logger.error("Warn find SQL HACK :" + v);
                 continue;
@@ -644,37 +697,38 @@ public class Qe<T> {
     }
 
     private void clear() {
-        del = null;
-        count = null;
-        sum = null;
-        max = null;
-        min = null;
-        casethen = null;
-        sumcasethen = null;
-        select = null;
-        from = null;
-        where = null;
-        group = null;
-        having = null;
-        order = null;
-        limit = null;
-        params = null;
-        symbolsql = null;
-        subselect = null;
+        del = new StringBuffer();
+        count = new StringBuffer();
+        sum = new StringBuffer();
+        max = new StringBuffer();
+        min = new StringBuffer();
+        casethen = new StringBuffer();
+        sumcasethen = new StringBuffer();
+        select = new StringBuffer();
+        subselect = new StringBuffer();
+        from = new StringBuffer();
+        where = new StringBuffer();
+        group = new StringBuffer();
+        having = new StringBuffer();
+        order = new StringBuffer();
+        limit = new StringBuffer();
+        link = "";
     }
-
-
     public static void main(String[] args) throws Exception {
-        String sql = new Qe(SysUser.class)
+        Qe qe = new Qe(SysUser.class);
+        String sql = qe
                 .select("user_uame")
-                .andIn("dept_id", new SubSelect(SysDept.class).select("id").andGt("id", 0))
-                .sum("id", SysDept.class)
+//                .andIn("dept_id", new SubSelect(SysDept.class).select("id").andGt("id", 0))
+//                .sum("id", SysDept.class)
 //                .sumCase(SysDept.Dao.id, 1, SysDept.Dao.id, "did")
 //                .caseAs(SysDept.Dao.id, 1, SysDept.Dao.id, "depid")
                 .leftJoin(SysDept.class,"dept_id")
 //                .andLike(SysUser.Dao.deptId, 1)
 //                .andIn(SysUser.Dao.deptId, new Integer[]{1, 2, 3})
 //                .andBetween(SysUser.Dao.createDate, new Date(), new Date())
+                .andEq("dept_id",8)
+                .or(qe.condition().andIn("dept_id", new Integer[]{1, 2, 3}),new Qe(SysDept.class).orEq("dept_id",5))
+
                 .group("dept_id")
                 .having("dept_id", Opt.GT, 0)
                 .asc("dept_id")

@@ -5,6 +5,7 @@ import com.artlongs.sys.model.SysUser;
 import org.beetl.sql.core.SQLManager;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -42,6 +43,10 @@ public class Lq<T> extends Qe<T> {
         super.select(getFunctionName(funs));
         return this;
     }
+    public Lq<T> selectAs(Attr.Property<T, ?> func,String as) {
+        super.selectAs(getFunctionName(func), as);
+        return this;
+    }
 
     /**
      * 选择其它数据表的字段
@@ -56,6 +61,12 @@ public class Lq<T> extends Qe<T> {
         }
         return this;
     }
+
+    public Lq<T> selectAs(Attr fun,String as) {
+        super.selectAs(fun.getClz(),fun.getColumn(), as);
+        return this;
+    }
+
 
     public Lq<T> sum(Attr.Property<T, ?> fun) {
         super.sum(getFunctionName(fun), clz);
@@ -94,6 +105,16 @@ public class Lq<T> extends Qe<T> {
 
     public Lq<T> leftJoin(Class joinTableClass, Attr mainKey) {
         super.leftJoin(joinTableClass, "id", mainKey.getColumn());
+        return this;
+    }
+
+    public Lq<T> and(Lq<T>... manyQe) {
+        super.and(manyQe);
+        return this;
+    }
+
+    public Lq<T> or(Lq<T>... manyQe) {
+        super.or(manyQe);
         return this;
     }
 
@@ -235,6 +256,8 @@ public class Lq<T> extends Qe<T> {
                 .select(new Attr<>(SysDept::getDeptName))
                 .leftJoin(SysDept.class, new Attr<>(SysUser::getDeptId))
                 .andLike(SysUser::getDeptId, 1)
+                .andIn(SysUser::getDeptId, new Integer[]{1, 2, 3})
+                .andBetween(SysUser::getCreateDate, new Date(), new Date())
                 .asc(SysUser::getDeptId)
                 .desc(SysUser::getUserName)
                 .group(SysUser::getDeptId)
