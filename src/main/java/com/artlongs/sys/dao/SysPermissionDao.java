@@ -1,15 +1,8 @@
 package com.artlongs.sys.dao;
 
 import act.util.Stateless;
-import com.artlongs.framework.dao.BaseDao;
-import com.artlongs.framework.utils.Lq;
-import com.artlongs.framework.utils.Qe;
 import com.artlongs.sys.model.SysPermission;
-import org.beetl.sql.core.SQLManager;
-import org.beetl.sql.core.SQLReady;
-import org.beetl.sql.core.query.Query;
 
-import javax.inject.Inject;
 import java.util.List;
 
 /**

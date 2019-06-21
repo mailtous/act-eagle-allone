@@ -1,4 +1,4 @@
-package com.artlongs.framework.utils;
+package com.artlongs.framework.query;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

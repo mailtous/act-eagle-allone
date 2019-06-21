@@ -2,22 +2,16 @@ package com.artlongs.framework.dao;
 
 import act.Act;
 import act.db.beetlsql.BeetlSqlService;
-import act.inject.AutoBind;
 import com.artlongs.framework.model.BaseEntity;
 import com.artlongs.framework.page.Page;
-import com.artlongs.framework.utils.GenericsUtils;
-import com.artlongs.framework.utils.Lq;
-import org.beetl.sql.core.ConnectionSource;
-import org.beetl.sql.core.ConnectionSourceHelper;
+import com.artlongs.framework.query.GenericsUtils;
+import com.artlongs.framework.query.Lq;
 import org.beetl.sql.core.SQLManager;
 import org.beetl.sql.core.SQLReady;
 import org.beetl.sql.core.engine.PageQuery;
 import org.osgl.util.C;
 import org.osgl.util.S;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +38,10 @@ public class BeetlSqlDao<T extends BaseEntity> implements BaseDao<T> {
             this.persistentClass = GenericsUtils.getSuperClassGenricType(this.getClass());
         }
         return persistentClass;
+    }
+
+    public SQLManager getSqlm(){
+        return sqlm;
     }
 
     /**

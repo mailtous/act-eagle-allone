@@ -1,14 +1,12 @@
-package com.artlongs.framework.utils;
+package com.artlongs.framework.query;
 
 import com.trigersoft.jaque.expression.*;
-import org.beetl.sql.core.UnderlinedNameConversion;
-import org.beetl.sql.core.kit.StringKit;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.lang.reflect.Member;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -47,8 +45,8 @@ public class Attr<T> {
         this.member = getMember(expression);
         this.clz = params.get(0).getResultType();
         this.name = attrName(member);
-        this.column = getUnderLineName(this.clz,  this.name);
-        this.tableName = StringKit.enCodeUnderlined(params.getClass().getSimpleName());
+        this.column = getUnderLineName(this.name);
+        this.tableName = getRealTableName(this.clz);
         return this;
     }
 
@@ -69,8 +67,12 @@ public class Attr<T> {
     }
 
     public String attrName(Member member) {
-        String method = member.getName();
-        return method.startsWith("get")?method.substring(3):method.substring(2);
+        return getCamelName(member.getName());
+    }
+
+    private String getCamelName(String method) {
+        method = method.startsWith("get") ? method.substring(3) : method.substring(2);
+        return StringKit.toLowerCaseFirstOne(method);
     }
 
     public String[] attrName(Member... member) {
@@ -83,10 +85,8 @@ public class Attr<T> {
     }
 
     public String attrName(Property<T, ?> fun) {
-        LambdaExpression<Function<T, ?>> lambdaExpression = getExpression(fun);
-        Member member = getMember(lambdaExpression);
-        String method = member.getName();
-        return method.startsWith("get")?method.substring(3):method.substring(2);
+        Member member = getMember(getExpression(fun));
+        return getCamelName(member.getName());
     }
 
     public String[] attrName(Property<T, ?>... funs) {
@@ -98,9 +98,20 @@ public class Attr<T> {
         return cols;
     }
 
+    public static String getRealTableName(Class<?> c) {
+        Table table = (Table) c.getAnnotation(Table.class);
+        Entity entity = (Entity) c.getAnnotation(Entity.class);
+        if (table != null && !table.name().isEmpty()) {
+            return table.name();
+        } else if (entity != null && !entity.name().isEmpty()) {
+            return entity.name();
+        }
+        return StringKit.enCodeUnderlined(c.getSimpleName());
+    }
 
-    public String getUnderLineName(Class clz,String arrtName) {
-        return new UnderlinedNameConversion().getColName(clz, arrtName);
+
+    public String getUnderLineName(String arrtName) {
+        return StringKit.enCodeUnderlined(arrtName);
     }
 
 

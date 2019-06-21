@@ -2,19 +2,15 @@ package com.artlongs.sys.model;
 
 
 import act.Act;
-import act.inject.AutoBind;
 import com.alibaba.fastjson.JSON;
-import com.artlongs.framework.dao.BeetlSqlDao;
 import com.artlongs.framework.model.BaseEntity;
-import com.artlongs.framework.utils.BeanUtils;
+import com.artlongs.framework.query.BeanMapUtils;
 import com.artlongs.sys.service.SysRoleService;
 import org.osgl.http.H;
 import org.osgl.inject.annotation.Configuration;
 import org.osgl.util.C;
 import org.osgl.util.S;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.persistence.Transient;
 import java.util.List;
 import java.util.Map;
@@ -197,7 +193,7 @@ public class SysUser extends BaseEntity {
     }
 
     public SysUser copyTo(SysUser sysUser) {
-        return BeanUtils.copyTo(this, sysUser );
+        return BeanMapUtils.copyTo(this, sysUser );
     }
 
     //=============== geter && setter ================================================

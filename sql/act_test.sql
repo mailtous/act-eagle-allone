@@ -27,7 +27,7 @@ CREATE TABLE `sys_dept` (
   `create_date` datetime DEFAULT NULL,
   `modify_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='部门表';
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COMMENT='部门表';
 
 -- ----------------------------
 --  Records of `sys_dept`
@@ -52,7 +52,7 @@ CREATE TABLE `sys_func` (
   `create_date` datetime DEFAULT NULL,
   `modify_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COMMENT='功能点及菜单列表';
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COMMENT='功能点及菜单列表';
 
 -- ----------------------------
 --  Records of `sys_func`
@@ -72,7 +72,7 @@ CREATE TABLE `sys_permission` (
   `create_date` datetime DEFAULT NULL,
   `modify_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COMMENT='权限表';
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COMMENT='权限表';
 
 -- ----------------------------
 --  Records of `sys_permission`
@@ -91,7 +91,7 @@ CREATE TABLE `sys_role` (
   `create_date` datetime DEFAULT NULL,
   `modify_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='角色表';
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COMMENT='角色表';
 
 -- ----------------------------
 --  Records of `sys_role`
@@ -116,7 +116,7 @@ CREATE TABLE `sys_user` (
   `modify_date` datetime DEFAULT NULL,
   `create_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='系统用户';
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COMMENT='系统用户';
 
 -- ----------------------------
 --  Records of `sys_user`
@@ -132,12 +132,14 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_name` varchar(64) DEFAULT NULL COMMENT '用户名称',
+  `age` int(2) DEFAULT NULL,
   `pwd` varchar(255) DEFAULT NULL,
   `role_id` int(11) DEFAULT NULL COMMENT '用户角色',
+  `money` decimal(10,3) DEFAULT NULL,
   `create_date` datetime DEFAULT NULL,
   `modify_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8
 
 -- ----------------------------
 --  Records of `user`

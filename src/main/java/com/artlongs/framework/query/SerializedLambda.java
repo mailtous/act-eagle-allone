@@ -1,6 +1,4 @@
-package com.artlongs.framework.utils;
-
-import org.osgl.$;
+package com.artlongs.framework.query;
 
 import java.io.*;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.artlongs.framework.utils;
+package com.artlongs.framework.query;
 
 /**
  * Created by ${leeton} on 2018/7/27.

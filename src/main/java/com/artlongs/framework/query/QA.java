@@ -1,6 +1,5 @@
-package com.artlongs.framework.utils;
+package com.artlongs.framework.query;
 
-import java.io.Serializable;
 import java.util.function.Function;
 import java.util.stream.Stream;
 

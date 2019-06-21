@@ -1,6 +1,7 @@
-package com.artlongs.framework.utils;
+package com.artlongs.framework.query;
 
 import com.artlongs.sys.model.SysUser;
+import org.osgl.util.S;
 
 /**
  *
