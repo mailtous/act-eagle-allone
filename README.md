@@ -10,5 +10,10 @@ JS技术采用 riotjs 及 layui
 密码:111
 数据库脚本在项目sql目录下
 
+安利一下: QE 功能我后来,在这个基础上开发了一个小项目, Fluentsql :
+https://github.com/mailtous/fluentsql
+在我们的公司已经启用了,效果很好,效率很高,程序小哥表示很 Happy!
+
+
 
   
